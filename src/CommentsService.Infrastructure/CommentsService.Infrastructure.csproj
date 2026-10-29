@@ -10,6 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../CommentsService.Domain/CommentsService.Domain.csproj" />
+    <ProjectReference Include="../CommentsService.Application/CommentsService.Application.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.14" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />

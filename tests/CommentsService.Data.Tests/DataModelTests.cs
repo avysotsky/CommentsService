@@ -1,3 +1,6 @@
+using CommentsService.Application.Abstractions.Persistence;
+using CommentsService.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using CommentsService.Infrastructure.Persistence;
 using CommentsService.Domain.Entities;
@@ -11,19 +14,25 @@ namespace CommentsService.Data.Tests;
 public sealed class DataModelTests : IAsyncLifetime
 {
     private CommentsDbContext db = null!;
+    private ServiceProvider provider = null!;
+    private AsyncServiceScope scope;
 
     public async Task InitializeAsync()
     {
         if (Environment.GetEnvironmentVariable("PGDATABASE") != "comments_test")
             throw new InvalidOperationException("Integration tests require PGDATABASE=comments_test.");
-        db = new CommentsDbContextFactory().CreateDbContext([]);
+        provider = new ServiceCollection().AddLogging().AddInfrastructure()
+            .BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true });
+        scope = provider.CreateAsyncScope();
+        db = scope.ServiceProvider.GetRequiredService<CommentsDbContext>();
         await db.Database.BeginTransactionAsync();
     }
 
     public async Task DisposeAsync()
     {
         await db.Database.RollbackTransactionAsync();
-        await db.DisposeAsync();
+        await scope.DisposeAsync();
+        await provider.DisposeAsync();
     }
 
     [Fact]
@@ -108,5 +117,32 @@ public sealed class DataModelTests : IAsyncLifetime
         var elevated = await db.Database.SqlQueryRaw<bool>(
             "SELECT (rolsuper OR rolcreatedb OR rolcreaterole) AS \"Value\" FROM pg_roles WHERE rolname=current_user").SingleAsync();
         Assert.False(elevated);
+    }
+
+    [Fact]
+    public async Task ApplicationPortsShareScopeAndPersistAuthorWithComment()
+    {
+        var repository = scope.ServiceProvider.GetRequiredService<ICommentRepository>();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        Assert.Same(db, unitOfWork);
+        var author = new Author("PortReader", "port@example.test");
+        var comment = new Comment(author, "Порт збереження 😀", IPAddress.IPv6Loopback, "Application port test");
+        repository.Add(comment);
+        Assert.False(await db.Comments.AsNoTracking().AnyAsync(x => x.Id == comment.Id));
+        Assert.Equal(2, await unitOfWork.SaveChangesAsync());
+        db.ChangeTracker.Clear();
+        var saved = await repository.FindByIdAsync(comment.Id);
+        Assert.NotNull(saved);
+        Assert.Equal(comment.Text, saved.Text);
+        Assert.Equal(author.Id, saved.AuthorId);
+        Assert.Equal(author.Email, saved.Author.Email);
+        Assert.Same(saved, Assert.Single(saved.Author.Comments));
+    }
+
+    [Fact]
+    public async Task RepositoryReturnsNullForMissingComment()
+    {
+        var repository = scope.ServiceProvider.GetRequiredService<ICommentRepository>();
+        Assert.Null(await repository.FindByIdAsync(Guid.NewGuid()));
     }
 }

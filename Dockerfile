@@ -11,10 +11,12 @@ COPY global.json Directory.Build.props ./
 COPY src/CommentsService.Api/CommentsService.Api.csproj ./src/CommentsService.Api/
 COPY src/CommentsService.Domain/CommentsService.Domain.csproj ./src/CommentsService.Domain/
 COPY src/CommentsService.Infrastructure/CommentsService.Infrastructure.csproj ./src/CommentsService.Infrastructure/
+COPY src/CommentsService.Application/CommentsService.Application.csproj ./src/CommentsService.Application/
 RUN dotnet restore src/CommentsService.Api
 COPY src/CommentsService.Api/ ./src/CommentsService.Api/
 COPY src/CommentsService.Domain/ ./src/CommentsService.Domain/
 COPY src/CommentsService.Infrastructure/ ./src/CommentsService.Infrastructure/
+COPY src/CommentsService.Application/ ./src/CommentsService.Application/
 RUN dotnet publish src/CommentsService.Api -c Release --no-restore -o /out /p:UseAppHost=false
 COPY --from=frontend /web/dist/ /out/wwwroot/
 

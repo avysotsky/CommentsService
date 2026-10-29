@@ -1,6 +1,6 @@
 # CommentsService
 
-Версія: **1.1.0.3** · Гілка: `CommentsService/v_1.1.0.3_BackendLayers`
+Версія: **1.1.0.3** · Гілка: `CommentsService/v_1.1.0.3_OnionArchitecture`
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 
@@ -93,10 +93,11 @@ Docker збирає весь застосунок. Проміжні катало
 Для підключення з IDE задайте `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`
 у приватному оточенні запуску. Не комітьте їхні значення.
 
-## Шари backend
+## Архітектура Onion
 
-Backend розділено на три проєкти: Domain/Entities, Infrastructure (Persistence/Configurations
-і Migrations) та Api. Domain не залежить від EF і HTTP. API використовує впроваджувані
-контракти операцій БД; тести розділено на доменні/архітектурні та інтеграційні.
-Див. [архітектуру та межі SOLID](docs/ARCHITECTURE.md). Виправлення BackendLayers
-зберігає версію 1.1.0.3, ідентифікатор міграції та наявні дані.
+Backend містить чотири проєкти: Domain, Application, Infrastructure та Api.
+Application визначає контракти зберігання; EF реалізує їх в Infrastructure.
+Infrastructure/Persistence містить Configurations, Repositories і Migrations.
+HTTP endpoints використовують контракти застосунку/платформи; Infrastructure підключається в Program.cs.
+Див. [архітектуру та правила залежностей](docs/ARCHITECTURE.md). Виправлення зберігає
+версію 1.1.0.3, ідентифікатор міграції та дані. Сценарії коментарів — етап 1.1.0.4.

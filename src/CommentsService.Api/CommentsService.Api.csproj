@@ -9,6 +9,7 @@
     <FileVersion>1.1.0.3</FileVersion>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../CommentsService.Application/CommentsService.Application.csproj" />
     <ProjectReference Include="../CommentsService.Infrastructure/CommentsService.Infrastructure.csproj" />
     <!-- Design-time EF startup tooling only; runtime persistence belongs to Infrastructure. -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14">

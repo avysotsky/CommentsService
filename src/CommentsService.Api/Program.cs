@@ -1,6 +1,6 @@
 using CommentsService.Infrastructure;
 using CommentsService.Infrastructure.Abstractions;
-using System.Reflection;
+using CommentsService.Api.Endpoints;
 
 if (args is ["--healthcheck"])
 {
@@ -33,21 +33,9 @@ if (databaseCommand)
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.MapGet("/api/status", () => new ApplicationStatus(
-    "CommentsService",
-    Assembly.GetExecutingAssembly().GetName().Version!.ToString(),
-    "DataModel"));
-
-// Process readiness only: database health is checked separately by Compose.
-app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
-app.MapGet("/health/database", async (IDatabaseStatusReader database, CancellationToken cancellationToken) =>
-    (await database.ReadAsync(cancellationToken)).IsReady
-        ? Results.Ok(new { status = "ok" })
-        : Results.StatusCode(503));
+app.MapSystemEndpoints();
 app.MapFallback("/api/{**path}", () => Results.NotFound());
 app.MapFallbackToFile("/{*path:nonfile}", "index.html");
 
 app.Run();
 return 0;
-
-public sealed record ApplicationStatus(string Application, string Version, string Stage);

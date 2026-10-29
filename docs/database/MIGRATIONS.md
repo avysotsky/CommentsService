@@ -2,7 +2,9 @@
 
 ## English
 
-BackendLayers moves the existing migration to Infrastructure/Migrations and DbContext to
+For future schema changes use `--output-dir Persistence/Migrations` on the EF add command.
+
+OnionArchitecture moves the existing migration to Infrastructure/Persistence/Migrations and DbContext to
 Infrastructure/Persistence. Its ID and generated SQL are unchanged; no new migration or
 checkpoint is required for this code-only correction. See ../ARCHITECTURE.md.
 
@@ -52,14 +54,16 @@ with the migration snapshot before publishing.
 
 Verified for this release: restore-checked pre-migration checkpoints for both persistent
 DBs; retained control records through the first migration; retained author/comment
-relationships and content through repeated migration; eight transaction-isolated tests;
+relationships and content through repeated migration; ten transaction-isolated tests;
 separate initial installation in a uniquely named blank database and idempotent SQL export.
 Only owned control records/schemas and the blank verification database were removed.
 Full thread/attachment preservation checks belong to later schema versions.
 
 ## Русский
 
-BackendLayers переносит прежнюю миграцию в Infrastructure/Migrations, DbContext — в
+Для будущих изменений схемы указывайте `--output-dir Persistence/Migrations` при создании миграции EF.
+
+OnionArchitecture переносит прежнюю миграцию в Infrastructure/Persistence/Migrations, DbContext — в
 Infrastructure/Persistence. ID и SQL сохранены; для этой доработки только кода не нужны
 новая миграция и контрольная копия. См. ../ARCHITECTURE.md.
 
@@ -107,13 +111,15 @@ dotnet ef migrations script --idempotent --project src/CommentsService.Infrastru
 
 Проверено: восстановление копий обеих постоянных БД до миграции; сохранение контрольных
 записей при первой миграции; сохранение связи автора/комментария и содержимого при повторной;
-восемь тестов с откатом; отдельная установка на пустую БД с уникальным именем и идемпотентный SQL.
+десять тестов с откатом; отдельная установка на пустую БД с уникальным именем и идемпотентный SQL.
 Удалены только собственные контрольные записи/схемы и пустая проверочная БД.
 Полная проверка сохранности веток ответов/вложений относится к следующим версиям схемы.
 
 ## Українська
 
-BackendLayers переносить попередню міграцію до Infrastructure/Migrations, DbContext — до
+Для майбутніх змін схеми вказуйте `--output-dir Persistence/Migrations` під час створення міграції EF.
+
+OnionArchitecture переносить попередню міграцію до Infrastructure/Persistence/Migrations, DbContext — до
 Infrastructure/Persistence. ID і SQL збережено; для цього виправлення лише коду не потрібні
 нова міграція та контрольна копія. Див. ../ARCHITECTURE.md.
 
@@ -161,6 +167,6 @@ dotnet ef migrations script --idempotent --project src/CommentsService.Infrastru
 
 Перевірено: відновлення копій обох постійних БД до міграції; збереження контрольних
 записів під час першої міграції; збереження зв’язку автора/коментаря та вмісту під час повторної;
-вісім тестів із відкатом; окреме встановлення на порожню БД з унікальною назвою та ідемпотентний SQL.
+десять тестів із відкатом; окреме встановлення на порожню БД з унікальною назвою та ідемпотентний SQL.
 Видалено лише власні контрольні записи/схеми та порожню перевірочну БД.
 Повна перевірка збереження гілок відповідей/вкладень належить до наступних версій схеми.

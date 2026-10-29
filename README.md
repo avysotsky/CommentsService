@@ -1,6 +1,6 @@
 # CommentsService
 
-Version: **1.1.0.3** · Branch: `CommentsService/v_1.1.0.3_BackendLayers`
+Version: **1.1.0.3** · Branch: `CommentsService/v_1.1.0.3_OnionArchitecture`
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 
@@ -93,10 +93,11 @@ Without database variables the API/status page still starts; database health ret
 To connect from the IDE, set `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`
 in your private launch environment. Never commit those values.
 
-## Backend layers
+## Onion architecture
 
-The backend has three projects: Domain/Entities, Infrastructure (Persistence/Configurations
-and Migrations), and Api. Domain has no EF or HTTP dependencies. API uses injected
-database operation contracts; tests are split into domain/architecture and database suites.
-See [architecture and SOLID boundaries](docs/ARCHITECTURE.md). This BackendLayers correction
-keeps version 1.1.0.3, the migration ID and existing data unchanged.
+The backend has four projects: Domain, Application, Infrastructure and Api.
+Application defines persistence ports; EF implements them in Infrastructure.
+Infrastructure/Persistence contains Configurations, Repositories and Migrations.
+HTTP endpoints use application/framework contracts; Infrastructure is connected in Program.cs.
+See [architecture and dependency rules](docs/ARCHITECTURE.md). This correction keeps
+version 1.1.0.3, the migration ID and data unchanged. Comment use cases arrive in 1.1.0.4.

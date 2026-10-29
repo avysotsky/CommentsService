@@ -4,17 +4,20 @@ using System.Net;
 using CommentsService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace CommentsService.Infrastructure.Migrations
+namespace CommentsService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CommentsDbContext))]
-    partial class CommentsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261029195935_InitialDataModel")]
+    partial class InitialDataModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

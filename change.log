@@ -2,6 +2,22 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.3 OnionArchitecture — 2026-10-29
+
+Branch: `CommentsService/v_1.1.0.3_OnionArchitecture`
+
+- Added Application referencing Domain only, with application-owned ICommentRepository and IUnitOfWork ports; core contracts expose no EF/HTTP/provider types.
+- Implemented the repository in Infrastructure; repository and unit of work share one scoped DbContext. Application use cases/HTTP comment features remain scheduled for 1.1.0.4.
+- Moved migrations and snapshot to Infrastructure/Persistence/Migrations, retaining migration 20261029195935_InitialDataModel, its SQL and history. No replacement migration or checkpoint rotation.
+- Moved HTTP mappings to Api/Endpoints and connected database readiness through a standard IHealthCheck adapter. Technical migration/status contracts remain outside the application core.
+- Updated architecture tests for inward references, independent Domain/Application assemblies, provider-free port signatures and HTTP endpoint boundaries.
+- Added repository/unit-of-work integration checks with transaction rollback. Updated Docker, solution, three READMEs, read.me, architecture/schema/migration documents and plans.
+- Validation: Release solution build has zero warnings/errors; 21 domain/architecture and 10 PostgreSQL tests passed (31 total).
+- Verified identical migration SQL, no pending model changes, retained live schema/history/data/relationships, environment, previous recovery copies and persistent volumes across deployment.
+- Verified fresh installation from the relocated migration, image migrate/check commands, database/process health, API metadata/frontend/API 404 and Development health 503 with missing/unreachable DB.
+- Edge desktop/360 px checks passed. Visual Studio GUI opening and MySQL Workbench GUI import remain unverified.
+- Version stays 1.1.0.3; next planned iteration remains 1.1.0.4 CommentsApi.
+
 ## 1.1.0.3 BackendLayers — 2026-10-29
 
 Branch: `CommentsService/v_1.1.0.3_BackendLayers`

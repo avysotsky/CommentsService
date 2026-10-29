@@ -1,9 +1,10 @@
 using CommentsService.Domain.Entities;
+using CommentsService.Application.Abstractions.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommentsService.Infrastructure.Persistence;
 
-public sealed class CommentsDbContext(DbContextOptions<CommentsDbContext> options) : DbContext(options)
+public sealed class CommentsDbContext(DbContextOptions<CommentsDbContext> options) : DbContext(options), IUnitOfWork
 {
     public DbSet<Author> Authors => Set<Author>();
     public DbSet<Comment> Comments => Set<Comment>();

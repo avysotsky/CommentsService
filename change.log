@@ -1,0 +1,29 @@
+# CommentsService — change.log
+
+## 1.1.0.1 Init — 2026-10-29
+
+Branch: `CommentsService/v_1.1.0.1_Init`
+
+### English
+
+- Started a new independent development history at Init.
+- Added a minimal .NET 10 API with GET /api/status.
+- Added an English React start page showing the backend connection state.
+- Added build/run instructions, versioning rules and the agreed incremental plan.
+- No database, migrations, comment features, Docker deployment or configuration extraction yet.
+- Validation: .NET Release build passed with zero warnings/errors; TypeScript/Vite
+  production build passed. Edge verified API metadata, connected/unavailable states,
+  English UI, no comments form/API, no JavaScript errors and no overflow at 360 px.
+- No unit/integration suite is included in Init; database tests belong to later steps.
+
+### Русский
+
+- Новая независимая история разработки начинается с Init.
+- Добавлен минимальный API .NET 10 с GET /api/status.
+- Добавлена английская стартовая страница React с состоянием подключения к backend.
+- Добавлены инструкции сборки/запуска, правила версий и согласованный поэтапный план.
+- БД, миграций, комментариев, Docker-развёртывания и выноса в конфиг пока нет.
+- Проверки: Release-сборка .NET без предупреждений/ошибок, production-сборка
+  TypeScript/Vite. В Edge проверены данные API, состояния связи/недоступности,
+  английский интерфейс, отсутствие формы/API комментариев, ошибок JS и переполнения на 360 px.
+- Unit/integration-набора в Init пока нет; проверки БД относятся к следующим этапам.

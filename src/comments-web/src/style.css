@@ -1,0 +1,32 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #263c32;
+  background: #f7f7f2;
+  font-synthesis: none;
+  line-height: 1.6;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1000px; margin: 0 auto; padding: 32px 40px; }
+header { display: flex; align-items: center; gap: 12px; font-size: 25px; font-weight: 700; letter-spacing: -1px; }
+.mark { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 10px; background: #f5cb52; font-size: 31px; line-height: 1; padding-bottom: 4px; }
+.light { font-weight: 400; }
+section { padding: 90px 0 70px; }
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #8a7737; }
+h1 { font-weight: 500; font-size: clamp(35px, 5.2vw, 58px); line-height: 1.15; letter-spacing: -2px; margin: 22px 0; }
+.intro { color: #717f6c; max-width: 550px; font-size: 16px; }
+dl { background: #fff; border: 1px solid #e3e7da; border-radius: 12px; margin: 37px 0 18px; padding: 8px 24px; max-width: 580px; }
+dl div { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 16px 0; }
+dl div + div { border-top: 1px solid #eef0e8; }
+dt { font-size: 13px; color: #7c8872; }
+dd { font-size: 13px; margin: 0; text-align: right; overflow-wrap: anywhere; }
+.note, footer { color: #89947d; font-size: 12px; }
+footer { border-top: 1px solid #e3e7da; padding-top: 22px; }
+@media (max-width: 520px) {
+  main { padding: 24px; }
+  header { font-size: 22px; }
+  section { padding: 55px 0 40px; }
+  h1 { letter-spacing: -1.4px; }
+  .intro { font-size: 14px; }
+  dl { padding: 7px 16px; }
+}

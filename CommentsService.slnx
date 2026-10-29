@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/Frontend/">
+    <File Path="src/comments-web/package.json" />
+    <File Path="src/comments-web/package-lock.json" />
+    <File Path="src/comments-web/index.html" />
+    <File Path="src/comments-web/tsconfig.json" />
+    <File Path="src/comments-web/vite.config.ts" />
+  </Folder>
+  <Folder Name="/Frontend/src/">
+    <File Path="src/comments-web/src/main.tsx" />
+    <File Path="src/comments-web/src/style.css" />
+    <File Path="src/comments-web/src/vite-env.d.ts" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/CommentsService.Api/CommentsService.Api.csproj" />
+  </Folder>
+</Solution>

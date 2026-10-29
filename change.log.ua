@@ -2,6 +2,15 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.2 VisualStudio — 2026-10-29
+
+Гілка: `CommentsService/v_1.1.0.2_VisualStudio`
+
+- Додано CommentsService.slnx для відкриття наявного API та файлів React у Visual Studio 2026.
+- Файли frontend додано як елементи рішення; збирання рішення збирає API. Docker і далі збирає весь застосунок.
+- Оновлено три README та read.me; версію 1.1.0.2 й наступну планову ітерацію збережено.
+- Перевірки: .NET CLI бачить проєкт API; Release-збирання рішення в Ubuntu пройшло без попереджень і помилок. Відкриття рішення в самій Visual Studio не перевірялося.
+
 ## 1.1.0.2 Docker — 2026-10-29
 
 Гілка: `CommentsService/v_1.1.0.2_Docker`

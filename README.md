@@ -1,6 +1,6 @@
 # CommentsService
 
-Version: **1.1.0.2** · Branch: `CommentsService/v_1.1.0.2_Docker`
+Version: **1.1.0.2** · Branch: `CommentsService/v_1.1.0.2_VisualStudio`
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 
@@ -86,3 +86,7 @@ access; this release does not provision a domain or public hosting.
 separately by Compose; the application does not connect to the databases yet.
 The app runs as an unprivileged container user. Dockerfiles and initialization
 scripts contain no embedded credentials or workstation-specific instructions.
+
+## Open in Visual Studio
+
+Open `CommentsService.slnx` in Visual Studio 2026 with the ASP.NET and web development workload and .NET 10 SDK installed. The solution includes the API project and a Frontend solution folder with the React source and build files. The frontend remains an npm/Vite application; building the solution builds the API only. Use the Docker instructions above to build and run the complete application.

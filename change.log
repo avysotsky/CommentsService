@@ -2,6 +2,15 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.2 VisualStudio — 2026-10-29
+
+Branch: `CommentsService/v_1.1.0.2_VisualStudio`
+
+- Added CommentsService.slnx for opening the existing API and React files in Visual Studio 2026.
+- Frontend files are solution items; building the solution builds the API. Docker still builds the complete application.
+- Updated all three READMEs and read.me; kept version 1.1.0.2 and the planned next iteration unchanged.
+- Validation: .NET CLI lists the API project; Release solution build in Ubuntu passed with zero warnings/errors. Opening the solution in Visual Studio itself was not verified.
+
 ## 1.1.0.2 Docker — 2026-10-29
 
 Branch: `CommentsService/v_1.1.0.2_Docker`

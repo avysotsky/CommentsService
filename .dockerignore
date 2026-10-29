@@ -8,6 +8,8 @@ artifacts
 .local
 **/.local
 **/.env
+**/.env.*
+**/*.env
 *.pdf
 tests
 **/AGENTS.md

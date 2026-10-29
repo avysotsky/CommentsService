@@ -7,7 +7,12 @@ Release format: `w.x.y.z`.
 - w: global application version; change only when explicitly requested.
 - x: feature version; change only when explicitly requested.
 - y: configuration version; remains 0 until configuration extraction is requested.
-- z: revision; increment for the next iteration.
+- z: revision; increment for the next planned iteration.
+
+Additional work required within an iteration keeps the same w.x.y.z and gets
+a different branch description, for example `CommentsService/v_1.1.0.2_DockerFix`.
+It starts from the affected version and does not shift the planned version numbers.
+Identify these updates by branch description and commit in the change logs.
 
 Start: `1.1.0.1`. Branches follow `CommentsService/v_w.x.y.z_description`.
 Each iteration starts from the previous completed version, adds its declared scope,
@@ -26,7 +31,12 @@ Record actual verification results; never claim an unexecuted check passed.
 - w — глобальная версия приложения; изменяется только по прямому указанию.
 - x — версия фичи; изменяется только по прямому указанию.
 - y — версия конфига; остаётся 0 до согласованного выноса данных в конфиг.
-- z — ревизия; увеличивается для следующей итерации.
+- z — ревизия; увеличивается для следующей плановой итерации.
+
+Дополнительная доработка внутри итерации сохраняет w.x.y.z и получает другое
+описание ветки, например `CommentsService/v_1.1.0.2_DockerFix`. Она создаётся
+от затронутой версии и не сдвигает плановую нумерацию. В журналах различать такие
+доработки по описанию ветки и коммиту.
 
 Начало: `1.1.0.1`. Ветки: `CommentsService/v_w.x.y.z_description`.
 Каждая итерация создаётся от предыдущего завершённого выпуска, добавляет только
@@ -44,7 +54,12 @@ Record actual verification results; never claim an unexecuted check passed.
 - w — глобальна версія застосунку; змінюється лише за прямою вказівкою.
 - x — версія функціональності; змінюється лише за прямою вказівкою.
 - y — версія конфігурації; залишається 0 до погодженого винесення даних у конфігурацію.
-- z — ревізія; збільшується для наступної ітерації.
+- z — ревізія; збільшується для наступної планової ітерації.
+
+Додаткове доопрацювання всередині ітерації зберігає w.x.y.z та отримує інший опис
+гілки, наприклад `CommentsService/v_1.1.0.2_DockerFix`. Воно починається від
+відповідної версії та не зсуває планову нумерацію. У журналах розрізняти такі
+доопрацювання за описом гілки й комітом.
 
 Початок: `1.1.0.1`. Гілки: `CommentsService/v_w.x.y.z_description`.
 Кожна ітерація створюється від попереднього завершеного випуску, додає лише

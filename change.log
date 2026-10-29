@@ -2,6 +2,22 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.2 Docker — 2026-10-29
+
+Branch: `CommentsService/v_1.1.0.2_Docker`
+
+- Added multi-stage Docker builds for React/.NET and one same-origin application container.
+- Added PostgreSQL development storage and an optional persistent test database with separate volumes and credentials.
+- Bootstrap creates non-superuser application roles only on empty volumes; ordinary restarts do not recreate databases.
+- Added application/container readiness checks, static frontend serving and correct 404 responses for unknown API routes.
+- Added one-time private environment generation that preserves existing files; credentials and local files are excluded from Git/build context.
+- Added the rule that extra work uses the same version with a different branch description, without shifting planned iterations.
+- Updated all three README languages, read.me and the development plan. No EF models/migrations or comment features yet; configuration version remains 0.
+- Validation: Docker Release/frontend build and all three container health checks passed.
+- Verified both databases retain probe records and the same volumes after container recreation; cleaned up only owned probes afterwards.
+- Verified database role restrictions, non-root app execution, credential-file preservation and no private files in the image.
+- Edge checks passed: same-origin API/frontend, version 1.1.0.2, health, API 404, SPA fallback, 360 px layout and no JavaScript errors.
+
 ## 1.1.0.1 Init — 2026-10-29
 
 Branch: `CommentsService/v_1.1.0.1_Init`

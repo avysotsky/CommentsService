@@ -1,44 +1,44 @@
-CommentsService — 1.1.0.1 Init
-Branch: CommentsService/v_1.1.0.1_Init
+CommentsService — 1.1.0.2 Docker
+Branch: CommentsService/v_1.1.0.2_Docker
 
 ENGLISH
-Initial .NET 10 / React skeleton. No comment functionality, database or Docker yet.
-Requirements: .NET SDK 10, Node.js 24 and npm.
-Build from repository root:
-  dotnet build src/CommentsService.Api -c Release
-  npm --prefix src/comments-web ci
-  npm --prefix src/comments-web run build
-Run in separate terminals:
-  dotnet run --project src/CommentsService.Api --no-launch-profile --urls http://127.0.0.1:5081
-  npm --prefix src/comments-web run dev
-Open: http://localhost:5174
-Full English instructions: README.md. Russian: README.RU.md. Ukrainian: README.UA.md.
-History: change.log. Planned iterations: docs/PLAN.md.
+Dockerized frontend/API and persistent PostgreSQL. Application data integration is next.
+Requirements: Docker Engine, Compose v2.24+, Git, Python 3.
+From the repository root:
+  python3 scripts/init-env.py
+  docker compose -p commentsservice up -d --build --wait
+  curl --fail http://127.0.0.1:8080/health
+Optional persistent test database:
+  docker compose -p commentsservice --profile testing up -d --wait test-database
+Stop without deleting data:
+  docker compose -p commentsservice --profile testing down
+Never use down -v for retained data. Keep project name/environment file unchanged.
+Instructions: README.md. History: change.log.
 
 РУССКИЙ
-Начальный каркас .NET 10 / React. Комментариев, БД и Docker пока нет.
-Требования: .NET SDK 10, Node.js 24 и npm.
-Сборка из корня репозитория:
-  dotnet build src/CommentsService.Api -c Release
-  npm --prefix src/comments-web ci
-  npm --prefix src/comments-web run build
-Запуск в разных терминалах:
-  dotnet run --project src/CommentsService.Api --no-launch-profile --urls http://127.0.0.1:5081
-  npm --prefix src/comments-web run dev
-Открыть: http://localhost:5174
-Полная инструкция на русском: README.RU.md. Английский: README.md. Украинский: README.UA.md.
-История: change.log.ru. План итераций: docs/PLAN.md.
+Frontend/API в Docker и постоянная PostgreSQL. Работа приложения с данными — следующий этап.
+Требования: Docker Engine, Compose v2.24+, Git, Python 3.
+Из корня репозитория:
+  python3 scripts/init-env.py
+  docker compose -p commentsservice up -d --build --wait
+  curl --fail http://127.0.0.1:8080/health
+Необязательная постоянная тестовая БД:
+  docker compose -p commentsservice --profile testing up -d --wait test-database
+Остановка с сохранением данных:
+  docker compose -p commentsservice --profile testing down
+Не используйте down -v. Сохраняйте имя проекта и файл окружения при обновлениях.
+Инструкция: README.RU.md. История: change.log.ru.
 
 УКРАЇНСЬКОЮ
-Початковий каркас .NET 10 / React. Коментарів, БД та Docker ще немає.
-Вимоги: .NET SDK 10, Node.js 24 та npm.
-Збирання з кореня репозиторію:
-  dotnet build src/CommentsService.Api -c Release
-  npm --prefix src/comments-web ci
-  npm --prefix src/comments-web run build
-Запуск у різних терміналах:
-  dotnet run --project src/CommentsService.Api --no-launch-profile --urls http://127.0.0.1:5081
-  npm --prefix src/comments-web run dev
-Відкрити: http://localhost:5174
-Повна інструкція українською: README.UA.md. Англійською: README.md. Російською: README.RU.md.
-Історія: change.log.ua. План ітерацій: docs/PLAN.md.
+Frontend/API в Docker і постійна PostgreSQL. Робота застосунку з даними — наступний етап.
+Вимоги: Docker Engine, Compose v2.24+, Git, Python 3.
+Із кореня репозиторію:
+  python3 scripts/init-env.py
+  docker compose -p commentsservice up -d --build --wait
+  curl --fail http://127.0.0.1:8080/health
+Необов’язкова постійна тестова БД:
+  docker compose -p commentsservice --profile testing up -d --wait test-database
+Зупинка зі збереженням даних:
+  docker compose -p commentsservice --profile testing down
+Не використовуйте down -v. Зберігайте назву проєкту та файл оточення під час оновлень.
+Інструкція: README.UA.md. Історія: change.log.ua.

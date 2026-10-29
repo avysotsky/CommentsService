@@ -7,6 +7,7 @@
 **/test-results/
 **/.env
 .env
+*.env
 tmp/
 artifacts/
 .vs/

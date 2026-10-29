@@ -3,7 +3,7 @@
 ## Status and version rules
 
 The approved sequence starts at `CommentsService/v_1.1.0.1_Init`.
-Current milestone: Init only. All subsequent iterations below remain planned.
+Current milestone: Docker. Init and Docker are completed; application data integration is next.
 Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
 Each completed iteration is pushed to its own branch with current read.me,
 README and change.log. README.md is English, README.RU.md Russian, README.UA.md
@@ -48,7 +48,7 @@ The new change.log starts with Init; it must record actual work, not simulated h
 | Branch | Scope and database expectations |
 |---|---|
 | `CommentsService/v_1.1.0.1_Init` | Minimal .NET/React skeleton, English identity, build instructions and initial release documents. No comments functionality or database reset scripts. |
-| `CommentsService/v_1.1.0.2_Docker` | Container builds and PostgreSQL, persistent storage, readiness checks. Bootstrap the development/test databases once and preserve them afterwards. |
+| `CommentsService/v_1.1.0.2_Docker` | Completed. Container builds and PostgreSQL, persistent storage, readiness checks. Bootstrap the development/test databases once and preserve them afterwards. |
 | `CommentsService/v_1.1.0.3_DataModel` | OOP entities, EF mappings, initial migration, diagrams and migration tracking. Establish previous-state recovery and retained-data upgrade checks. |
 | `CommentsService/v_1.1.0.4_CommentsApi` | Create/read plain-text comments, author/client metadata, timestamps and server validation. Integration tests use the persistent test DB with owned fixtures/rollback. |
 | `CommentsService/v_1.1.0.5_CommentsUi` | SPA form/table, client validation, async submission and multilingual text. Browser checks use isolated fixtures and preserve unrelated data. |
@@ -64,8 +64,8 @@ The new change.log starts with Init; it must record actual work, not simulated h
 | `CommentsService/v_1.1.0.15_Acceptance` | Full checklist/browser checks; upgrades across database-changing versions on preserved data; recovery rehearsal; measurements on the retained large set; separate blank-DB installation check; final Workbench/schema verification. |
 | `CommentsService/v_1.1.0.16_Deployment` | Deploy the accepted version, migrate the target database with a prior recovery point, verify HTTPS/external access/persistence and update user/deployment docs. An available server is required. |
 
-Relevant checks accompany every step. If a separate fix is necessary, it takes
-the next revision number and later planned revisions shift accordingly.
+Relevant checks accompany every step. Additional fixes use a separate branch with the same version and a different
+description. Planned subsequent version numbers do not shift.
 This retains the Junior feature scope; the large data set adds persistence and
 query checks, not the brokers/NoSQL/cloud architecture of higher assignment levels.
 
@@ -86,7 +86,7 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 ## Статус и правила версий
 
 Согласованная последовательность начинается с `CommentsService/v_1.1.0.1_Init`.
-Текущий этап — только Init. Все следующие итерации ниже пока остаются планом.
+Текущий этап — Docker. Init и Docker завершены; следующий этап — модель данных.
 w=1, x=1, y=0 сохраняются, увеличивается только ревизия z. Вынос в конфиг отложен.
 Каждая завершённая итерация отправляется в свою ветку с актуальными read.me,
 README и change.log. README.md — английский, README.RU.md — русский, README.UA.md —
@@ -133,7 +133,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 | Версия | Содержание и работа с БД |
 |---|---|
 | **1.1.0.1 Init** | Каркас .NET/React, английское название, сборка и начальные документы. Комментариев и скриптов сброса БД ещё нет. |
-| **1.1.0.2 Docker** | Контейнеры, PostgreSQL, постоянные тома и готовность. БД разработки/тестов создаются один раз и сохраняются. |
+| **1.1.0.2 Docker** | Завершено. Контейнеры, PostgreSQL, постоянные тома и готовность. БД разработки/тестов создаются один раз и сохраняются. |
 | **1.1.0.3 DataModel** | Сущности, EF, первая миграция, схемы и учёт миграций. Закладываем предыдущую восстановительную копию и проверки обновления на данных. |
 | **1.1.0.4 CommentsApi** | Запись/чтение текста, данные автора/клиента, время и валидация. Проверки в постоянной тестовой БД с откатом или собственными фикстурами. |
 | **1.1.0.5 CommentsUi** | SPA-форма/таблица, валидация, AJAX и любой язык текста. Браузерные фикстуры не затрагивают чужие данные. |
@@ -149,8 +149,8 @@ README и change.log. README.md — английский, README.RU.md — ру�
 | **1.1.0.15 Acceptance** | Полная приёмка; обновление между версиями схемы на сохранённых данных; пробное восстановление; замеры большого набора; отдельно установка на пустую БД; проверка схем и Workbench. |
 | **1.1.0.16 Deployment** | Развёртывание, миграция целевой БД после контрольной копии, HTTPS, внешняя проверка и документы. Нужен доступный сервер. |
 
-Необходимые проверки сопровождают каждый шаг. Отдельное исправление занимает
-следующий номер ревизии и сдвигает последующие номера плана. Функциональный объём
+Необходимые проверки сопровождают каждый шаг. Отдельная доработка выполняется в ветке той же версии с другим описанием;
+номера следующих плановых итераций не сдвигаются. Функциональный объём
 остаётся Junior: большой набор добавляет проверки сохранности и запросов,
 а не брокеры/NoSQL/облачную архитектуру старших уровней задания.
 
@@ -171,7 +171,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 ## Статус і правила версій
 
 Погоджена послідовність починається з `CommentsService/v_1.1.0.1_Init`.
-Поточний етап — Init. Усі наступні ітерації нижче поки залишаються планом.
+Поточний етап — Docker. Init і Docker завершено; наступний етап — модель даних.
 w=1, x=1, y=0 зберігаються, збільшується лише ревізія z. Винесення даних у конфігурацію відкладено.
 Кожна завершена ітерація публікується у своїй гілці з актуальними read.me,
 README і change.log. README.md — англійською, README.RU.md — російською, README.UA.md —
@@ -217,7 +217,7 @@ README і change.log. README.md — англійською, README.RU.md — р�
 | Версія | Зміст і робота з БД |
 |---|---|
 | **1.1.0.1 Init** | Каркас .NET/React, англомовна назва, збирання й початкові документи. Функцій коментарів і скриптів скидання БД ще немає. |
-| **1.1.0.2 Docker** | Контейнери, PostgreSQL, постійні томи та готовність. БД розробки/тестів створюються один раз і зберігаються. |
+| **1.1.0.2 Docker** | Завершено. Контейнери, PostgreSQL, постійні томи та готовність. БД розробки/тестів створюються один раз і зберігаються. |
 | **1.1.0.3 DataModel** | Сутності, EF, перша міграція, схеми й облік міграцій. Попередня відновлювальна копія та перевірки оновлення на даних. |
 | **1.1.0.4 CommentsApi** | Запис/читання тексту, дані автора/клієнта, час і валідація. Постійна тестова БД із відкатом або власними фікстурами. |
 | **1.1.0.5 CommentsUi** | SPA-форма/таблиця, валідація, AJAX і повідомлення будь-якою мовою. Браузерні фікстури не змінюють сторонні дані. |
@@ -233,8 +233,8 @@ README і change.log. README.md — англійською, README.RU.md — р�
 | **1.1.0.15 Acceptance** | Повна перевірка; міграції між версіями на збережених даних; пробне відновлення; вимірювання великого набору; окремо порожня БД; схеми та Workbench. |
 | **1.1.0.16 Deployment** | Розгортання, міграція цільової БД після контрольної копії, HTTPS, зовнішня перевірка та документи. Потрібен доступний сервер. |
 
-Необхідні перевірки супроводжують кожен крок. Окреме виправлення займає наступний
-номер ревізії та зсуває наступні номери плану. Функціональний обсяг залишається
+Необхідні перевірки супроводжують кожен крок. Окреме доопрацювання виконується в гілці тієї самої версії з іншим описом;
+номери наступних планових ітерацій не зсуваються. Функціональний обсяг залишається
 Junior: великий набір додає перевірки збереження та запитів, а не брокери/NoSQL/
 хмарну архітектуру старших рівнів завдання.
 

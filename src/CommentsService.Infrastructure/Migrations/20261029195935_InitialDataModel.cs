@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CommentsService.Api.Data.Migrations
+namespace CommentsService.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialDataModel : Migration

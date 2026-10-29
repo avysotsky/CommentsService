@@ -13,6 +13,9 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/CommentsService.Api/CommentsService.Api.csproj" />
+    <Project Path="src/CommentsService.Domain/CommentsService.Domain.csproj" />
+    <Project Path="src/CommentsService.Infrastructure/CommentsService.Infrastructure.csproj" />
   </Folder>
-  <Folder Name="/tests/"><Project Path="tests/CommentsService.Data.Tests/CommentsService.Data.Tests.csproj" /></Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CommentsService.Domain.Tests/CommentsService.Domain.Tests.csproj" /><Project Path="tests/CommentsService.Data.Tests/CommentsService.Data.Tests.csproj" /></Folder>
 </Solution>

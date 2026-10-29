@@ -2,6 +2,22 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.3 BackendLayers — 2026-10-29
+
+Branch: `CommentsService/v_1.1.0.3_BackendLayers`
+
+- Replaced the single-project backend structure with Domain, Infrastructure and Api projects; version remains 1.1.0.3.
+- Domain/Entities has no project/package dependencies; constructors protect required values and bounds, keep author/comment links consistent, and expose read-only collections.
+- Infrastructure owns Persistence/CommentsDbContext, separate Persistence/Configurations, the design-time factory and Migrations.
+- API delegates readiness/migration operations through small injected interfaces; EF/provider logic and entity mappings no longer reside in API.
+- Preserved migration 20261029195935_InitialDataModel, its generated SQL, history and physical schema. Updated CLR namespaces in migration metadata; no replacement migration or checkpoint rotation.
+- Split tests into domain/architecture and database projects. Architecture tests enforce dependency direction and a persistence/HTTP-free domain; database tests verify read-only navigation materialization and transaction rollback.
+- Updated solution references, Docker restore/publish steps, three READMEs, read.me, architecture/schema/migration documents and plans.
+- Validation: Release solution build has zero warnings/errors; 18 domain/architecture tests and 8 PostgreSQL integration tests passed (26 total).
+- Verified identical generated SQL, no pending EF model changes, unchanged live schema/history/data/relationships, private environment and volumes across update; only owned retention fixtures were removed.
+- Verified initial installation using the moved migration in a separate blank database, container migration/check commands, HTTP readiness/status/frontend/API 404, and Development API database-health 503 for missing/unreachable DB.
+- Edge desktop/360 px checks passed. Visual Studio GUI opening and MySQL Workbench GUI import remain unverified.
+
 ## 1.1.0.3 DataModel — 2026-10-29
 
 Branch: `CommentsService/v_1.1.0.3_DataModel`

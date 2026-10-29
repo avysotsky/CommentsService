@@ -1,6 +1,6 @@
 # CommentsService
 
-Version: **1.1.0.3** · Branch: `CommentsService/v_1.1.0.3_DataModel`
+Version: **1.1.0.3** · Branch: `CommentsService/v_1.1.0.3_BackendLayers`
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 
@@ -60,10 +60,11 @@ See [schema and diagrams](docs/database/SCHEMA.md) and [migration/recovery detai
 ```bash
 python3 scripts/db-command.py check
 python3 scripts/db-command.py check --service test-database
+dotnet test tests/CommentsService.Domain.Tests -c Release
 python3 scripts/test-data-model.py
 ```
 
-Only the integration tests require a host .NET 10 SDK. They use `comments_test`,
+Both test suites require a host .NET 10 SDK. Database tests use `comments_test`,
 read the generated credential file, and roll back every test transaction.
 Override `--host`/`--port` on the test command if the database is on another host.
 Database command/checkpoint scripts support `--env-file`, `--project` and repeated
@@ -91,3 +92,11 @@ Docker builds the complete app. Windows and Linux intermediate outputs are separ
 Without database variables the API/status page still starts; database health returns 503.
 To connect from the IDE, set `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`
 in your private launch environment. Never commit those values.
+
+## Backend layers
+
+The backend has three projects: Domain/Entities, Infrastructure (Persistence/Configurations
+and Migrations), and Api. Domain has no EF or HTTP dependencies. API uses injected
+database operation contracts; tests are split into domain/architecture and database suites.
+See [architecture and SOLID boundaries](docs/ARCHITECTURE.md). This BackendLayers correction
+keeps version 1.1.0.3, the migration ID and existing data unchanged.

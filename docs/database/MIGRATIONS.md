@@ -2,6 +2,10 @@
 
 ## English
 
+BackendLayers moves the existing migration to Infrastructure/Migrations and DbContext to
+Infrastructure/Persistence. Its ID and generated SQL are unchanged; no new migration or
+checkpoint is required for this code-only correction. See ../ARCHITECTURE.md.
+
 Release 1.1.0.3 adds migration `20261029195935_InitialDataModel` to the previous
 Docker/VisualStudio 1.1.0.2 databases, which have no application tables. It creates
 schema `comments`, Authors, Comments, indexes, checks, a restricted foreign key,
@@ -37,8 +41,8 @@ Migration generation/export requires .NET 10 and the committed tool manifest:
 
 ```bash
 dotnet tool restore
-dotnet ef migrations list --project src/CommentsService.Api
-dotnet ef migrations script --idempotent --project src/CommentsService.Api --output docs/database/postgresql.sql
+dotnet ef migrations list --project src/CommentsService.Infrastructure --startup-project src/CommentsService.Api
+dotnet ef migrations script --idempotent --project src/CommentsService.Infrastructure --startup-project src/CommentsService.Api --output docs/database/postgresql.sql
 ```
 
 Set private `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD` first; do not put
@@ -54,6 +58,10 @@ Only owned control records/schemas and the blank verification database were remo
 Full thread/attachment preservation checks belong to later schema versions.
 
 ## Русский
+
+BackendLayers переносит прежнюю миграцию в Infrastructure/Migrations, DbContext — в
+Infrastructure/Persistence. ID и SQL сохранены; для этой доработки только кода не нужны
+новая миграция и контрольная копия. См. ../ARCHITECTURE.md.
 
 Версия 1.1.0.3 добавляет миграцию `20261029195935_InitialDataModel` к БД предыдущей
 1.1.0.2 Docker/VisualStudio, где ещё нет таблиц приложения. Она создаёт схему
@@ -89,8 +97,8 @@ Full thread/attachment preservation checks belong to later schema versions.
 
 ```bash
 dotnet tool restore
-dotnet ef migrations list --project src/CommentsService.Api
-dotnet ef migrations script --idempotent --project src/CommentsService.Api --output docs/database/postgresql.sql
+dotnet ef migrations list --project src/CommentsService.Infrastructure --startup-project src/CommentsService.Api
+dotnet ef migrations script --idempotent --project src/CommentsService.Infrastructure --startup-project src/CommentsService.Api --output docs/database/postgresql.sql
 ```
 
 Предварительно задайте приватные `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`;
@@ -104,6 +112,10 @@ dotnet ef migrations script --idempotent --project src/CommentsService.Api --out
 Полная проверка сохранности веток ответов/вложений относится к следующим версиям схемы.
 
 ## Українська
+
+BackendLayers переносить попередню міграцію до Infrastructure/Migrations, DbContext — до
+Infrastructure/Persistence. ID і SQL збережено; для цього виправлення лише коду не потрібні
+нова міграція та контрольна копія. Див. ../ARCHITECTURE.md.
 
 Версія 1.1.0.3 додає міграцію `20261029195935_InitialDataModel` до БД попередньої
 1.1.0.2 Docker/VisualStudio, де ще немає таблиць застосунку. Вона створює схему
@@ -139,8 +151,8 @@ dotnet ef migrations script --idempotent --project src/CommentsService.Api --out
 
 ```bash
 dotnet tool restore
-dotnet ef migrations list --project src/CommentsService.Api
-dotnet ef migrations script --idempotent --project src/CommentsService.Api --output docs/database/postgresql.sql
+dotnet ef migrations list --project src/CommentsService.Infrastructure --startup-project src/CommentsService.Api
+dotnet ef migrations script --idempotent --project src/CommentsService.Infrastructure --startup-project src/CommentsService.Api --output docs/database/postgresql.sql
 ```
 
 Попередньо задайте приватні `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`;

@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace CommentsService.Api.Data;
+namespace CommentsService.Infrastructure.Persistence;
 
 public static class DatabaseOptions
 {

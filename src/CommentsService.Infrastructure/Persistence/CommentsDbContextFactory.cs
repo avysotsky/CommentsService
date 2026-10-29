@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace CommentsService.Api.Data;
+namespace CommentsService.Infrastructure.Persistence;
 
 public sealed class CommentsDbContextFactory : IDesignTimeDbContextFactory<CommentsDbContext>
 {

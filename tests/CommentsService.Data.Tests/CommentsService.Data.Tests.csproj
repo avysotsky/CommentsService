@@ -10,6 +10,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1"><PrivateAssets>all</PrivateAssets></PackageReference>
-    <ProjectReference Include="../../src/CommentsService.Api/CommentsService.Api.csproj" />
+    <ProjectReference Include="../../src/CommentsService.Infrastructure/CommentsService.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

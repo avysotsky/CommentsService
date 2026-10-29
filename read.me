@@ -1,7 +1,9 @@
-CommentsService — 1.1.0.3 DataModel
-Branch: CommentsService/v_1.1.0.3_DataModel
+CommentsService — 1.1.0.3 DataModel / BackendLayers
+Branch: CommentsService/v_1.1.0.3_BackendLayers
 
 ENGLISH
+Backend: Domain/Entities; Infrastructure/Persistence/Configurations and Migrations; Api.
+Architecture and SOLID boundaries: docs/ARCHITECTURE.md.
 Author/Comment entities, EF Core, explicit migrations and verified recovery checkpoints. Comment APIs are next.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
@@ -16,12 +18,15 @@ curl --fail http://127.0.0.1:8080/health/database
 
 python3 scripts/db-command.py check
 python3 scripts/db-command.py check --service test-database
+dotnet test tests/CommentsService.Domain.Tests -c Release
 python3 scripts/test-data-model.py
 
 Stop writes before checkpoint/migration; keep the same project/environment/volumes. Never use down -v.
 Instructions: README.md. Schema/recovery: docs/database. History: change.log.
 
 РУССКИЙ
+Backend: Domain/Entities; Infrastructure/Persistence/Configurations и Migrations; Api.
+Архитектура и границы SOLID: docs/ARCHITECTURE.md.
 Сущности автора/комментария, EF Core, явные миграции и проверенные восстановительные копии. API комментариев — следующий этап.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
@@ -36,12 +41,15 @@ curl --fail http://127.0.0.1:8080/health/database
 
 python3 scripts/db-command.py check
 python3 scripts/db-command.py check --service test-database
+dotnet test tests/CommentsService.Domain.Tests -c Release
 python3 scripts/test-data-model.py
 
 Перед копией/миграцией остановите запись; сохраняйте проект/окружение/тома. Не используйте down -v.
 Инструкция: README.RU.md. Схема/восстановление: docs/database. История: change.log.ru.
 
 УКРАЇНСЬКОЮ
+Backend: Domain/Entities; Infrastructure/Persistence/Configurations і Migrations; Api.
+Архітектура та межі SOLID: docs/ARCHITECTURE.md.
 Сутності автора/коментаря, EF Core, явні міграції та перевірені відновлювальні копії. API коментарів — наступний етап.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
@@ -56,6 +64,7 @@ curl --fail http://127.0.0.1:8080/health/database
 
 python3 scripts/db-command.py check
 python3 scripts/db-command.py check --service test-database
+dotnet test tests/CommentsService.Domain.Tests -c Release
 python3 scripts/test-data-model.py
 
 Перед копією/міграцією зупиніть запис; зберігайте проєкт/оточення/томи. Не використовуйте down -v.

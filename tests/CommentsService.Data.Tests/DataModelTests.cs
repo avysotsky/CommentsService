@@ -1,6 +1,6 @@
 using System.Net;
-using CommentsService.Api.Data;
-using CommentsService.Api.Domain;
+using CommentsService.Infrastructure.Persistence;
+using CommentsService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Xunit;
@@ -37,6 +37,7 @@ public sealed class DataModelTests : IAsyncLifetime
         var saved = await db.Comments.Include(x => x.Author).SingleAsync(x => x.Id == comment.Id);
         Assert.Equal(comment.Text, saved.Text);
         Assert.Equal(author.Id, saved.AuthorId);
+        Assert.Same(saved, Assert.Single(saved.Author.Comments));
         Assert.Equal(author.UserName, saved.Author.UserName);
         Assert.Equal(author.Email, saved.Author.Email);
         Assert.Equal(author.HomePage, saved.Author.HomePage);
@@ -73,7 +74,12 @@ public sealed class DataModelTests : IAsyncLifetime
     [InlineData("Reader", "   ", PostgresErrorCodes.CheckViolation)]
     public async Task DatabaseRejectsInvalidRequiredContent(string userName, string text, string sqlState)
     {
-        db.Add(new Comment(new Author(userName, "r@example.test"), text, IPAddress.Loopback, ""));
+        var author = new Author("ValidName", "r@example.test");
+        var comment = new Comment(author, "Valid text", IPAddress.Loopback, "");
+        db.Add(comment);
+        // Bypass constructors deliberately to test database constraints independently.
+        db.Entry(author).Property(x => x.UserName).CurrentValue = userName;
+        db.Entry(comment).Property(x => x.Text).CurrentValue = text;
         var error = await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync());
         Assert.Equal(sqlState, Assert.IsType<PostgresException>(error.InnerException).SqlState);
     }
@@ -81,7 +87,9 @@ public sealed class DataModelTests : IAsyncLifetime
     [Fact]
     public async Task DatabaseEnforcesFieldLengths()
     {
-        db.Add(new Comment(new Author(new string('A', 101), "r@example.test"), "text", IPAddress.Loopback, ""));
+        var author = new Author("ValidName", "r@example.test");
+        db.Add(new Comment(author, "text", IPAddress.Loopback, ""));
+        db.Entry(author).Property(x => x.UserName).CurrentValue = new string('A', 101);
         var error = await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync());
         Assert.Equal(PostgresErrorCodes.StringDataRightTruncation, Assert.IsType<PostgresException>(error.InnerException).SqlState);
     }

@@ -1,6 +1,6 @@
 # CommentsService
 
-Версія: **1.1.0.3** · Гілка: `CommentsService/v_1.1.0.3_DataModel`
+Версія: **1.1.0.3** · Гілка: `CommentsService/v_1.1.0.3_BackendLayers`
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 
@@ -60,10 +60,11 @@ curl --fail http://127.0.0.1:8080/health/database
 ```bash
 python3 scripts/db-command.py check
 python3 scripts/db-command.py check --service test-database
+dotnet test tests/CommentsService.Domain.Tests -c Release
 python3 scripts/test-data-model.py
 ```
 
-SDK .NET 10 на хості потрібен лише інтеграційним тестам. Вони використовують `comments_test`,
+Для обох наборів тестів потрібен SDK .NET 10 на хості. Тести БД використовують `comments_test`,
 читають створений файл паролів і відкочують транзакцію кожного тесту.
 Для іншої машини/порту вкажіть `--host`/`--port` у команді тестів.
 Скрипти команд БД і контрольних копій приймають `--env-file`, `--project` та повторюваний
@@ -91,3 +92,11 @@ Docker збирає весь застосунок. Проміжні катало
 Без змінних БД API/сторінка статусу запускаються; перевірка БД повертає 503.
 Для підключення з IDE задайте `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`
 у приватному оточенні запуску. Не комітьте їхні значення.
+
+## Шари backend
+
+Backend розділено на три проєкти: Domain/Entities, Infrastructure (Persistence/Configurations
+і Migrations) та Api. Domain не залежить від EF і HTTP. API використовує впроваджувані
+контракти операцій БД; тести розділено на доменні/архітектурні та інтеграційні.
+Див. [архітектуру та межі SOLID](docs/ARCHITECTURE.md). Виправлення BackendLayers
+зберігає версію 1.1.0.3, ідентифікатор міграції та наявні дані.

@@ -2,6 +2,24 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.3 DataModel — 2026-10-29
+
+Branch: `CommentsService/v_1.1.0.3_DataModel`
+
+- Added OOP Author/Comment entities, EF Core 10/PostgreSQL mappings, UUID keys, UTC timestamps and IPv4/IPv6/User-Agent metadata.
+- Added initial migration 20261029195935_InitialDataModel with schema/history, required fields, length/check constraints, restricted author deletion and indexes.
+- Wired the application to its non-superuser database role; added explicit migrate/check commands and database health. Startup does not migrate automatically.
+- Added restore-verified checkpoints that retain one previous copy per database and remove only their own temporary verification databases.
+- Added eight integration tests using per-test transaction rollback; no database reset or shared-table cleanup.
+- Added PostgreSQL SQL export, ER/OOP diagrams, a MySQL Workbench import projection and migration/recovery documentation.
+- Updated three READMEs, read.me and plans. Comment APIs, replies and attachments remain in their planned iterations; configuration version stays 0.
+- Isolated Windows/Linux intermediate build assets; included tests in the solution. Added the runtime GSS library while retaining default driver encryption settings.
+- Validation: Ubuntu Release solution build passed with zero warnings/errors; 8/8 PostgreSQL tests passed; Docker backend/frontend builds and all three services are healthy.
+- Verified restore of both pre-migration checkpoints, retained control data across initial migration, and unchanged author/comment data/relationships across repeated migration.
+- Verified restoration of related author/comment checkpoint fixtures, separate blank-database installation, idempotent PostgreSQL SQL export and unchanged persistent volumes.
+- Verified image migration/check commands, native API startup without DB credentials (database health 503), Windows localhost access, and Edge desktop/360 px layout with correct release/status and no JavaScript errors.
+- MySQL Workbench GUI import and opening the updated solution in Visual Studio were not verified. The SQL projection and import instructions are supplied.
+
 ## 1.1.0.2 VisualStudio — 2026-10-29
 
 Branch: `CommentsService/v_1.1.0.2_VisualStudio`

@@ -26,3 +26,6 @@ tests
 **/.ssh
 **/*.local
 **/*.local.*
+
+# Private IDE launch environment
+**/Properties/launchSettings.json

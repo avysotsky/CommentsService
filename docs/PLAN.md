@@ -3,7 +3,7 @@
 ## Status and version rules
 
 The approved sequence starts at `CommentsService/v_1.1.0.1_Init`.
-Current milestone: Docker. Init and Docker are completed; application data integration is next.
+Current milestone: DataModel 1.1.0.3. Init, Docker and VisualStudio are completed. Next: CommentsApi 1.1.0.4.
 Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
 Each completed iteration is pushed to its own branch with current read.me,
 README and change.log. README.md is English, README.RU.md Russian, README.UA.md
@@ -49,7 +49,7 @@ The new change.log starts with Init; it must record actual work, not simulated h
 |---|---|
 | `CommentsService/v_1.1.0.1_Init` | Minimal .NET/React skeleton, English identity, build instructions and initial release documents. No comments functionality or database reset scripts. |
 | `CommentsService/v_1.1.0.2_Docker` | Completed. Container builds and PostgreSQL, persistent storage, readiness checks. Bootstrap the development/test databases once and preserve them afterwards. |
-| `CommentsService/v_1.1.0.3_DataModel` | OOP entities, EF mappings, initial migration, diagrams and migration tracking. Establish previous-state recovery and retained-data upgrade checks. |
+| `CommentsService/v_1.1.0.3_DataModel` | Completed. OOP entities, EF mappings, initial migration, diagrams and migration tracking. Establish previous-state recovery and retained-data upgrade checks. |
 | `CommentsService/v_1.1.0.4_CommentsApi` | Create/read plain-text comments, author/client metadata, timestamps and server validation. Integration tests use the persistent test DB with owned fixtures/rollback. |
 | `CommentsService/v_1.1.0.5_CommentsUi` | SPA form/table, client validation, async submission and multilingual text. Browser checks use isolated fixtures and preserve unrelated data. |
 | `CommentsService/v_1.1.0.6_XhtmlEditor` | XHTML allowlist, safe links, nesting, toolbar and server-validated preview. Existing comments remain intact. |
@@ -86,7 +86,7 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 ## Статус и правила версий
 
 Согласованная последовательность начинается с `CommentsService/v_1.1.0.1_Init`.
-Текущий этап — Docker. Init и Docker завершены; следующий этап — модель данных.
+Текущий этап — DataModel 1.1.0.3. Init, Docker и VisualStudio завершены. Далее — CommentsApi 1.1.0.4.
 w=1, x=1, y=0 сохраняются, увеличивается только ревизия z. Вынос в конфиг отложен.
 Каждая завершённая итерация отправляется в свою ветку с актуальными read.me,
 README и change.log. README.md — английский, README.RU.md — русский, README.UA.md —
@@ -134,7 +134,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 |---|---|
 | **1.1.0.1 Init** | Каркас .NET/React, английское название, сборка и начальные документы. Комментариев и скриптов сброса БД ещё нет. |
 | **1.1.0.2 Docker** | Завершено. Контейнеры, PostgreSQL, постоянные тома и готовность. БД разработки/тестов создаются один раз и сохраняются. |
-| **1.1.0.3 DataModel** | Сущности, EF, первая миграция, схемы и учёт миграций. Закладываем предыдущую восстановительную копию и проверки обновления на данных. |
+| **1.1.0.3 DataModel** | Завершено. Сущности, EF, первая миграция, схемы и учёт миграций. Закладываем предыдущую восстановительную копию и проверки обновления на данных. |
 | **1.1.0.4 CommentsApi** | Запись/чтение текста, данные автора/клиента, время и валидация. Проверки в постоянной тестовой БД с откатом или собственными фикстурами. |
 | **1.1.0.5 CommentsUi** | SPA-форма/таблица, валидация, AJAX и любой язык текста. Браузерные фикстуры не затрагивают чужие данные. |
 | **1.1.0.6 XhtmlEditor** | Разрешённые теги, безопасные ссылки, вложенность, кнопки и предпросмотр. Существующие комментарии сохраняются. |
@@ -171,7 +171,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 ## Статус і правила версій
 
 Погоджена послідовність починається з `CommentsService/v_1.1.0.1_Init`.
-Поточний етап — Docker. Init і Docker завершено; наступний етап — модель даних.
+Поточний етап — DataModel 1.1.0.3. Init, Docker і VisualStudio завершено. Далі — CommentsApi 1.1.0.4.
 w=1, x=1, y=0 зберігаються, збільшується лише ревізія z. Винесення даних у конфігурацію відкладено.
 Кожна завершена ітерація публікується у своїй гілці з актуальними read.me,
 README і change.log. README.md — англійською, README.RU.md — російською, README.UA.md —
@@ -218,7 +218,7 @@ README і change.log. README.md — англійською, README.RU.md — р�
 |---|---|
 | **1.1.0.1 Init** | Каркас .NET/React, англомовна назва, збирання й початкові документи. Функцій коментарів і скриптів скидання БД ще немає. |
 | **1.1.0.2 Docker** | Завершено. Контейнери, PostgreSQL, постійні томи та готовність. БД розробки/тестів створюються один раз і зберігаються. |
-| **1.1.0.3 DataModel** | Сутності, EF, перша міграція, схеми й облік міграцій. Попередня відновлювальна копія та перевірки оновлення на даних. |
+| **1.1.0.3 DataModel** | Завершено. Сутності, EF, перша міграція, схеми й облік міграцій. Попередня відновлювальна копія та перевірки оновлення на даних. |
 | **1.1.0.4 CommentsApi** | Запис/читання тексту, дані автора/клієнта, час і валідація. Постійна тестова БД із відкатом або власними фікстурами. |
 | **1.1.0.5 CommentsUi** | SPA-форма/таблиця, валідація, AJAX і повідомлення будь-якою мовою. Браузерні фікстури не змінюють сторонні дані. |
 | **1.1.0.6 XhtmlEditor** | Дозволені теги, безпечні посилання, вкладеність, кнопки та попередній перегляд. Наявні коментарі зберігаються. |

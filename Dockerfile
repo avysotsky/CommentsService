@@ -7,7 +7,7 @@ RUN npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS backend
 WORKDIR /source
-COPY global.json ./
+COPY global.json Directory.Build.props ./
 COPY src/CommentsService.Api/CommentsService.Api.csproj ./src/CommentsService.Api/
 RUN dotnet restore src/CommentsService.Api
 COPY src/CommentsService.Api/ ./src/CommentsService.Api/
@@ -15,6 +15,7 @@ RUN dotnet publish src/CommentsService.Api -c Release --no-restore -o /out /p:Us
 COPY --from=frontend /web/dist/ /out/wwwroot/
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
+RUN apt-get update && apt-get install -y --no-install-recommends libgssapi-krb5-2 && apt-get clean
 WORKDIR /app
 COPY --from=backend /out/ ./
 USER $APP_UID

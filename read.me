@@ -1,50 +1,62 @@
-CommentsService — 1.1.0.2 Docker
-Branch: CommentsService/v_1.1.0.2_VisualStudio
+CommentsService — 1.1.0.3 DataModel
+Branch: CommentsService/v_1.1.0.3_DataModel
 
 ENGLISH
-Visual Studio 2026: open CommentsService.slnx (.NET 10 SDK; ASP.NET/web workload).
-Solution builds the API; Frontend contains editable React files. Docker builds the complete app.
-Dockerized frontend/API and persistent PostgreSQL. Application data integration is next.
-Requirements: Docker Engine, Compose v2.24+, Git, Python 3.
-From the repository root:
-  python3 scripts/init-env.py
-  docker compose -p commentsservice up -d --build --wait
-  curl --fail http://127.0.0.1:8080/health
-Optional persistent test database:
-  docker compose -p commentsservice --profile testing up -d --wait test-database
-Stop without deleting data:
-  docker compose -p commentsservice --profile testing down
-Never use down -v for retained data. Keep project name/environment file unchanged.
-Instructions: README.md. History: change.log.
+Author/Comment entities, EF Core, explicit migrations and verified recovery checkpoints. Comment APIs are next.
+Docker Engine, Compose v2.24+, Git, Python 3.
+Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
+python3 scripts/init-env.py
+docker compose -p commentsservice --profile testing up -d --wait database test-database
+python3 scripts/db-checkpoint.py
+docker compose -p commentsservice build app
+python3 scripts/db-command.py migrate
+python3 scripts/db-command.py migrate --service test-database
+docker compose -p commentsservice up -d --no-build --wait
+curl --fail http://127.0.0.1:8080/health/database
+
+python3 scripts/db-command.py check
+python3 scripts/db-command.py check --service test-database
+python3 scripts/test-data-model.py
+
+Stop writes before checkpoint/migration; keep the same project/environment/volumes. Never use down -v.
+Instructions: README.md. Schema/recovery: docs/database. History: change.log.
 
 РУССКИЙ
-Visual Studio 2026: открыть CommentsService.slnx (SDK .NET 10; рабочая нагрузка ASP.NET/веб).
-Решение собирает API; Frontend содержит редактируемые файлы React. Docker собирает всё приложение.
-Frontend/API в Docker и постоянная PostgreSQL. Работа приложения с данными — следующий этап.
-Требования: Docker Engine, Compose v2.24+, Git, Python 3.
-Из корня репозитория:
-  python3 scripts/init-env.py
-  docker compose -p commentsservice up -d --build --wait
-  curl --fail http://127.0.0.1:8080/health
-Необязательная постоянная тестовая БД:
-  docker compose -p commentsservice --profile testing up -d --wait test-database
-Остановка с сохранением данных:
-  docker compose -p commentsservice --profile testing down
-Не используйте down -v. Сохраняйте имя проекта и файл окружения при обновлениях.
-Инструкция: README.RU.md. История: change.log.ru.
+Сущности автора/комментария, EF Core, явные миграции и проверенные восстановительные копии. API комментариев — следующий этап.
+Docker Engine, Compose v2.24+, Git, Python 3.
+Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
+python3 scripts/init-env.py
+docker compose -p commentsservice --profile testing up -d --wait database test-database
+python3 scripts/db-checkpoint.py
+docker compose -p commentsservice build app
+python3 scripts/db-command.py migrate
+python3 scripts/db-command.py migrate --service test-database
+docker compose -p commentsservice up -d --no-build --wait
+curl --fail http://127.0.0.1:8080/health/database
+
+python3 scripts/db-command.py check
+python3 scripts/db-command.py check --service test-database
+python3 scripts/test-data-model.py
+
+Перед копией/миграцией остановите запись; сохраняйте проект/окружение/тома. Не используйте down -v.
+Инструкция: README.RU.md. Схема/восстановление: docs/database. История: change.log.ru.
 
 УКРАЇНСЬКОЮ
-Visual Studio 2026: відкрити CommentsService.slnx (SDK .NET 10; робоче навантаження ASP.NET/веб).
-Рішення збирає API; Frontend містить редаговані файли React. Docker збирає весь застосунок.
-Frontend/API в Docker і постійна PostgreSQL. Робота застосунку з даними — наступний етап.
-Вимоги: Docker Engine, Compose v2.24+, Git, Python 3.
-Із кореня репозиторію:
-  python3 scripts/init-env.py
-  docker compose -p commentsservice up -d --build --wait
-  curl --fail http://127.0.0.1:8080/health
-Необов’язкова постійна тестова БД:
-  docker compose -p commentsservice --profile testing up -d --wait test-database
-Зупинка зі збереженням даних:
-  docker compose -p commentsservice --profile testing down
-Не використовуйте down -v. Зберігайте назву проєкту та файл оточення під час оновлень.
-Інструкція: README.UA.md. Історія: change.log.ua.
+Сутності автора/коментаря, EF Core, явні міграції та перевірені відновлювальні копії. API коментарів — наступний етап.
+Docker Engine, Compose v2.24+, Git, Python 3.
+Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
+python3 scripts/init-env.py
+docker compose -p commentsservice --profile testing up -d --wait database test-database
+python3 scripts/db-checkpoint.py
+docker compose -p commentsservice build app
+python3 scripts/db-command.py migrate
+python3 scripts/db-command.py migrate --service test-database
+docker compose -p commentsservice up -d --no-build --wait
+curl --fail http://127.0.0.1:8080/health/database
+
+python3 scripts/db-command.py check
+python3 scripts/db-command.py check --service test-database
+python3 scripts/test-data-model.py
+
+Перед копією/міграцією зупиніть запис; зберігайте проєкт/оточення/томи. Не використовуйте down -v.
+Інструкція: README.UA.md. Схема/відновлення: docs/database. Історія: change.log.ua.

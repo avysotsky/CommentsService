@@ -23,15 +23,15 @@ function App() {
   return <main>
     <header><span className="mark" aria-hidden="true">c</span><span>Comments<span className="light">Service</span></span></header>
     <section aria-labelledby="title">
-      <p className="eyebrow">1.1.0.2 / DOCKER</p>
+      <p className="eyebrow">1.1.0.3 / DATA MODEL</p>
       <h1 id="title">A starting point<br />for better conversations.</h1>
-      <p className="intro">The frontend and API now run together in Docker. Persistent databases are provisioned for the next iteration.</p>
+      <p className="intro">The first database model is ready: authors, comments and client metadata, with versioned migrations.</p>
       <dl>
         <div><dt>Frontend</dt><dd>React build</dd></div>
         <div><dt>Backend</dt><dd role="status">{status ? 'Connected' : failed ? 'Unavailable — start the API' : 'Checking connection…'}</dd></div>
-        <div><dt>Release</dt><dd>{status ? `${status.version} · ${status.stage}` : '1.1.0.2 · Docker'}</dd></div>
+        <div><dt>Release</dt><dd>{status ? `${status.version} · ${status.stage}` : '1.1.0.3 · DataModel'}</dd></div>
       </dl>
-      <p className="note">Application data integration and comments will be added next.</p>
+      <p className="note">Comment submission and browsing will be added in the next iteration.</p>
     </section>
     <footer>CommentsService · One step at a time.</footer>
   </main>;

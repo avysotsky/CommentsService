@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <!-- Keep Windows IDE restores separate from Linux/Docker build assets. -->
+    <BaseIntermediateOutputPath>obj/$(OS)/</BaseIntermediateOutputPath>
+    <BaseOutputPath>bin/$(OS)/</BaseOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
+  </PropertyGroup>
+</Project>

@@ -64,7 +64,7 @@ public sealed class ArchitectureTests
             Assert.False(type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IQueryable<>));
             foreach (var argument in type.GenericTypeArguments) Check(argument);
         }
-        foreach (var contract in new[] { typeof(ICommentRepository), typeof(IUnitOfWork) })
+        foreach (var contract in typeof(ICommentRepository).Assembly.GetExportedTypes().Where(type => type.IsInterface))
         foreach (var method in contract.GetMethods())
         {
             Check(method.ReturnType);

@@ -2,6 +2,24 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.4 CommentsApi — 2026-10-30
+
+Branch: `CommentsService/v_1.1.0.4_CommentsApi`
+
+- Added Application create/read/recent-list use cases, normalization, server validation and public comment DTOs, preserving Onion dependency boundaries.
+- Added POST /api/comments (201 + Location), GET /api/comments/{id} and a bounded latest list (default 25, limit 1–100). Full pagination/sorting remains scheduled for 1.1.0.8.
+- Added email/HTTP(S) URL/Latin-alphanumeric name checks, text bounds/Unicode checks and plain-text markup rejection. Unknown JSON fields and client-supplied server metadata are rejected.
+- Captured socket peer IP/User-Agent on the server, generated UUID/UTC timestamps and kept network metadata out of public responses. Create/read timestamps use consistent microsecond precision.
+- Added no-tracking read projections, a shared-context unit of work and generic 503 errors for unavailable storage, including EF-wrapped connection failures.
+- Added consistent ProblemDetails, JSON/media-type errors and a 1 MiB body limit. The form/table, XHTML, replies, CAPTCHA and attachments remain later milestones.
+- Added Application/Api test projects and scripts/test-backend.py. HTTP tests remove only owned comments/unreferenced authors; database tests roll back. No resets or shared-table cleanup.
+- Updated the release page, four project versions, three READMEs, read.me, API/architecture/schema/migration documents and plans in all three languages.
+- Validation: Release solution build passed with zero warnings/errors; 21 domain/architecture, 35 application, 10 PostgreSQL and 31 HTTP tests passed (97 total).
+- Verified real TCP create/read, Unicode/SQL-looking text preservation, metadata capture, input/media errors and body-size rejection; Edge desktop/360 px, same-origin reads and no JavaScript errors passed.
+- Verified generic 503 responses without DB configuration and with a refused DB port, including regression coverage for provider exception wrapping.
+- SQL/model/migration 20261029195935_InitialDataModel are unchanged. Both persistent data baselines/history/schemas/volumes and previous recovery copies were preserved; owned acceptance fixtures/container were removed.
+- Visual Studio GUI opening and MySQL Workbench GUI import were not rechecked. Next milestone: 1.1.0.5 CommentsUi.
+
 ## 1.1.0.3 OnionArchitecture — 2026-10-29
 
 Branch: `CommentsService/v_1.1.0.3_OnionArchitecture`

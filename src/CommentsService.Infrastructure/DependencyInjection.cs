@@ -1,5 +1,6 @@
 using CommentsService.Application.Abstractions.Persistence;
 using CommentsService.Infrastructure.Persistence.Repositories;
+using CommentsService.Infrastructure.Persistence.Queries;
 using CommentsService.Infrastructure.Health;
 using CommentsService.Infrastructure.Abstractions;
 using CommentsService.Infrastructure.Persistence;
@@ -16,7 +17,8 @@ public static class DependencyInjection
             options.UseNpgsql(DatabaseOptions.ConnectionString(),
                 pg => pg.MigrationsHistoryTable("__EFMigrationsHistory", "comments")));
         services.AddScoped<ICommentRepository, CommentRepository>();
-        services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<CommentsDbContext>());
+        services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+        services.AddScoped<ICommentQueries, CommentQueries>();
         services.AddScoped<IDatabaseMigrator, EfDatabaseMigrator>();
         services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", tags: ["database"]);
         var configured = new[] { "PGHOST", "PGDATABASE", "PGUSER", "PGPASSWORD" }

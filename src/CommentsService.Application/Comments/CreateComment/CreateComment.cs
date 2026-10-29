@@ -1,0 +1,25 @@
+using CommentsService.Application.Abstractions.Persistence;
+using CommentsService.Application.Common;
+using CommentsService.Domain.Entities;
+
+namespace CommentsService.Application.Comments.CreateComment;
+
+public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork) : ICreateComment
+{
+    public async Task<Validated<CommentDto>> ExecuteAsync(CreateCommentInput input, ClientMetadata client,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(client);
+        cancellationToken.ThrowIfCancellationRequested();
+        var normalized = input with { UserName = input.UserName?.Trim(), Email = input.Email?.Trim(),
+            HomePage = string.IsNullOrWhiteSpace(input.HomePage) ? null : input.HomePage.Trim() };
+        var errors = CreateCommentValidator.Validate(normalized);
+        if (errors.Count != 0) return Validated<CommentDto>.Invalid(errors);
+        var author = new Author(normalized.UserName!, normalized.Email!, normalized.HomePage);
+        var comment = new Comment(author, normalized.Text!, client.IpAddress, client.UserAgent);
+        repository.Add(comment);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Validated<CommentDto>.Success(CommentDto.From(comment));
+    }
+}

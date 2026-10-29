@@ -1,175 +1,97 @@
-# Onion architecture / Архитектура Onion / Архітектура Onion
+# Backend architecture / Архитектура backend / Архітектура backend
 
 ## English
 
-Current correction: **1.1.0.3 OnionArchitecture**. Four backend projects enforce inward
-code dependencies. Domain and Application form the application core; neither depends
-on EF, ASP.NET, PostgreSQL or Infrastructure. See the dependency diagram below.
+Release **1.1.0.4 CommentsApi** implements comment use cases inside the Onion core.
 
-- **Domain/Entities**: entities, identity and content invariants, consistent author/comment
-  relationships and read-only collections. No external project/package dependencies.
-- **Application/Abstractions/Persistence**: application-owned persistence ports.
-  ICommentRepository stages a comment and retrieves one by ID; IUnitOfWork persists
-  staged changes in one scope. Contracts expose domain/.NET types, not DbContext,
-  DbSet, IQueryable, SQL or HttpContext. Application references Domain only.
-- **Infrastructure/Persistence**: CommentsDbContext, design-time factory, Configurations,
-  Repositories and **Migrations**. CommentRepository implements the application port.
-  The unit of work and repositories resolve the same scoped DbContext, so an author
-  and comment can be saved atomically. Infrastructure references Application and Domain.
-- **Infrastructure/Health**: an IHealthCheck adapter implements operational database
-  readiness. Migration/status administration contracts remain in Infrastructure/Abstractions;
-  they are technical operations, not business use cases in Application.
-- **Api/Endpoints**: HTTP mapping and responses. System endpoints use the standard Health
-  Checks mechanism. Program.cs is the composition root: it calls AddInfrastructure and
-  dispatches explicit maintenance commands. Its Infrastructure reference is confined to
-  composition/maintenance; request endpoints do not depend on Infrastructure or Domain.
-  The EF Design package is private tooling for the startup project.
+- Domain/Entities protects entity invariants and has no external project/package dependencies.
+- Application/Comments contains CreateComment, GetComment and GetLatestComments, input validation,
+  normalization, public DTOs and validation outcomes. Application references Domain only.
+- Application/Abstractions/Persistence owns ICommentRepository, ICommentQueries and IUnitOfWork.
+  These ports expose no EF/HTTP/provider types or IQueryable.
+- Infrastructure implements tracked writes, no-tracking DTO projections and a scoped EfUnitOfWork.
+  All write adapters share one DbContext. Only connectivity failures are translated into the
+  core StorageUnavailableException; provider details stay outside HTTP responses.
+- Infrastructure/Persistence contains DbContext, Configurations, Repositories, Queries and Migrations.
+  Operational migration/status contracts and the standard IHealthCheck adapter remain technical concerns.
+- Api/Endpoints maps HTTP to application inputs/results. Api/Contracts owns JSON transport rules;
+  Api/Errors emits generic ProblemDetails. IP/User-Agent are read from server request context.
+  Program.cs registers implementations; its Infrastructure reference is limited to composition/maintenance.
 
-This correction establishes the core ports and their working adapters. Create/read
-comment use cases, request/result models and their HTTP endpoints are scheduled for
-**1.1.0.4 CommentsApi**; comment HTTP routes still return 404. Application will own
-those scenarios and input validation; domain invariants remain in Domain. No MediatR,
-CQRS framework or generic repository is required by this architecture.
+Validation occurs before staging writes. Author/comment are saved atomically by the shared
+unit of work. Read queries project only public fields and bound the latest list; no network
+metadata or entity navigation graph is serialized. See [API contract](API.md).
 
-SRP separates business invariants, scenarios, persistence and transport. Configuration
-classes extend mappings without putting provider details in the core. DI supplies
-implementations of application-owned interfaces (DIP); repository and save contracts
-are separate (ISP). Implementations must preserve contract semantics (LSP).
+Tests are split into Domain.Tests (domain/architecture), Application.Tests (in-memory use cases),
+Data.Tests (PostgreSQL with rollback), and Api.Tests (HTTP with cleanup of owned rows only).
+Architecture tests guard inward references, core independence, public port types and endpoint boundaries.
 
-Migration `20261029195935_InitialDataModel` is now in
-`Infrastructure/Persistence/Migrations`. Its ID, generated SQL, history schema and
-physical tables remain unchanged; only its namespace/location changes. No new
-migration, database reset or checkpoint rotation is needed. For future schema changes,
-use EF's `--output-dir Persistence/Migrations` with Infrastructure as target and Api
-as startup project. Existing schema/export/Workbench projection remain applicable.
-
-```bash
-dotnet build CommentsService.slnx -c Release
-dotnet test tests/CommentsService.Domain.Tests -c Release
-python3 scripts/test-data-model.py
-dotnet ef migrations has-pending-model-changes --project src/CommentsService.Infrastructure --startup-project src/CommentsService.Api
-```
-
-Domain.Tests includes core/architecture tests: allowed project references, independent
-Domain/Application assemblies, provider-free application signatures and endpoint boundaries.
-Data.Tests uses real PostgreSQL and per-test rollback, including DI scope/repository/save
-integration. Private PG variables are required for EF commands; see database/MIGRATIONS.md.
-Regression verification compares generated SQL, live schema/history and retained related
-records across deployment, and checks fresh installation and database health failures.
+Migration 20261029195935_InitialDataModel and SQL are unchanged from 1.1.0.3. No artificial
+migration/checkpoint rotation is required. Future EF add commands use --output-dir Persistence/Migrations
+with Infrastructure as target and Api as startup. CommentsUi is next; XHTML, threads and full
+sorting/pagination remain their planned milestones. OOP/SOLID/Onion apply to all subsequent changes.
 
 ## Русский
 
-Текущее исправление: **1.1.0.3 OnionArchitecture**. Четыре проекта backend закрепляют
-зависимости кода внутрь. Domain и Application образуют ядро приложения; ни один из них
-не зависит от EF, ASP.NET, PostgreSQL и Infrastructure. Схема зависимостей приведена ниже.
+Выпуск **1.1.0.4 CommentsApi** реализует сценарии комментариев внутри ядра Onion.
 
-- **Domain/Entities**: сущности, инварианты имени и содержимого, согласованные связи
-  автора/комментария, коллекции только для чтения. Нет внешних ссылок на проекты/пакеты.
-- **Application/Abstractions/Persistence**: контракты хранения, принадлежащие приложению.
-  ICommentRepository ставит комментарий на сохранение и получает его по ID; IUnitOfWork
-  сохраняет подготовленные изменения в одной области. Контракты используют типы Domain/.NET,
-  без DbContext, DbSet, IQueryable, SQL и HttpContext. Application ссылается только на Domain.
-- **Infrastructure/Persistence**: CommentsDbContext, фабрика времени разработки, Configurations,
-  Repositories и **Migrations**. CommentRepository реализует прикладной контракт.
-  Репозитории и единица работы используют один scoped DbContext: автора и комментарий
-  можно сохранить атомарно. Infrastructure ссылается на Application и Domain.
-- **Infrastructure/Health**: адаптер IHealthCheck проверяет техническую готовность БД.
-  Контракты миграции/состояния БД остаются в Infrastructure/Abstractions: это технические
-  операции, а не бизнес-сценарии Application.
-- **Api/Endpoints**: HTTP и ответы. Системные endpoints используют стандартный механизм
-  Health Checks. Program.cs — место сборки зависимостей: вызывает AddInfrastructure и
-  выбирает явные служебные команды. Ссылка на Infrastructure используется при сборке/обслуживании;
-  обработчики запросов не зависят от Infrastructure и Domain.
-  Пакет EF Design приватный и нужен инструментам стартового проекта.
+- Domain/Entities защищает инварианты сущностей и не имеет внешних зависимостей от проектов/пакетов.
+- Application/Comments содержит CreateComment, GetComment и GetLatestComments, валидацию ввода,
+  нормализацию, публичные DTO и результаты валидации. Application ссылается только на Domain.
+- Application/Abstractions/Persistence содержит ICommentRepository, ICommentQueries и IUnitOfWork.
+  Контракты не раскрывают типы EF/HTTP/провайдера и IQueryable.
+- Infrastructure реализует запись с отслеживанием, DTO-проекции без отслеживания и scoped EfUnitOfWork.
+  Адаптеры записи используют один DbContext. Только ошибки доступности переводятся в
+  StorageUnavailableException ядра; детали провайдера не выдаются в HTTP-ответах.
+- Infrastructure/Persistence содержит DbContext, Configurations, Repositories, Queries и Migrations.
+  Контракты миграции/состояния и стандартный адаптер IHealthCheck остаются техническими операциями.
+- Api/Endpoints связывает HTTP с входами/результатами Application. Api/Contracts задаёт правила JSON;
+  Api/Errors выдаёт общие ProblemDetails. IP/User-Agent берутся из серверного контекста запроса.
+  Program.cs регистрирует реализации; ссылка на Infrastructure ограничена сборкой/обслуживанием.
 
-Исправление создаёт прикладные контракты и работающие адаптеры. Сценарии создания/чтения
-комментариев, модели запросов/результатов и HTTP endpoints остаются в этапе
-**1.1.0.4 CommentsApi**; HTTP-маршруты комментариев пока возвращают 404. Эти сценарии
-и проверка входных данных будут в Application; доменные инварианты остаются в Domain.
-MediatR, CQRS-фреймворк и универсальный репозиторий для этой архитектуры не обязательны.
+Валидация выполняется до подготовки записи. Автор/комментарий сохраняются атомарно общей
+единицей работы. Чтение проецирует только публичные поля и ограничивает список последних записей;
+сетевые метаданные и граф сущностей не сериализуются. См. [контракт API](API.md).
 
-SRP разделяет бизнес-инварианты, сценарии, хранение и транспорт. Классы конфигураций
-расширяют настройки EF, не перенося детали провайдера в ядро. DI предоставляет
-реализации прикладных интерфейсов (DIP); контракты репозитория и сохранения разделены
-(ISP). Реализации должны сохранять семантику контрактов (LSP).
+Тесты разделены на Domain.Tests (домен/архитектура), Application.Tests (сценарии в памяти),
+Data.Tests (PostgreSQL с откатом) и Api.Tests (HTTP с удалением только своих записей).
+Архитектурные тесты контролируют ссылки внутрь, независимость ядра, типы контрактов и границы endpoints.
 
-Миграция `20261029195935_InitialDataModel` теперь находится в
-`Infrastructure/Persistence/Migrations`. ID, SQL, схема истории и физические таблицы
-сохранены; меняются только пространство имён и расположение. Новая миграция, сброс БД
-и замена контрольных копий не нужны. Для будущих изменений схемы используйте
-`--output-dir Persistence/Migrations`, цель Infrastructure, стартовый проект Api.
-Прежние схема/SQL-экспорт/проекция Workbench остаются актуальными.
-
-```bash
-dotnet build CommentsService.slnx -c Release
-dotnet test tests/CommentsService.Domain.Tests -c Release
-python3 scripts/test-data-model.py
-dotnet ef migrations has-pending-model-changes --project src/CommentsService.Infrastructure --startup-project src/CommentsService.Api
-```
-
-Domain.Tests содержит доменные/архитектурные тесты: граф проектов, независимость сборок
-Domain/Application, отсутствие типов провайдера в контрактах и границы endpoints.
-Data.Tests использует PostgreSQL и откат каждого теста, включая проверку DI/репозитория/
-сохранения. Для EF нужны приватные переменные PG; см. database/MIGRATIONS.md.
-Проверки сравнивают SQL, реальную схему/историю и связанные записи после обновления,
-а также проверяют установку с нуля и ошибки готовности БД.
+Миграция 20261029195935_InitialDataModel и SQL не меняются относительно 1.1.0.3. Искусственная
+миграция/замена контрольных копий не нужна. При будущей генерации указывать --output-dir Persistence/Migrations,
+цель Infrastructure, стартовый проект Api. Далее CommentsUi; XHTML, ответы и полные
+сортировки/пагинация остаются в своих этапах. OOP/SOLID/Onion обязательны при последующих изменениях.
 
 ## Українська
 
-Поточне виправлення: **1.1.0.3 OnionArchitecture**. Чотири проєкти backend закріплюють
-залежності коду всередину. Domain і Application утворюють ядро застосунку; жоден із них
-не залежить від EF, ASP.NET, PostgreSQL та Infrastructure. Схему залежностей наведено нижче.
+Випуск **1.1.0.4 CommentsApi** реалізує сценарії коментарів усередині ядра Onion.
 
-- **Domain/Entities**: сутності, інваріанти імені та вмісту, узгоджені зв’язки
-  автора/коментаря, колекції лише для читання. Немає зовнішніх посилань на проєкти/пакети.
-- **Application/Abstractions/Persistence**: контракти зберігання, що належать застосунку.
-  ICommentRepository готує коментар до збереження та отримує його за ID; IUnitOfWork
-  зберігає підготовлені зміни в одній області. Контракти використовують типи Domain/.NET,
-  без DbContext, DbSet, IQueryable, SQL і HttpContext. Application посилається лише на Domain.
-- **Infrastructure/Persistence**: CommentsDbContext, фабрика часу розробки, Configurations,
-  Repositories та **Migrations**. CommentRepository реалізує прикладний контракт.
-  Репозиторії та одиниця роботи використовують один scoped DbContext: автора й коментар
-  можна зберегти атомарно. Infrastructure посилається на Application і Domain.
-- **Infrastructure/Health**: адаптер IHealthCheck перевіряє технічну готовність БД.
-  Контракти міграції/стану БД залишаються в Infrastructure/Abstractions: це технічні
-  операції, а не бізнес-сценарії Application.
-- **Api/Endpoints**: HTTP та відповіді. Системні endpoints використовують стандартний механізм
-  Health Checks. Program.cs — місце складання залежностей: викликає AddInfrastructure та
-  вибирає явні службові команди. Посилання на Infrastructure використовується під час складання/обслуговування;
-  обробники запитів не залежать від Infrastructure та Domain.
-  Пакет EF Design приватний і потрібний інструментам стартового проєкту.
+- Domain/Entities захищає інваріанти сутностей і не має зовнішніх залежностей від проєктів/пакетів.
+- Application/Comments містить CreateComment, GetComment і GetLatestComments, валідацію вводу,
+  нормалізацію, публічні DTO та результати валідації. Application посилається лише на Domain.
+- Application/Abstractions/Persistence містить ICommentRepository, ICommentQueries та IUnitOfWork.
+  Контракти не розкривають типи EF/HTTP/провайдера та IQueryable.
+- Infrastructure реалізує запис із відстеженням, DTO-проєкції без відстеження та scoped EfUnitOfWork.
+  Адаптери запису використовують один DbContext. Лише помилки доступності перетворюються на
+  StorageUnavailableException ядра; деталі провайдера не надаються в HTTP-відповідях.
+- Infrastructure/Persistence містить DbContext, Configurations, Repositories, Queries та Migrations.
+  Контракти міграції/стану і стандартний адаптер IHealthCheck залишаються технічними операціями.
+- Api/Endpoints пов’язує HTTP з входами/результатами Application. Api/Contracts задає правила JSON;
+  Api/Errors надає загальні ProblemDetails. IP/User-Agent беруться із серверного контексту запиту.
+  Program.cs реєструє реалізації; посилання на Infrastructure обмежене складанням/обслуговуванням.
 
-Виправлення створює прикладні контракти й робочі адаптери. Сценарії створення/читання
-коментарів, моделі запитів/результатів і HTTP endpoints залишаються в етапі
-**1.1.0.4 CommentsApi**; HTTP-маршрути коментарів поки повертають 404. Ці сценарії
-та перевірка вхідних даних будуть в Application; доменні інваріанти залишаються в Domain.
-MediatR, CQRS-фреймворк та універсальний репозиторій для цієї архітектури не обов’язкові.
+Валідація виконується до підготовки запису. Автор/коментар зберігаються атомарно спільною
+одиницею роботи. Читання проєктує лише публічні поля та обмежує список останніх записів;
+мережеві метадані й граф сутностей не серіалізуються. Див. [контракт API](API.md).
 
-SRP розділяє бізнес-інваріанти, сценарії, зберігання й транспорт. Класи конфігурацій
-розширюють налаштування EF, не переносячи деталі провайдера до ядра. DI надає
-реалізації прикладних інтерфейсів (DIP); контракти репозиторію та збереження розділені
-(ISP). Реалізації мають зберігати семантику контрактів (LSP).
+Тести розділено на Domain.Tests (домен/архітектура), Application.Tests (сценарії в пам’яті),
+Data.Tests (PostgreSQL із відкатом) та Api.Tests (HTTP з видаленням лише власних записів).
+Архітектурні тести контролюють посилання всередину, незалежність ядра, типи контрактів і межі endpoints.
 
-Міграція `20261029195935_InitialDataModel` тепер розміщена в
-`Infrastructure/Persistence/Migrations`. ID, SQL, схема історії та фізичні таблиці
-збережені; змінюються лише простір імен і розташування. Нова міграція, скидання БД
-та заміна контрольних копій не потрібні. Для майбутніх змін схеми використовуйте
-`--output-dir Persistence/Migrations`, ціль Infrastructure, стартовий проєкт Api.
-Попередні схема/SQL-експорт/проєкція Workbench залишаються актуальними.
-
-```bash
-dotnet build CommentsService.slnx -c Release
-dotnet test tests/CommentsService.Domain.Tests -c Release
-python3 scripts/test-data-model.py
-dotnet ef migrations has-pending-model-changes --project src/CommentsService.Infrastructure --startup-project src/CommentsService.Api
-```
-
-Domain.Tests містить доменні/архітектурні тести: граф проєктів, незалежність збірок
-Domain/Application, відсутність типів провайдера в контрактах і межі endpoints.
-Data.Tests використовує PostgreSQL та відкат кожного тесту, включно з перевіркою DI/репозиторію/
-збереження. Для EF потрібні приватні змінні PG; див. database/MIGRATIONS.md.
-Перевірки порівнюють SQL, реальну схему/історію та пов’язані записи після оновлення,
-а також перевіряють встановлення з нуля й помилки готовності БД.
+Міграція 20261029195935_InitialDataModel та SQL не змінюються відносно 1.1.0.3. Штучна
+міграція/заміна контрольних копій не потрібна. Під час майбутньої генерації вказувати --output-dir Persistence/Migrations,
+ціль Infrastructure, стартовий проєкт Api. Далі CommentsUi; XHTML, відповіді й повні
+сортування/пагінація залишаються у своїх етапах. OOP/SOLID/Onion обов’язкові під час наступних змін.
 
 ## Dependencies / Зависимости / Залежності
 

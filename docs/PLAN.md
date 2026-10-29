@@ -3,7 +3,7 @@
 ## Status and version rules
 
 The approved sequence starts at `CommentsService/v_1.1.0.1_Init`.
-Current milestone: DataModel 1.1.0.3, corrected in OnionArchitecture. Init, Docker and VisualStudio are completed. Next: CommentsApi 1.1.0.4.
+Current milestone: 1.1.0.4 CommentsApi completed. Onion architecture is preserved. Next: 1.1.0.5 CommentsUi.
 Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
 Each completed iteration is pushed to its own branch with current read.me,
 README and change.log. README.md is English, README.RU.md Russian, README.UA.md
@@ -52,7 +52,7 @@ The new change.log starts with Init; it must record actual work, not simulated h
 | `CommentsService/v_1.1.0.3_DataModel` | Completed. OOP entities, EF mappings, initial migration, diagrams and migration tracking. Establish previous-state recovery and retained-data upgrade checks. |
 | `CommentsService/v_1.1.0.3_BackendLayers` | Architecture correction for 1.1.0.3: Domain, Infrastructure and API projects; entity configurations, interfaces, domain invariants and architecture tests. Same schema and migration; next planned version stays 1.1.0.4. |
 | `CommentsService/v_1.1.0.3_OnionArchitecture` | Onion correction: Application ports, Infrastructure adapters, standard Health Checks, inward dependency tests and Persistence/Migrations. Same version/schema/history; comment use cases remain in 1.1.0.4. |
-| `CommentsService/v_1.1.0.4_CommentsApi` | Create/read plain-text comments, author/client metadata, timestamps and server validation. Integration tests use the persistent test DB with owned fixtures/rollback. |
+| `CommentsService/v_1.1.0.4_CommentsApi` | Completed. Create/read plain-text comments, author/client metadata, timestamps and server validation. Integration tests use the persistent test DB with owned fixtures/rollback. |
 | `CommentsService/v_1.1.0.5_CommentsUi` | SPA form/table, client validation, async submission and multilingual text. Browser checks use isolated fixtures and preserve unrelated data. |
 | `CommentsService/v_1.1.0.6_XhtmlEditor` | XHTML allowlist, safe links, nesting, toolbar and server-validated preview. Existing comments remain intact. |
 | `CommentsService/v_1.1.0.7_CommentThreads` | Replies and parent/root relationships, cascading display. Any schema additions use a data-preserving migration; verify existing roots/replies. |
@@ -88,7 +88,7 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 ## Статус и правила версий
 
 Согласованная последовательность начинается с `CommentsService/v_1.1.0.1_Init`.
-Текущий этап — DataModel 1.1.0.3 с исправлением OnionArchitecture. Init, Docker и VisualStudio завершены. Далее — CommentsApi 1.1.0.4.
+Текущий этап 1.1.0.4 CommentsApi завершён. Onion сохранён. Далее — 1.1.0.5 CommentsUi.
 w=1, x=1, y=0 сохраняются, увеличивается только ревизия z. Вынос в конфиг отложен.
 Каждая завершённая итерация отправляется в свою ветку с актуальными read.me,
 README и change.log. README.md — английский, README.RU.md — русский, README.UA.md —
@@ -139,7 +139,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 | **1.1.0.3 DataModel** | Завершено. Сущности, EF, первая миграция, схемы и учёт миграций. Закладываем предыдущую восстановительную копию и проверки обновления на данных. |
 | **1.1.0.3 BackendLayers** | Исправление архитектуры 1.1.0.3: проекты Domain, Infrastructure и API; конфигурации сущностей, интерфейсы, доменные инварианты и архитектурные тесты. Схема и миграция прежние; следующий этап остаётся 1.1.0.4. |
 | **1.1.0.3 OnionArchitecture** | Исправление Onion: контракты Application, адаптеры Infrastructure, стандартные Health Checks, проверки зависимостей внутрь и Persistence/Migrations. Версия/схема/история прежние; сценарии комментариев — этап 1.1.0.4. |
-| **1.1.0.4 CommentsApi** | Запись/чтение текста, данные автора/клиента, время и валидация. Проверки в постоянной тестовой БД с откатом или собственными фикстурами. |
+| **1.1.0.4 CommentsApi** | Завершено. Запись/чтение текста, данные автора/клиента, время и валидация. Проверки в постоянной тестовой БД с откатом или собственными фикстурами. |
 | **1.1.0.5 CommentsUi** | SPA-форма/таблица, валидация, AJAX и любой язык текста. Браузерные фикстуры не затрагивают чужие данные. |
 | **1.1.0.6 XhtmlEditor** | Разрешённые теги, безопасные ссылки, вложенность, кнопки и предпросмотр. Существующие комментарии сохраняются. |
 | **1.1.0.7 CommentThreads** | Ответы, корни/родители и каскад. Новые поля — миграцией без пересоздания данных; проверяем существующие связи. |
@@ -175,7 +175,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 ## Статус і правила версій
 
 Погоджена послідовність починається з `CommentsService/v_1.1.0.1_Init`.
-Поточний етап — DataModel 1.1.0.3 з виправленням OnionArchitecture. Init, Docker і VisualStudio завершено. Далі — CommentsApi 1.1.0.4.
+Поточний етап 1.1.0.4 CommentsApi завершено. Onion збережено. Далі — 1.1.0.5 CommentsUi.
 w=1, x=1, y=0 зберігаються, збільшується лише ревізія z. Винесення даних у конфігурацію відкладено.
 Кожна завершена ітерація публікується у своїй гілці з актуальними read.me,
 README і change.log. README.md — англійською, README.RU.md — російською, README.UA.md —
@@ -225,7 +225,7 @@ README і change.log. README.md — англійською, README.RU.md — р�
 | **1.1.0.3 DataModel** | Завершено. Сутності, EF, перша міграція, схеми й облік міграцій. Попередня відновлювальна копія та перевірки оновлення на даних. |
 | **1.1.0.3 BackendLayers** | Виправлення архітектури 1.1.0.3: проєкти Domain, Infrastructure та API; конфігурації сутностей, інтерфейси, доменні інваріанти й архітектурні тести. Схема й міграція попередні; наступний етап залишається 1.1.0.4. |
 | **1.1.0.3 OnionArchitecture** | Виправлення Onion: контракти Application, адаптери Infrastructure, стандартні Health Checks, перевірки залежностей усередину та Persistence/Migrations. Версія/схема/історія попередні; сценарії коментарів — етап 1.1.0.4. |
-| **1.1.0.4 CommentsApi** | Запис/читання тексту, дані автора/клієнта, час і валідація. Постійна тестова БД із відкатом або власними фікстурами. |
+| **1.1.0.4 CommentsApi** | Завершено. Запис/читання тексту, дані автора/клієнта, час і валідація. Постійна тестова БД із відкатом або власними фікстурами. |
 | **1.1.0.5 CommentsUi** | SPA-форма/таблиця, валідація, AJAX і повідомлення будь-якою мовою. Браузерні фікстури не змінюють сторонні дані. |
 | **1.1.0.6 XhtmlEditor** | Дозволені теги, безпечні посилання, вкладеність, кнопки та попередній перегляд. Наявні коментарі зберігаються. |
 | **1.1.0.7 CommentThreads** | Відповіді, корені/батьківські записи та каскад. Нові поля додаються міграцією зі збереженням даних; зв’язки перевіряються. |

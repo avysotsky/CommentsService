@@ -124,7 +124,6 @@ public sealed class DataModelTests : IAsyncLifetime
     {
         var repository = scope.ServiceProvider.GetRequiredService<ICommentRepository>();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        Assert.Same(db, unitOfWork);
         var author = new Author("PortReader", "port@example.test");
         var comment = new Comment(author, "Порт збереження 😀", IPAddress.IPv6Loopback, "Application port test");
         repository.Add(comment);

@@ -1,4 +1,5 @@
 using Npgsql;
+using CommentsService.Application.Common;
 
 namespace CommentsService.Infrastructure.Persistence;
 
@@ -8,7 +9,7 @@ public static class DatabaseOptions
     public static string ConnectionString()
     {
         string Required(string name) => Environment.GetEnvironmentVariable(name)
-            ?? throw new InvalidOperationException($"Set {name} before using database commands.");
+            ?? throw new StorageUnavailableException($"Set {name} before using database commands.");
         return new NpgsqlConnectionStringBuilder
         {
             Host = Required("PGHOST"),

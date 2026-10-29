@@ -1,4 +1,4 @@
-# Data model / Модель данных / Модель даних — 1.1.0.3
+# Data model / Модель данных / Модель даних — 1.1.0.4
 
 ## English
 
@@ -18,8 +18,8 @@ fields are required. PostgreSQL stores IP addresses as `inet` (IPv4 and IPv6).
 
 Limits: UserName 100, Email 254, HomePage 2048, Text 65536, UserAgent 2048 characters.
 Database checks require a nonempty Latin-alphanumeric UserName and Text containing
-something other than spaces. Email/URL syntax and complete input validation belong
-to CommentsApi. These storage limits are application choices, not assignment limits.
+something other than spaces. Email/URL syntax and plain-text input validation are enforced by
+CommentsApi; see [API rules](../API.md). These storage limits are application choices, not assignment limits.
 Indexes: Comments.AuthorId and descending (CreatedAt, Id), in addition to primary keys.
 Replies/root links and attachment tables are deferred to their planned iterations.
 
@@ -50,7 +50,7 @@ IP-адрес хранится как `inet` PostgreSQL с поддержкой 
 
 Ограничения длины: UserName 100, Email 254, HomePage 2048, Text 65536, UserAgent 2048 символов.
 БД требует непустое имя из латинских букв/цифр и текст, содержащий не только пробелы.
-Формат Email/URL и полная валидация относятся к CommentsApi. Эти пределы хранения —
+Формат Email/URL и текстовый ввод проверяются в CommentsApi; см. [правила API](../API.md). Эти пределы хранения —
 решение приложения, а не ограничения задания. Индексы: Comments.AuthorId и
 (CreatedAt, Id) по убыванию, дополнительно к первичным ключам.
 Связи ответов/корней и таблицы вложений отложены до соответствующих этапов.
@@ -82,7 +82,7 @@ IP-адреса зберігається як `inet` PostgreSQL із підтр�
 
 Межі довжини: UserName 100, Email 254, HomePage 2048, Text 65536, UserAgent 2048 символів.
 БД вимагає непорожнє ім’я з латинських літер/цифр і текст, що містить не лише пробіли.
-Формат Email/URL і повна валідація належать до CommentsApi. Ці межі зберігання —
+Формат Email/URL і текстовий ввід перевіряються в CommentsApi; див. [правила API](../API.md). Ці межі зберігання —
 рішення застосунку, а не обмеження завдання. Індекси: Comments.AuthorId та
 (CreatedAt, Id) за спаданням, додатково до первинних ключів.
 Зв’язки відповідей/коренів і таблиці вкладень відкладено до відповідних етапів.

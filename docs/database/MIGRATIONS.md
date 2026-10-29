@@ -2,6 +2,10 @@
 
 ## English
 
+Current release 1.1.0.4 keeps the 1.1.0.3 schema/migration unchanged. The API adds
+validated writes/read projections; no new migration or checkpoint rotation is required.
+HTTP tests remove only their own comments/unreferenced author snapshots.
+
 For future schema changes use `--output-dir Persistence/Migrations` on the EF add command.
 
 OnionArchitecture moves the existing migration to Infrastructure/Persistence/Migrations and DbContext to
@@ -61,6 +65,10 @@ Full thread/attachment preservation checks belong to later schema versions.
 
 ## Русский
 
+Текущий выпуск 1.1.0.4 сохраняет схему/миграцию 1.1.0.3. API добавляет проверяемую
+запись и проекции чтения; новая миграция и замена копий не нужны.
+HTTP-тесты удаляют только свои комментарии и записи авторов без ссылок.
+
 Для будущих изменений схемы указывайте `--output-dir Persistence/Migrations` при создании миграции EF.
 
 OnionArchitecture переносит прежнюю миграцию в Infrastructure/Persistence/Migrations, DbContext — в
@@ -116,6 +124,10 @@ dotnet ef migrations script --idempotent --project src/CommentsService.Infrastru
 Полная проверка сохранности веток ответов/вложений относится к следующим версиям схемы.
 
 ## Українська
+
+Поточний випуск 1.1.0.4 зберігає схему/міграцію 1.1.0.3. API додає перевірюваний
+запис і проєкції читання; нова міграція та заміна копій не потрібні.
+HTTP-тести видаляють лише власні коментарі й записи авторів без посилань.
 
 Для майбутніх змін схеми вказуйте `--output-dir Persistence/Migrations` під час створення міграції EF.
 

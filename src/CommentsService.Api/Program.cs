@@ -1,3 +1,7 @@
+using CommentsService.Application.Comments.CreateComment;
+using CommentsService.Application.Comments.GetComment;
+using CommentsService.Application.Comments.GetLatestComments;
+using CommentsService.Api.Errors;
 using CommentsService.Infrastructure;
 using CommentsService.Infrastructure.Abstractions;
 using CommentsService.Api.Endpoints;
@@ -17,6 +21,12 @@ if (args is ["--healthcheck"])
 var databaseCommand = args is ["--migrate"] or ["--check-database"];
 var builder = WebApplication.CreateBuilder(databaseCommand ? [] : args);
 builder.Services.AddInfrastructure();
+builder.Services.AddScoped<ICreateComment, CreateComment>();
+builder.Services.AddScoped<IGetComment, GetComment>();
+builder.Services.AddScoped<IGetLatestComments, GetLatestComments>();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 1024 * 1024);
 await using var app = builder.Build();
 
 if (databaseCommand)
@@ -30,12 +40,17 @@ if (databaseCommand)
     return 0;
 }
 
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.MapSystemEndpoints();
+app.MapCommentsEndpoints();
 app.MapFallback("/api/{**path}", () => Results.NotFound());
 app.MapFallbackToFile("/{*path:nonfile}", "index.html");
 
 app.Run();
 return 0;
+
+public partial class Program { }

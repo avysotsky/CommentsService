@@ -13,6 +13,6 @@ internal sealed class CommentRepository(CommentsDbContext db) : ICommentReposito
     }
 
     public Task<Comment?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
-        db.Comments.Include(comment => comment.Author)
-            .SingleOrDefaultAsync(comment => comment.Id == id, cancellationToken);
+        DatabaseOperation.ExecuteAsync(() => db.Comments.Include(comment => comment.Author)
+            .SingleOrDefaultAsync(comment => comment.Id == id, cancellationToken));
 }

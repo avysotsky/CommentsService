@@ -23,15 +23,15 @@ function App() {
   return <main>
     <header><span className="mark" aria-hidden="true">c</span><span>Comments<span className="light">Service</span></span></header>
     <section aria-labelledby="title">
-      <p className="eyebrow">1.1.0.3 / DATA MODEL</p>
+      <p className="eyebrow">1.1.0.4 / COMMENTS API</p>
       <h1 id="title">A starting point<br />for better conversations.</h1>
-      <p className="intro">The first database model is ready: authors, comments and client metadata, with versioned migrations.</p>
+      <p className="intro">The API now saves and reads plain-text comments with server validation and client metadata.</p>
       <dl>
         <div><dt>Frontend</dt><dd>React build</dd></div>
         <div><dt>Backend</dt><dd role="status">{status ? 'Connected' : failed ? 'Unavailable — start the API' : 'Checking connection…'}</dd></div>
-        <div><dt>Release</dt><dd>{status ? `${status.version} · ${status.stage}` : '1.1.0.3 · DataModel'}</dd></div>
+        <div><dt>Release</dt><dd>{status ? `${status.version} · ${status.stage}` : '1.1.0.4 · CommentsApi'}</dd></div>
       </dl>
-      <p className="note">Comment submission and browsing will be added in the next iteration.</p>
+      <p className="note">The comment form and table will be added in the next iteration.</p>
     </section>
     <footer>CommentsService · One step at a time.</footer>
   </main>;

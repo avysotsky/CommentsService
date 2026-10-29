@@ -58,4 +58,3 @@ to the backend on port 5081. Stop either process with Ctrl+C in its terminal.
 Docker and persistent database deployment belong to the next iteration. Later
 versions will include their own current installation instructions. See change.log
 for the functionality actually delivered by each release.
-

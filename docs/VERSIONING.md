@@ -14,7 +14,9 @@ Each iteration starts from the previous completed version, adds its declared sco
 updates read.me, README and change.log, and is pushed to its own branch.
 README.md is English, README.RU.md is Russian, README.UA.md is Ukrainian.
 Keep all three README translations current; do not create README.en.md.
-Other supporting documents contain all three languages: English, Russian, Ukrainian, in that order.
+Change logs are separate: change.log (English), change.log.ru (Russian), change.log.ua (Ukrainian).
+Keep their release entries synchronized. Other shared supporting documents contain
+English, Russian and Ukrainian, in that order.
 Record actual verification results; never claim an unexecuted check passed.
 
 ## Русский
@@ -31,7 +33,8 @@ Record actual verification results; never claim an unexecuted check passed.
 заявленную функциональность, обновляет read.me, README и change.log и отправляется
 в свою ветку. README.md — английский, README.RU.md — русский, README.UA.md — украинский.
 Все три перевода поддерживать актуальными; README.en.md не создавать.
-В остальных сопроводительных документах три языка: английский, русский, украинский, в этом порядке.
+Журналы разделены: change.log — английский, change.log.ru — русский, change.log.ua — украинский.
+Записи выпусков синхронизировать. В остальных общих документах — английский, русский, украинский.
 Результаты проверок записываются фактически; неподтверждённый PASS запрещён.
 
 ## Українська
@@ -48,5 +51,6 @@ Record actual verification results; never claim an unexecuted check passed.
 заявлену функціональність, оновлює read.me, README і change.log та публікується
 у своїй гілці. README.md — англійською, README.RU.md — російською, README.UA.md — українською.
 Усі три переклади підтримувати актуальними; README.en.md не створювати.
-Решта супровідних документів містить три мови в такому порядку: англійська, російська, українська.
+Журнали окремі: change.log — англійською, change.log.ru — російською, change.log.ua — українською.
+Записи випусків синхронізувати. Решта спільних документів містить англійський, російський і український текст.
 Результати перевірок записуються фактично; непідтверджений PASS заборонений.

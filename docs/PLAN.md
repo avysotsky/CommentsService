@@ -7,7 +7,8 @@ Current milestone: Init only. All subsequent iterations below remain planned.
 Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
 Each completed iteration is pushed to its own branch with current read.me,
 README and change.log. README.md is English, README.RU.md Russian, README.UA.md
-Ukrainian. Other supporting documents use English, Russian and Ukrainian, in that order.
+Ukrainian. Change logs: change.log (EN), change.log.ru (RU), change.log.ua (UA).
+Other shared supporting documents use English, Russian and Ukrainian, in that order.
 The new change.log starts with Init; it must record actual work, not simulated history.
 
 ## Database lifecycle — applies to every iteration
@@ -89,7 +90,8 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 w=1, x=1, y=0 сохраняются, увеличивается только ревизия z. Вынос в конфиг отложен.
 Каждая завершённая итерация отправляется в свою ветку с актуальными read.me,
 README и change.log. README.md — английский, README.RU.md — русский, README.UA.md —
-украинский. В остальных сопроводительных документах сначала английский, затем русский и украинский.
+украинский. Журналы: change.log (EN), change.log.ru (RU), change.log.ua (UA).
+В остальных общих документах сначала английский, затем русский и украинский.
 Новый change.log начинается с Init и отражает реально выполненную работу.
 
 ## Жизненный цикл БД — для каждой итерации
@@ -173,7 +175,8 @@ README и change.log. README.md — английский, README.RU.md — ру�
 w=1, x=1, y=0 зберігаються, збільшується лише ревізія z. Винесення даних у конфігурацію відкладено.
 Кожна завершена ітерація публікується у своїй гілці з актуальними read.me,
 README і change.log. README.md — англійською, README.RU.md — російською, README.UA.md —
-українською. Решта супровідних документів містить англійський, російський і український текст у цьому порядку.
+українською. Журнали: change.log (EN), change.log.ru (RU), change.log.ua (UA).
+Решта спільних документів містить англійський, російський і український текст у цьому порядку.
 Новий change.log починається з Init і відображає реально виконану роботу.
 
 ## Життєвий цикл БД — для кожної ітерації

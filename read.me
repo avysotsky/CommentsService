@@ -31,5 +31,14 @@ History: change.log. Planned iterations: docs/PLAN.md.
 
 УКРАЇНСЬКОЮ
 Початковий каркас .NET 10 / React. Коментарів, БД та Docker ще немає.
+Вимоги: .NET SDK 10, Node.js 24 та npm.
+Збирання з кореня репозиторію:
+  dotnet build src/CommentsService.Api -c Release
+  npm --prefix src/comments-web ci
+  npm --prefix src/comments-web run build
+Запуск у різних терміналах:
+  dotnet run --project src/CommentsService.Api --no-launch-profile --urls http://127.0.0.1:5081
+  npm --prefix src/comments-web run dev
+Відкрити: http://localhost:5174
 Повна інструкція українською: README.UA.md. Англійською: README.md. Російською: README.RU.md.
-Версія: 1.1.0.1. Гілка: CommentsService/v_1.1.0.1_Init.
+Історія: change.log. План ітерацій: docs/PLAN.md.

@@ -12,6 +12,7 @@ Branch: `CommentsService/v_1.1.0.1_Init`
 - Added build/run instructions, versioning rules and the agreed incremental plan.
 - Documentation update within Init: README.md is English, README.RU.md is Russian,
   README.UA.md is Ukrainian; removed the redundant README.en.md and updated language links.
+- All supporting documentation is maintained in English, Russian and Ukrainian.
 - No database, migrations, comment features, Docker deployment or configuration extraction yet.
 - Validation: .NET Release build passed with zero warnings/errors; TypeScript/Vite
   production build passed. Edge verified API metadata, connected/unavailable states,
@@ -26,8 +27,24 @@ Branch: `CommentsService/v_1.1.0.1_Init`
 - Добавлены инструкции сборки/запуска, правила версий и согласованный поэтапный план.
 - Документация уточнена в рамках Init: README.md — английский, README.RU.md — русский,
   README.UA.md — украинский; лишний README.en.md удалён, языковые ссылки обновлены.
+- Вся сопроводительная документация поддерживается на английском, русском и украинском.
 - БД, миграций, комментариев, Docker-развёртывания и выноса в конфиг пока нет.
 - Проверки: Release-сборка .NET без предупреждений/ошибок, production-сборка
   TypeScript/Vite. В Edge проверены данные API, состояния связи/недоступности,
   английский интерфейс, отсутствие формы/API комментариев, ошибок JS и переполнения на 360 px.
 - Unit/integration-набора в Init пока нет; проверки БД относятся к следующим этапам.
+
+### Українська
+
+- Нова незалежна історія розробки починається з Init.
+- Додано мінімальний API .NET 10 з GET /api/status.
+- Додано англомовну стартову сторінку React зі станом підключення до backend.
+- Додано інструкції збирання/запуску, правила версій і погоджений поетапний план.
+- Документацію уточнено в межах Init: README.md — англійською, README.RU.md — російською,
+  README.UA.md — українською; зайвий README.en.md видалено, мовні посилання оновлено.
+- Уся супровідна документація підтримується англійською, російською та українською.
+- БД, міграцій, коментарів, Docker-розгортання та винесення даних у конфігурацію ще немає.
+- Перевірки: Release-збирання .NET без попереджень/помилок, production-збирання
+  TypeScript/Vite. В Edge перевірено дані API, стани підключення/недоступності,
+  англомовний інтерфейс, відсутність форми/API коментарів, помилок JS та переповнення на 360 px.
+- Набору unit/integration-тестів в Init ще немає; перевірки БД належать до наступних етапів.

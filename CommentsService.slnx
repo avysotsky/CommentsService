@@ -8,8 +8,19 @@
   </Folder>
   <Folder Name="/Frontend/src/">
     <File Path="src/comments-web/src/main.tsx" />
+    <File Path="src/comments-web/src/App.tsx" />
+    <File Path="src/comments-web/src/messages.ts" />
     <File Path="src/comments-web/src/style.css" />
     <File Path="src/comments-web/src/vite-env.d.ts" />
+  </Folder>
+  <Folder Name="/Frontend/src/comments/">
+    <File Path="src/comments-web/src/comments/model.ts" />
+    <File Path="src/comments-web/src/comments/client.ts" />
+    <File Path="src/comments-web/src/comments/CommentForm.tsx" />
+    <File Path="src/comments-web/src/comments/CommentsTable.tsx" />
+  </Folder>
+  <Folder Name="/Frontend/tests/">
+    <File Path="src/comments-web/tests/comments.test.mjs" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/CommentsService.Api/CommentsService.Api.csproj" />

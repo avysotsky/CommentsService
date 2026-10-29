@@ -3,7 +3,7 @@
 ## Status and version rules
 
 The approved sequence starts at `CommentsService/v_1.1.0.1_Init`.
-Current milestone: 1.1.0.4 CommentsApi completed. Onion architecture is preserved. Next: 1.1.0.5 CommentsUi.
+Current milestone: 1.1.0.5 CommentsUi completed. Onion architecture is preserved. Next: 1.1.0.6 XhtmlEditor.
 Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
 Each completed iteration is pushed to its own branch with current read.me,
 README and change.log. README.md is English, README.RU.md Russian, README.UA.md
@@ -88,7 +88,7 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 ## Статус и правила версий
 
 Согласованная последовательность начинается с `CommentsService/v_1.1.0.1_Init`.
-Текущий этап 1.1.0.4 CommentsApi завершён. Onion сохранён. Далее — 1.1.0.5 CommentsUi.
+Текущий этап 1.1.0.5 CommentsUi завершён. Onion сохранён. Далее — 1.1.0.6 XhtmlEditor.
 w=1, x=1, y=0 сохраняются, увеличивается только ревизия z. Вынос в конфиг отложен.
 Каждая завершённая итерация отправляется в свою ветку с актуальными read.me,
 README и change.log. README.md — английский, README.RU.md — русский, README.UA.md —
@@ -175,7 +175,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 ## Статус і правила версій
 
 Погоджена послідовність починається з `CommentsService/v_1.1.0.1_Init`.
-Поточний етап 1.1.0.4 CommentsApi завершено. Onion збережено. Далі — 1.1.0.5 CommentsUi.
+Поточний етап 1.1.0.5 CommentsUi завершено. Onion збережено. Далі — 1.1.0.6 XhtmlEditor.
 w=1, x=1, y=0 зберігаються, збільшується лише ревізія z. Винесення даних у конфігурацію відкладено.
 Кожна завершена ітерація публікується у своїй гілці з актуальними read.me,
 README і change.log. README.md — англійською, README.RU.md — російською, README.UA.md —

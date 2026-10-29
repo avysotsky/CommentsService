@@ -2,7 +2,7 @@
 
 ## English
 
-Release **1.1.0.4 CommentsApi** implements comment use cases inside the Onion core.
+Release **1.1.0.5 CommentsUi** implements comment use cases inside the Onion core.
 
 - Domain/Entities protects entity invariants and has no external project/package dependencies.
 - Application/Comments contains CreateComment, GetComment and GetLatestComments, input validation,
@@ -28,12 +28,12 @@ Architecture tests guard inward references, core independence, public port types
 
 Migration 20261029195935_InitialDataModel and SQL are unchanged from 1.1.0.3. No artificial
 migration/checkpoint rotation is required. Future EF add commands use --output-dir Persistence/Migrations
-with Infrastructure as target and Api as startup. CommentsUi is next; XHTML, threads and full
+with Infrastructure as target and Api as startup. CommentsUi is implemented; XHTML, threads and full
 sorting/pagination remain their planned milestones. OOP/SOLID/Onion apply to all subsequent changes.
 
 ## Русский
 
-Выпуск **1.1.0.4 CommentsApi** реализует сценарии комментариев внутри ядра Onion.
+Выпуск **1.1.0.5 CommentsUi** реализует сценарии комментариев внутри ядра Onion.
 
 - Domain/Entities защищает инварианты сущностей и не имеет внешних зависимостей от проектов/пакетов.
 - Application/Comments содержит CreateComment, GetComment и GetLatestComments, валидацию ввода,
@@ -59,12 +59,12 @@ Data.Tests (PostgreSQL с откатом) и Api.Tests (HTTP с удаление
 
 Миграция 20261029195935_InitialDataModel и SQL не меняются относительно 1.1.0.3. Искусственная
 миграция/замена контрольных копий не нужна. При будущей генерации указывать --output-dir Persistence/Migrations,
-цель Infrastructure, стартовый проект Api. Далее CommentsUi; XHTML, ответы и полные
+цель Infrastructure, стартовый проект Api. CommentsUi реализован; XHTML, ответы и полные
 сортировки/пагинация остаются в своих этапах. OOP/SOLID/Onion обязательны при последующих изменениях.
 
 ## Українська
 
-Випуск **1.1.0.4 CommentsApi** реалізує сценарії коментарів усередині ядра Onion.
+Випуск **1.1.0.5 CommentsUi** реалізує сценарії коментарів усередині ядра Onion.
 
 - Domain/Entities захищає інваріанти сутностей і не має зовнішніх залежностей від проєктів/пакетів.
 - Application/Comments містить CreateComment, GetComment і GetLatestComments, валідацію вводу,
@@ -90,7 +90,7 @@ Data.Tests (PostgreSQL із відкатом) та Api.Tests (HTTP з видал
 
 Міграція 20261029195935_InitialDataModel та SQL не змінюються відносно 1.1.0.3. Штучна
 міграція/заміна контрольних копій не потрібна. Під час майбутньої генерації вказувати --output-dir Persistence/Migrations,
-ціль Infrastructure, стартовий проєкт Api. Далі CommentsUi; XHTML, відповіді й повні
+ціль Infrastructure, стартовий проєкт Api. CommentsUi реалізовано; XHTML, відповіді й повні
 сортування/пагінація залишаються у своїх етапах. OOP/SOLID/Onion обов’язкові під час наступних змін.
 
 ## Dependencies / Зависимости / Залежності
@@ -103,3 +103,20 @@ flowchart BT
     Api --> Application
     Api -. "composition root / DI" .-> Infrastructure
 ```
+
+## Frontend boundaries / Границы frontend / Межі frontend
+
+EN: React presentation uses the CommentsClient port. HttpCommentsClient implements HTTP;
+the composition root injects it. Pure input validation and safe URL handling are separate
+from rendering. Form state, request errors and the recent list have separate responsibilities.
+Backend Domain/Application remain independent of React/HTTP/EF. Server validation is authoritative.
+
+RU: React использует контракт CommentsClient. HttpCommentsClient реализует HTTP;
+точка сборки внедряет его. Чистая валидация и безопасные URL отделены от отображения.
+Состояние формы, ошибки запросов и список имеют отдельные обязанности.
+Domain/Application не зависят от React/HTTP/EF. Серверная валидация окончательная.
+
+UA: React використовує контракт CommentsClient. HttpCommentsClient реалізує HTTP;
+точка складання впроваджує його. Чисту валідацію та безпечні URL відокремлено від відображення.
+Стан форми, помилки запитів і список мають окремі обов’язки.
+Domain/Application не залежать від React/HTTP/EF. Серверна валідація остаточна.

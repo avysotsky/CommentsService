@@ -1,4 +1,4 @@
-# Comments API — 1.1.0.4
+# Comments API — 1.1.0.5
 
 ## English
 
@@ -37,7 +37,7 @@ Errors use ProblemDetails JSON: 400 for invalid input/JSON/limit, 404 for missin
 Validation responses include an errors dictionary keyed by JSON field name. Internal
 exception/connection details are not included. Caller cancellation reaches data operations.
 
-The web page still displays release/connectivity only. The form/table arrives in 1.1.0.5;
+The SPA form/table uses these endpoints in 1.1.0.5;
 replies, CAPTCHA, XHTML and attachments remain later milestones. No schema change is
 needed from 1.1.0.3; migration 20261029195935_InitialDataModel is unchanged.
 
@@ -78,7 +78,7 @@ UTF-16; нулевые символы, некорректный Unicode и по�
 Ответ валидации содержит errors с именами JSON-полей. Внутренние исключения и параметры
 подключения не выдаются. Отмена запроса передаётся операциям данных.
 
-Веб-страница пока показывает выпуск/подключение. Форма/таблица — этап 1.1.0.5; ответы,
+SPA-форма/таблица использует эти маршруты в 1.1.0.5; ответы,
 CAPTCHA, XHTML и вложения остаются последующими этапами. Схема 1.1.0.3 сохраняется;
 миграция 20261029195935_InitialDataModel не меняется.
 
@@ -119,7 +119,7 @@ UTF-16; нульові символи, некоректний Unicode та сх�
 Відповідь валідації містить errors з іменами JSON-полів. Внутрішні винятки й параметри
 підключення не надаються. Скасування запиту передається операціям даних.
 
-Веб-сторінка поки показує випуск/підключення. Форма/таблиця — етап 1.1.0.5; відповіді,
+SPA-форма/таблиця використовує ці маршрути в 1.1.0.5; відповіді,
 CAPTCHA, XHTML і вкладення залишаються наступними етапами. Схема 1.1.0.3 зберігається;
 міграція 20261029195935_InitialDataModel не змінюється.
 

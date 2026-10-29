@@ -2,6 +2,19 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.5 CommentsUi — 2026-10-30
+
+Branch: `CommentsService/v_1.1.0.5_CommentsUi`
+
+- Replaced the placeholder page with a React comment form and latest-25 table, author/email/homepage, local timestamps, loading/empty/error states and refresh.
+- Added client validation, async JSON submission without navigation, pending/double-submit protection, server field errors, success feedback and draft retention after failed requests.
+- Added English, Russian and Ukrainian interface selection. Comment text preserves Unicode/newlines and is escaped by React; homepage links allow HTTP(S) without credentials only.
+- Separated presentation, pure validation, the CommentsClient port and HttpCommentsClient adapter. Backend Onion/OOP/SOLID boundaries remain intact; only release metadata changes in backend code.
+- Verified Release frontend/Docker builds, 7 frontend tests and all 97 backend tests (21 domain/architecture, 35 application, 10 database, 31 HTTP).
+- Verified Edge real create/read/reload, a single POST on double click, client/server validation, EN/RU/UA, 503/draft retention, refresh retry, loading/empty states, escaped markup, safe links and desktop/360 px without JavaScript errors.
+- Both persistent data/schema/history baselines, volumes and recovery-copy hashes matched after checks. Only the browser run's own rows and temporary app container were removed. Migration 20261029195935_InitialDataModel is unchanged.
+- Updated three READMEs/change logs, read.me, plans, architecture/API/schema/migration documentation and frontend solution items. Visual Studio/Workbench GUI were not checked. Next: 1.1.0.6 XhtmlEditor; replies, full sorting/pagination, CAPTCHA and attachments remain later stages.
+
 ## 1.1.0.4 CommentsApi — 2026-10-30
 
 Branch: `CommentsService/v_1.1.0.4_CommentsApi`

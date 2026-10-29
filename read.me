@@ -1,11 +1,11 @@
-CommentsService — 1.1.0.4 CommentsApi
-Branch: CommentsService/v_1.1.0.4_CommentsApi
+CommentsService — 1.1.0.5 CommentsUi
+Branch: CommentsService/v_1.1.0.5_CommentsUi
 
 ENGLISH
-Upgrade from 1.1.0.3: same schema; reuse existing checkpoints/volumes.
+Upgrade from 1.1.0.4: same schema; reuse existing checkpoints/volumes.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Architecture and SOLID boundaries: docs/ARCHITECTURE.md.
-Create/read plain-text comments, server validation and client metadata. API contract: docs/API.md. Form/table are next.
+Create/read plain-text comments, server validation and client metadata. API contract: docs/API.md. SPA form/table, client validation, async submission and EN/RU/UA are available. Next: 1.1.0.6 XhtmlEditor.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py
@@ -20,15 +20,19 @@ curl --fail http://127.0.0.1:8080/health/database
 python3 scripts/db-command.py check
 python3 scripts/db-command.py check --service test-database
 python3 scripts/test-backend.py
+# Node.js 24: src/comments-web
+npm ci --prefix src/comments-web
+npm test --prefix src/comments-web
+npm run build --prefix src/comments-web
 
 Stop writes before checkpoint/migration; keep the same project/environment/volumes. Never use down -v.
 Instructions: README.md. Schema/recovery: docs/database. History: change.log.
 
 РУССКИЙ
-Обновление с 1.1.0.3: прежняя схема; сохраняйте копии/тома.
+Обновление с 1.1.0.4: прежняя схема; сохраняйте копии/тома.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Архитектура и границы SOLID: docs/ARCHITECTURE.md.
-Создание/чтение текстовых комментариев, серверная валидация и метаданные клиента. Контракт: docs/API.md. Далее форма/таблица.
+Создание/чтение текстовых комментариев, серверная валидация и метаданные клиента. Контракт: docs/API.md. SPA-форма/таблица, клиентская валидация, AJAX и EN/RU/UA реализованы. Далее 1.1.0.6 XhtmlEditor.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py
@@ -43,15 +47,19 @@ curl --fail http://127.0.0.1:8080/health/database
 python3 scripts/db-command.py check
 python3 scripts/db-command.py check --service test-database
 python3 scripts/test-backend.py
+# Node.js 24: src/comments-web
+npm ci --prefix src/comments-web
+npm test --prefix src/comments-web
+npm run build --prefix src/comments-web
 
 Перед копией/миграцией остановите запись; сохраняйте проект/окружение/тома. Не используйте down -v.
 Инструкция: README.RU.md. Схема/восстановление: docs/database. История: change.log.ru.
 
 УКРАЇНСЬКОЮ
-Оновлення з 1.1.0.3: попередня схема; зберігайте копії/томи.
+Оновлення з 1.1.0.4: попередня схема; зберігайте копії/томи.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Архітектура та межі SOLID: docs/ARCHITECTURE.md.
-Створення/читання текстових коментарів, серверна валідація та метадані клієнта. Контракт: docs/API.md. Далі форма/таблиця.
+Створення/читання текстових коментарів, серверна валідація та метадані клієнта. Контракт: docs/API.md. SPA-форму/таблицю, клієнтську валідацію, AJAX та EN/RU/UA реалізовано. Далі 1.1.0.6 XhtmlEditor.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py
@@ -66,6 +74,10 @@ curl --fail http://127.0.0.1:8080/health/database
 python3 scripts/db-command.py check
 python3 scripts/db-command.py check --service test-database
 python3 scripts/test-backend.py
+# Node.js 24: src/comments-web
+npm ci --prefix src/comments-web
+npm test --prefix src/comments-web
+npm run build --prefix src/comments-web
 
 Перед копією/міграцією зупиніть запис; зберігайте проєкт/оточення/томи. Не використовуйте down -v.
 Інструкція: README.UA.md. Схема/відновлення: docs/database. Історія: change.log.ua.

@@ -10,6 +10,8 @@ Branch: `CommentsService/v_1.1.0.1_Init`
 - Added a minimal .NET 10 API with GET /api/status.
 - Added an English React start page showing the backend connection state.
 - Added build/run instructions, versioning rules and the agreed incremental plan.
+- Documentation update within Init: README.md is English, README.RU.md is Russian,
+  README.UA.md is Ukrainian; removed the redundant README.en.md and updated language links.
 - No database, migrations, comment features, Docker deployment or configuration extraction yet.
 - Validation: .NET Release build passed with zero warnings/errors; TypeScript/Vite
   production build passed. Edge verified API metadata, connected/unavailable states,
@@ -22,6 +24,8 @@ Branch: `CommentsService/v_1.1.0.1_Init`
 - Добавлен минимальный API .NET 10 с GET /api/status.
 - Добавлена английская стартовая страница React с состоянием подключения к backend.
 - Добавлены инструкции сборки/запуска, правила версий и согласованный поэтапный план.
+- Документация уточнена в рамках Init: README.md — английский, README.RU.md — русский,
+  README.UA.md — украинский; лишний README.en.md удалён, языковые ссылки обновлены.
 - БД, миграций, комментариев, Docker-развёртывания и выноса в конфиг пока нет.
 - Проверки: Release-сборка .NET без предупреждений/ошибок, production-сборка
   TypeScript/Vite. В Edge проверены данные API, состояния связи/недоступности,

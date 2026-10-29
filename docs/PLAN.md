@@ -6,7 +6,8 @@ The approved sequence starts at `CommentsService/v_1.1.0.1_Init`.
 Current milestone: Init only. All subsequent iterations below remain planned.
 Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
 Each completed iteration is pushed to its own branch with current read.me,
-README and change.log. Supporting documents use English first, Russian second.
+README and change.log. README.md is English, README.RU.md Russian, README.UA.md
+Ukrainian. Other bilingual supporting documents use English first, Russian second.
 The new change.log starts with Init; it must record actual work, not simulated history.
 
 ## Database lifecycle — applies to every iteration
@@ -87,7 +88,8 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 Текущий этап — только Init. Все следующие итерации ниже пока остаются планом.
 w=1, x=1, y=0 сохраняются, увеличивается только ревизия z. Вынос в конфиг отложен.
 Каждая завершённая итерация отправляется в свою ветку с актуальными read.me,
-README и change.log. В документах сначала английский, затем русский.
+README и change.log. README.md — английский, README.RU.md — русский, README.UA.md —
+украинский. В остальных двуязычных документах сначала английский, затем русский.
 Новый change.log начинается с Init и отражает реально выполненную работу.
 
 ## Жизненный цикл БД — для каждой итерации

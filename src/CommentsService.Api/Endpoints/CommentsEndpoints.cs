@@ -35,6 +35,12 @@ public static class CommentsEndpoints
             if (!result.IsValid) return Results.ValidationProblem(result.Errors.ToDictionary());
             return Results.Created($"/api/comments/{result.Value!.Id}", result.Value);
         });
+        group.MapGet("/page", async (int? page, string? sort, string? direction,
+            CommentsService.Application.Comments.GetRootPage.IGetRootPage get, CancellationToken token) =>
+        {
+            var result = await get.ExecuteAsync(page ?? 1, sort ?? "createdAt", direction ?? "desc", token);
+            return result.IsValid ? Results.Ok(result.Value) : Results.ValidationProblem(result.Errors.ToDictionary());
+        });
         group.MapGet("/{id:guid}/replies", async (Guid id, int? limit, Guid? after,
             CommentsService.Application.Comments.GetReplies.IGetReplies get, CancellationToken token) =>
         {

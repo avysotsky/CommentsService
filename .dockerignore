@@ -29,3 +29,6 @@ tests
 
 # Private IDE launch environment
 **/Properties/launchSettings.json
+
+**/__pycache__
+**/*.pyc

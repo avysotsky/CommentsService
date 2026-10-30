@@ -51,3 +51,7 @@ Desktop.ini
 
 # Private IDE launch environment
 **/Properties/launchSettings.json
+
+# Generated Python caches
+**/__pycache__/
+*.pyc

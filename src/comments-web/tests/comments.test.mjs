@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validate, safeHomePage } from '../src/comments/model.ts';
+import { validate, safeHomePage, readRootQuery } from '../src/comments/model.ts';
 import { HttpCommentsClient, CommentsRequestError } from '../src/comments/client.ts';
 
 const valid = { userName: 'Reader123', email: 'reader@example.test', homePage: '', text: 'Привіт 😀\n1 < 2' };
@@ -79,4 +79,19 @@ test('create carries only requested parent and exposes missing-target errors', a
     return Response.json({ errors: { parentId: ['Not found'] } }, { status: 400 });
   });
   await assert.rejects(client.create({ ...valid, parentId: 'parent' }), error => error.fields.parentId[0] === 'Not found');
+});
+
+test('page transport sends bounded query fields and cancellation without cache', async () => {
+  const controller = new AbortController();
+  const client = new HttpCommentsClient(async (url, options) => {
+    assert.equal(url, '/api/comments/page?page=2&sort=email&direction=asc');
+    assert.equal(options.signal, controller.signal); assert.equal(options.cache, 'no-store');
+    return Response.json({ items: [], page: 2, pageSize: 25, totalCount: 0, totalPages: 0 });
+  });
+  assert.equal((await client.page({ page: 2, sort: 'email', direction: 'asc' }, controller.signal)).page, 2);
+});
+test('bookmarked paging input validates ranges and allowlists', () => {
+  assert.deepEqual(readRootQuery('?page=2&sort=userName&direction=asc'), { page: 2, sort: 'userName', direction: 'asc' });
+  for (const page of ['-1', '0', '1.5', 'NaN', '85899346']) assert.equal(readRootQuery('?page=' + page).page, 1);
+  assert.deepEqual(readRootQuery('?sort=drop&direction=evil'), { page: 1, sort: 'createdAt', direction: 'desc' });
 });

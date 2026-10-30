@@ -14,6 +14,7 @@ p.add_argument('--env-file', default='.env')
 p.add_argument('--project', default='commentsservice')
 p.add_argument('--compose-file', action='append')
 p.add_argument('--output', default='artifacts/checkpoints')
+p.add_argument('--include-benchmark', action='store_true', help='Also checkpoint the persistent comments_benchmark database.')
 a = p.parse_args()
 compose = ['docker', 'compose']
 for file in a.compose_file or ['compose.yaml']:
@@ -48,9 +49,11 @@ SELECT coalesce(json_agg(x ORDER BY x.s, x.t), '[]') FROM (
             'FROM (SELECT md5(to_jsonb(t)::text) h FROM ' + qualified + ' t) rows;')
     return result
 
-for service, database in [('database', 'comments'), ('test-database', 'comments_test')]:
+targets = [('database', 'comments', 'database'), ('test-database', 'comments_test', 'test-database')]
+if a.include_benchmark: targets.append(('test-database', 'comments_benchmark', 'benchmark'))
+for service, database, checkpoint_name in targets:
     temporary = 'cs_checkpoint_' + uuid.uuid4().hex
-    candidate = out / (service + '.candidate.dump')
+    candidate = out / (checkpoint_name + '.candidate.dump')
     created = False
     try:
         before = inventory(service, database)
@@ -69,11 +72,11 @@ for service, database in [('database', 'comments'), ('test-database', 'comments_
         manifest = {'database': database, 'created_at_utc': datetime.now(timezone.utc).isoformat(), 'tables': restored,
                     'sha256': hashlib.sha256(candidate.read_bytes()).hexdigest(),
                     'restore_verified': True}
-        manifest_candidate = out / (service + '.candidate.json')
+        manifest_candidate = out / (checkpoint_name + '.candidate.json')
         manifest_candidate.write_text(json.dumps(manifest, indent=2) + '\n')
-        os.replace(candidate, out / (service + '.dump'))
-        os.replace(manifest_candidate, out / (service + '.json'))
-        print('PASS: checkpoint restored and row fingerprints verified for ' + service, flush=True)
+        os.replace(candidate, out / (checkpoint_name + '.dump'))
+        os.replace(manifest_candidate, out / (checkpoint_name + '.json'))
+        print('PASS: checkpoint restored and row fingerprints verified for ' + database, flush=True)
     finally:
         if created:
             # Only the uniquely named database created above belongs to this run.

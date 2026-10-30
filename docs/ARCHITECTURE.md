@@ -2,12 +2,14 @@
 
 ## English
 
+GetRootPage validates page/sort/direction and exposes typed query contracts in Application. Infrastructure applies an allowlisted LINQ order, UUID tie-break, offset/25 limit, and repeatable-read count/items snapshot. The API only maps HTTP. Frontend RootPagination controls query state through CommentsClient; drafts and thread rendering remain separate. The compatibility latest-list use case is retained.
+
 Application owns ICommentMarkup/XhtmlCommentMarkup, shared by create and read-only preview. HTTP only maps transport. Frontend uses the CommentsClient port and an allowlisted React renderer, never raw HTML. No provider/HTTP dependency enters the core.
 
-Release **1.1.0.7 CommentThreads** implements comment use cases inside the Onion core.
+Release **1.1.0.8 SortingPagination** implements comment use cases inside the Onion core.
 
 - Domain/Entities protects entity invariants and has no external project/package dependencies.
-- Application/Comments contains CreateComment, GetComment, GetReplies and GetLatestComments, input validation,
+- Application/Comments contains CreateComment, GetComment, GetReplies, GetRootPage and GetLatestComments, input validation,
   normalization, public DTOs and validation outcomes. Application references Domain only.
 - Application/Abstractions/Persistence owns ICommentRepository, ICommentQueries and IUnitOfWork.
   These ports expose no EF/HTTP/provider types or IQueryable.
@@ -32,17 +34,18 @@ Migration 20261030101720_CommentThreads extends the initial schema with immutabl
 backfills old roots and preserves original content. Create validates the parent before staging an author;
 GetReplies owns cursor/limit validation. Infrastructure implements bounded direct-child queries and projects
 flat DTOs; no recursive EF navigation graphs are serialized. The UI flattens expanded branches iteratively.
-Future EF add commands use --output-dir Persistence/Migrations. Full root sorting/pagination remains
-1.1.0.8; OOP/SOLID/Onion remain mandatory. See database/MIGRATIONS.md for verified upgrade/rollback.
+Future EF add commands use --output-dir Persistence/Migrations. Root sorting/pagination is implemented in 1.1.0.8; OOP/SOLID/Onion remain mandatory. See database/MIGRATIONS.md for verified upgrade/rollback.
 
 ## Русский
 
+GetRootPage проверяет page/sort/direction и задаёт типизированный запрос в Application. Infrastructure применяет разрешённую LINQ-сортировку, UUID для равных значений, offset/25 и repeatable-read снимок количества/строк. API связывает HTTP. RootPagination управляет запросом через CommentsClient; черновик и ветки отделены. Прежний сценарий последнего списка сохранён.
+
 Application содержит ICommentMarkup/XhtmlCommentMarkup для создания и предпросмотра без записи. HTTP связывает транспорт. Frontend использует контракт CommentsClient и разрешённые React-элементы, без вставки HTML. Зависимости провайдера/HTTP не входят в ядро.
 
-Выпуск **1.1.0.7 CommentThreads** реализует сценарии комментариев внутри ядра Onion.
+Выпуск **1.1.0.8 SortingPagination** реализует сценарии комментариев внутри ядра Onion.
 
 - Domain/Entities защищает инварианты сущностей и не имеет внешних зависимостей от проектов/пакетов.
-- Application/Comments содержит CreateComment, GetComment, GetReplies и GetLatestComments, валидацию ввода,
+- Application/Comments содержит CreateComment, GetComment, GetReplies, GetRootPage и GetLatestComments, валидацию ввода,
   нормализацию, публичные DTO и результаты валидации. Application ссылается только на Domain.
 - Application/Abstractions/Persistence содержит ICommentRepository, ICommentQueries и IUnitOfWork.
   Контракты не раскрывают типы EF/HTTP/провайдера и IQueryable.
@@ -67,17 +70,18 @@ Data.Tests (PostgreSQL с откатом) и Api.Tests (HTTP с удаление
 заполняет старые корни и сохраняет прежние данные. Create проверяет родителя до подготовки автора;
 GetReplies проверяет курсор/лимит. Infrastructure выполняет ограниченные запросы прямых ответов и выдаёт
 плоские DTO без рекурсивного графа EF. UI итеративно разворачивает открытые ветки.
-При генерации EF указывать --output-dir Persistence/Migrations. Полные сортировки/страницы корней —
-1.1.0.8; OOP/SOLID/Onion обязательны. Обновление/откат: database/MIGRATIONS.md.
+При генерации EF указывать --output-dir Persistence/Migrations. Сортировки/страницы корней реализованы в 1.1.0.8; OOP/SOLID/Onion обязательны. Обновление/откат: database/MIGRATIONS.md.
 
 ## Українська
 
+GetRootPage перевіряє page/sort/direction і задає типізований запит в Application. Infrastructure застосовує дозволене LINQ-сортування, UUID для однакових значень, offset/25 і repeatable-read знімок кількості/рядків. API пов’язує HTTP. RootPagination керує запитом через CommentsClient; чернетку й гілки відокремлено. Попередній сценарій останнього списку збережено.
+
 Application містить ICommentMarkup/XhtmlCommentMarkup для створення та перегляду без запису. HTTP пов’язує транспорт. Frontend використовує контракт CommentsClient і дозволені React-елементи, без вставлення HTML. Залежності провайдера/HTTP не входять до ядра.
 
-Випуск **1.1.0.7 CommentThreads** реалізує сценарії коментарів усередині ядра Onion.
+Випуск **1.1.0.8 SortingPagination** реалізує сценарії коментарів усередині ядра Onion.
 
 - Domain/Entities захищає інваріанти сутностей і не має зовнішніх залежностей від проєктів/пакетів.
-- Application/Comments містить CreateComment, GetComment, GetReplies і GetLatestComments, валідацію вводу,
+- Application/Comments містить CreateComment, GetComment, GetReplies, GetRootPage і GetLatestComments, валідацію вводу,
   нормалізацію, публічні DTO та результати валідації. Application посилається лише на Domain.
 - Application/Abstractions/Persistence містить ICommentRepository, ICommentQueries та IUnitOfWork.
   Контракти не розкривають типи EF/HTTP/провайдера та IQueryable.
@@ -102,8 +106,7 @@ Data.Tests (PostgreSQL із відкатом) та Api.Tests (HTTP з видал
 заповнює старі корені та зберігає попередні дані. Create перевіряє батьківський запис до підготовки автора;
 GetReplies перевіряє курсор/ліміт. Infrastructure виконує обмежені запити прямих відповідей та видає
 плоскі DTO без рекурсивного графа EF. UI ітеративно розгортає відкриті гілки.
-Під час генерації EF вказувати --output-dir Persistence/Migrations. Повні сортування/сторінки коренів —
-1.1.0.8; OOP/SOLID/Onion обов’язкові. Оновлення/відкат: database/MIGRATIONS.md.
+Під час генерації EF вказувати --output-dir Persistence/Migrations. Сортування/сторінки коренів реалізовано в 1.1.0.8; OOP/SOLID/Onion обов’язкові. Оновлення/відкат: database/MIGRATIONS.md.
 
 ## Dependencies / Зависимости / Залежності
 

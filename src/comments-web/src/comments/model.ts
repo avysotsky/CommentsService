@@ -3,7 +3,18 @@ export type Comment = Omit<CommentInput, 'homePage' | 'parentId'> & { id: string
 export type Field = 'userName' | 'email' | 'homePage' | 'text';
 export type FieldErrors = Partial<Record<Field | 'parentId', string[]>>;
 export type RepliesPage = { items: Comment[]; nextAfter: string | null };
+export type RootSort = 'userName' | 'email' | 'createdAt';
+export type RootPageQuery = { page: number; sort: RootSort; direction: 'asc' | 'desc' };
+export type RootPage = { items: Comment[]; page: number; pageSize: number; totalCount: number; totalPages: number };
+export const defaultRootQuery: RootPageQuery = { page: 1, sort: 'createdAt', direction: 'desc' };
+export function readRootQuery(search: string): RootPageQuery {
+  const params = new URLSearchParams(search), page = Number(params.get('page') ?? 1);
+  const sort = params.get('sort'), direction = params.get('direction');
+  return { page: Number.isInteger(page) && page >= 1 && page <= 85899345 ? page : 1,
+    sort: sort === 'userName' || sort === 'email' ? sort : 'createdAt', direction: direction === 'asc' ? 'asc' : 'desc' };
+}
 export interface CommentsClient {
+  page(query: RootPageQuery, signal?: AbortSignal): Promise<RootPage>;
   replies(parentId: string, after?: string | null, signal?: AbortSignal): Promise<RepliesPage>;
   latest(signal?: AbortSignal): Promise<Comment[]>;
   create(input: CommentInput): Promise<Comment>;

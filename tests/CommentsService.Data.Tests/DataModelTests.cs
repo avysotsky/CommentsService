@@ -35,6 +35,44 @@ public sealed class DataModelTests : IAsyncLifetime
         await provider.DisposeAsync();
     }
 
+    [Theory]
+    [InlineData(0, false)] [InlineData(0, true)]
+    [InlineData(1, false)] [InlineData(1, true)]
+    [InlineData(2, false)] [InlineData(2, true)]
+    public async Task RootPagesSortAllDirectionsExcludeRepliesAndDoNotLoseTiedRows(int sortValue, bool descending)
+    {
+        var rootsBefore = await db.Comments.CountAsync(x => x.ParentId == null);
+        var own = new List<Comment>();
+        for (var i = 0; i < 54; i++)
+        {
+            var author = new Author("Paging" + (i % 4), "paging" + (i % 3) + "@example.test");
+            var root = new Comment(author, "page fixture", IPAddress.Loopback, ""); own.Add(root); db.Add(root);
+            db.Entry(root).Property(x => x.CreatedAt).CurrentValue = DateTimeOffset.Parse("2026-01-01T00:00:00Z");
+        }
+        db.Add(new Comment(new Author("PagingReply", "reply@example.test"), "not a root", IPAddress.Loopback, "", own[0]));
+        await db.SaveChangesAsync();
+        var queries = scope.ServiceProvider.GetRequiredService<ICommentQueries>();
+        var sort = (CommentsService.Application.Comments.GetRootPage.CommentSort)sortValue;
+        var direction = descending ? CommentsService.Application.Comments.GetRootPage.SortDirection.Desc : CommentsService.Application.Comments.GetRootPage.SortDirection.Asc;
+        var found = new List<Guid>(); long total = 0;
+        for (var page = 1; ; page++)
+        {
+            var result = await queries.GetRootPageAsync(new(page, sort, direction)); total = result.TotalCount;
+            Assert.Equal(25, result.PageSize); Assert.Equal(rootsBefore + 54, result.TotalCount);
+            Assert.Equal((result.TotalCount + 24) / 25, result.TotalPages);
+            Assert.All(result.Items, x => Assert.Null(x.ParentId));
+            Assert.InRange(result.Items.Count, 1, 25);
+            found.AddRange(result.Items.Select(x => x.Id));
+            if (page == result.TotalPages) break;
+        }
+        Assert.Equal(total, found.Count); Assert.Equal(found.Count, found.Distinct().Count());
+        Func<Comment, string> key = sortValue == 0 ? x => x.Author.UserName : sortValue == 1 ? x => x.Author.Email : _ => "same";
+        var ordered = descending ? own.OrderByDescending(key, StringComparer.Ordinal).ThenByDescending(x => x.Id) : own.OrderBy(key, StringComparer.Ordinal).ThenBy(x => x.Id);
+        Assert.Equal(ordered.Select(x => x.Id), found.Where(id => own.Any(x => x.Id == id)));
+        var beyond = await queries.GetRootPageAsync(new((int)((total + 24) / 25 + 1), sort, direction));
+        Assert.Empty(beyond.Items); Assert.Equal(total, beyond.TotalCount);
+    }
+
     [Fact]
     public async Task ThreadLinksRoundTripAndRootsAreListedSeparately()
     {

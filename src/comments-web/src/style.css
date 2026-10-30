@@ -55,3 +55,10 @@ footer { color: #5c6b59; font-size: 12px; border-top: 1px solid #dfe4d7; padding
 .thread-actions button, .thread-controls button { font-size:12px; padding:.3rem .6rem; }
 .thread-controls td { background:#fafbf7; font-size:12px; }
 .reply-target { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.6rem; padding:.75rem; margin-bottom:1rem; background:#f4f6ed; border-radius:.5rem; overflow-wrap:anywhere; }
+
+.root-controls { margin:1rem 0; }
+.sort-controls, .pagination { display:flex; flex-wrap:wrap; align-items:center; gap:.6rem; }
+.sort-controls { margin-bottom:.8rem; }
+.sort-controls label, .pagination label, .pagination span { font-size:12px; }
+.pagination input { width:7rem; padding:.3rem .4rem; font-size:12px; }
+.pagination button { font-size:12px; padding:.3rem .6rem; }

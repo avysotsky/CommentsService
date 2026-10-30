@@ -2,6 +2,18 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.8 SortingPagination — 2026-10-30
+
+Branch: `CommentsService/v_1.1.0.8_SortingPagination`
+
+- Added GetRootPage in Application, typed sort queries in its persistence port and an Infrastructure repeatable-read count/items projection. GET /api/comments/page supports userName/email/createdAt asc/desc, fixed 25-root pages, totals and deterministic UUID ties. Default is LIFO; replies are excluded from root counts. Legacy bounded latest-array/reply routes remain compatible. No application schema migration.
+- Added sort/direction controls, First/Previous/Next/Last, page jump, URL/reload persistence, stale-bookmark correction, localized labels and retained drafts/results on failure. New roots return to newest-first page one; replies retain the current page. Onion/OOP/SOLID boundaries remain intact.
+- Passed 174 backend tests (22 domain/architecture, 78 application, 20 database, 54 HTTP), 12 frontend tests and frontend/Docker builds. Tests cover six sorts, equal-value boundaries, no duplicates/lost roots, reply exclusion, invalid/injection-like parameters and cancellation.
+- Edge desktop/360 px passed a real 55-root fixture, 25/25/last pages, page jump/reload URLs, all six sorts, replies on page two, new-root reset, draft/error retention, empty/stale/invalid bookmarks and EN/RU/UA without JS errors. Owned browser rows/container were removed; working/test data/schema/history baselines, volume identity and original checkpoint hashes matched.
+- Prepared persistent paging-v1 once in the separate comments_benchmark DB: 1,000,000 comments, 800,000 roots, 200,000 replies, 10,000 authors and 32,000 pages. Repeated preparation reused its version/count without data writes; full-row aggregate fingerprints and metadata matched across reuse/measurements. Functional test data stays separate.
+- Measured 18 sort/direction/page cases with three samples, then validated the portable temporary-API CLI in a second run on the same corpus. First-page medians 51.93–323.61 ms; deep name/email medians 1338.42–1821.36 ms. These local observations are documented with OFFSET/join cost, not presented as an SLA. No speculative index migration/cache was introduced.
+- Added opt-in benchmark migration/check and checkpoint coverage. A temporary checkpoint restored and fingerprint-verified all three DBs including the million-row corpus; only its six owned probe artifacts/restore DBs were removed. Existing recovery points remain unchanged. Documentation and benchmark procedures are EN/RU/UA. VS/Workbench GUI not checked. Next: 1.1.0.9 Captcha.
+
 ## 1.1.0.7 CommentThreads — 2026-10-30
 
 Branch: `CommentsService/v_1.1.0.7_CommentThreads`

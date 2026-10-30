@@ -77,6 +77,8 @@ public sealed class CommentThreadTests
         { Reads++; return Task.FromResult(Rows.SingleOrDefault(x => x.Id == id) is { } c ? CommentDto.From(c) : null); }
         public Task<IReadOnlyList<CommentDto>> GetLatestAsync(int limit, CancellationToken cancellationToken = default) =>
             Task.FromResult<IReadOnlyList<CommentDto>>(Rows.Where(x => x.ParentId == null).Select(CommentDto.From).Take(limit).ToArray());
+        public Task<CommentsService.Application.Comments.GetRootPage.RootCommentsPage> GetRootPageAsync(
+            CommentsService.Application.Comments.GetRootPage.RootPageQuery query, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<IReadOnlyList<CommentDto>> GetRepliesAsync(Guid parentId, int limit, ReplyCursor? after, CancellationToken cancellationToken = default)
         {
             Reads++; Limit = limit; Cursor = after; Token = cancellationToken;

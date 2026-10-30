@@ -302,6 +302,31 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
         Assert.Empty(page.Items); Assert.Null(page.NextAfter);
     }
 
+    [Theory]
+    [InlineData("page=0")] [InlineData("page=-1")] [InlineData("page=85899346")]
+    [InlineData("page=bad")] [InlineData("sort=Text")] [InlineData("sort=email%3BDROP%20TABLE")]
+    [InlineData("direction=descending")]
+    public async Task RootPagingRejectsInvalidQueries(string query)
+    {
+        using var response = await fixture.Client.GetAsync("/api/comments/page?" + query);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+    [Fact]
+    public async Task RootPagingDefaultsToLifoAndCountsOnlyRoots()
+    {
+        var first = await CreateThreadComment(text: "First root page");
+        var second = await CreateThreadComment(text: "Newest root page");
+        var reply = await CreateThreadComment(first.Id);
+        var page = (await fixture.Client.GetFromJsonAsync<CommentsService.Application.Comments.GetRootPage.RootCommentsPage>("/api/comments/page"))!;
+        Assert.Equal(1, page.Page); Assert.Equal(25, page.PageSize);
+        Assert.Equal(second.Id, page.Items[0].Id);
+        Assert.DoesNotContain(page.Items, x => x.Id == reply.Id); Assert.All(page.Items, x => Assert.Null(x.ParentId));
+        Assert.True(page.TotalCount >= 2); Assert.Equal((page.TotalCount + 24) / 25, page.TotalPages);
+        using var response = await fixture.Client.GetAsync("/api/comments/page?sort=email&direction=asc&page=85899345");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Empty((await response.Content.ReadFromJsonAsync<CommentsService.Application.Comments.GetRootPage.RootCommentsPage>())!.Items);
+    }
+
     private sealed class UnavailableQuery : IGetComment
     {
         public Task<CommentDto?> ExecuteAsync(Guid id, CancellationToken cancellationToken = default) =>

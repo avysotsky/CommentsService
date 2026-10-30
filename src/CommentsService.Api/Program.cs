@@ -24,6 +24,7 @@ builder.Services.AddInfrastructure();
 builder.Services.AddSingleton<CommentsService.Application.Comments.Markup.ICommentMarkup, CommentsService.Application.Comments.Markup.XhtmlCommentMarkup>();
 builder.Services.AddScoped<ICreateComment, CreateComment>();
 builder.Services.AddScoped<IGetComment, GetComment>();
+builder.Services.AddScoped<CommentsService.Application.Comments.GetRootPage.IGetRootPage, CommentsService.Application.Comments.GetRootPage.GetRootPage>();
 builder.Services.AddScoped<CommentsService.Application.Comments.GetReplies.IGetReplies, CommentsService.Application.Comments.GetReplies.GetReplies>();
 builder.Services.AddScoped<IGetLatestComments, GetLatestComments>();
 builder.Services.AddProblemDetails();

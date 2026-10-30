@@ -164,6 +164,8 @@ public sealed class CommentUseCaseTests
             QueryCalls++; Token = cancellationToken;
             return Task.FromResult(Comments.SingleOrDefault(x => x.Id == id) is { } found ? CommentDto.From(found) : null);
         }
+        public Task<CommentsService.Application.Comments.GetRootPage.RootCommentsPage> GetRootPageAsync(
+            CommentsService.Application.Comments.GetRootPage.RootPageQuery query, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<IReadOnlyList<CommentDto>> GetRepliesAsync(Guid parentId, int limit,
             CommentsService.Application.Comments.GetReplies.ReplyCursor? after, CancellationToken cancellationToken = default) =>
             Task.FromResult<IReadOnlyList<CommentDto>>(Comments.Where(c => c.ParentId == parentId).Select(CommentDto.From).Take(limit).ToArray());

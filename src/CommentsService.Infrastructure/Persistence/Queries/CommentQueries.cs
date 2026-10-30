@@ -1,6 +1,8 @@
 using CommentsService.Application.Abstractions.Persistence;
 using CommentsService.Application.Comments;
 using CommentsService.Domain.Entities;
+using CommentsService.Application.Comments.GetRootPage;
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace CommentsService.Infrastructure.Persistence.Queries;
@@ -20,6 +22,28 @@ internal sealed class CommentQueries(CommentsDbContext db) : ICommentQueries
         return await DatabaseOperation.ExecuteAsync(() => Project(source.OrderByDescending(comment => comment.CreatedAt)
             .ThenByDescending(comment => comment.Id).Take(limit)).ToListAsync(cancellationToken));
     }
+
+    public Task<RootCommentsPage> GetRootPageAsync(RootPageQuery query, CancellationToken cancellationToken = default) =>
+        DatabaseOperation.ExecuteAsync(async () =>
+        {
+            // Count and items share a snapshot; reuse the caller's transaction in rollback-based tests.
+            await using var transaction = db.Database.CurrentTransaction is null
+                ? await db.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken) : null;
+            var roots = db.Comments.AsNoTracking().Where(comment => comment.ParentId == null);
+            var count = await roots.LongCountAsync(cancellationToken);
+            var descending = query.Direction == SortDirection.Desc;
+            IOrderedQueryable<Comment> ordered = query.Sort switch
+            {
+                CommentSort.UserName => descending ? roots.OrderByDescending(c => c.Author.UserName) : roots.OrderBy(c => c.Author.UserName),
+                CommentSort.Email => descending ? roots.OrderByDescending(c => c.Author.Email) : roots.OrderBy(c => c.Author.Email),
+                _ => descending ? roots.OrderByDescending(c => c.CreatedAt) : roots.OrderBy(c => c.CreatedAt)
+            };
+            ordered = descending ? ordered.ThenByDescending(c => c.Id) : ordered.ThenBy(c => c.Id);
+            var items = await Project(ordered.Skip((query.Page - 1) * GetRootPage.PageSize).Take(GetRootPage.PageSize)).ToListAsync(cancellationToken);
+            if (transaction is not null) await transaction.CommitAsync(cancellationToken);
+            return new RootCommentsPage(items, query.Page, GetRootPage.PageSize, count,
+                (count + GetRootPage.PageSize - 1) / GetRootPage.PageSize);
+        });
 
     public Task<CommentDto?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         DatabaseOperation.ExecuteAsync(() => Project(db.Comments.AsNoTracking().Where(comment => comment.Id == id))

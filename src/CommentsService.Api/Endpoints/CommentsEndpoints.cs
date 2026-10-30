@@ -16,7 +16,7 @@ public static class CommentsEndpoints
         {
             if (!context.Request.HasJsonContentType()) return Results.Problem(
                 statusCode: StatusCodes.Status415UnsupportedMediaType, title: "Unsupported media type.");
-            var body = await context.Request.ReadFromJsonAsync<PreviewCommentBody>(token);
+            var body = await JsonRequest.ReadAsync<PreviewCommentBody>(context, token);
             if (body is null) return Results.Problem(statusCode: StatusCodes.Status400BadRequest, title: "Invalid request body.");
             var result = markup.Validate(body.Text);
             return result.IsValid ? Results.Ok(result.Value) : Results.ValidationProblem(result.Errors.ToDictionary());

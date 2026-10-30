@@ -2,6 +2,16 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.14 SecurityReview — 2026-10-30
+
+`CommentsService/v_1.1.0.14_SecurityReview`
+
+SecurityReview (1.1.0.14): the API adds CSP, nosniff, frame denial, no-referrer and restricted browser permissions; API responses use no-store and the Kestrel server banner is disabled. The SPA policy allows only its own scripts/styles/API plus data/blob images needed by CAPTCHA and the viewer. TXT retains its stricter sandbox policy. Creating and previewing comments share a UTF-8 JSON reader capped at 1 MiB, including chunked bodies. Use exact camelCase fields: duplicate keys, case aliases, unknown fields, malformed JSON and invalid UTF-8 return 400; unsupported media/charset returns 415; oversized JSON returns 413. The existing 6 MiB total multipart, 5 MiB image and 100 KiB TXT bounds remain.
+
+XHTML allowlisting/XXE prevention, safe links, literal client rendering, parameterized EF queries/allowlisted sorts, atomic single attachments, image normalization and strict TXT bytes were reviewed and tested. Onion/OOP/SOLID boundaries are preserved: HTTP parsing/headers stay in API. No dependency or schema changes; latest migration remains `20261030130243_TextAttachments`. Upgrade 1.1.0.13 → 1.1.0.14 by rebuilding/restarting the app with the same environment, Compose overrides, databases and volumes. Retain existing corpus/checkpoints.
+
+Verification: 268 backend tests (27/84/56/101), 26 frontend tests, frontend/Docker builds, native HTTP size/charset/header checks and Edge desktop/360px passed. Browser tests confirmed normal SPA/CAPTCHA/preview/viewer behavior without CSP violations, literal hostile DTO/TXT handling, CAPTCHA replay rejection, exact downloads, blocked injected inline script and refused framing. All 18 retained-million paging cases passed; rows/schema/history of three databases, volumes, private environment, checkpoint hashes and the existing preview state were preserved. Scope and deployment limits: [security review](docs/SECURITY.md). Next: 1.1.0.15 Acceptance.
+
 ## 1.1.0.13 ResponsiveUi — 2026-10-30
 
 `CommentsService/v_1.1.0.13_ResponsiveUi`

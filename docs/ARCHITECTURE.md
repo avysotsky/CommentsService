@@ -207,3 +207,12 @@ EN: Presentation changes only. CommentForm maps typed validation fields through 
 RU: Изменено только представление. CommentForm переводит типизированные ошибки полей через fieldError, не выводя текст провайдера. Domain/Application/Infrastructure и backend-сценарии прежние. CommentsTable сохраняет семантику таблицы с явными ролями в мобильной вертикальной вёрстке; направление изолируется только для пользовательского содержимого. main по-прежнему создаёт и внедряет HTTP-адаптеры. Миграций и новых зависимостей нет.
 
 UA: Змінено лише представлення. CommentForm перекладає типізовані помилки полів через fieldError, не виводячи текст провайдера. Domain/Application/Infrastructure та backend-сценарії попередні. CommentsTable зберігає семантику таблиці з явними ролями в мобільній вертикальній верстці; напрямок ізольовано лише для користувацького вмісту. main і далі створює та впроваджує HTTP-адаптери. Міграцій і нових залежностей немає.
+
+
+## SecurityReview 1.1.0.14 — EN / RU / UA
+
+EN: JsonRequest owns bounded UTF-8/canonical JSON binding for create/preview; SecurityHeaders owns response policy before exception handling/static files/endpoints. These HTTP concerns remain in API, with unchanged Application ports, domain invariants and Infrastructure adapters. Queries still use typed allowlisted sorting and parameterized EF expressions; file processing remains behind Application interfaces. No new provider/framework dependencies enter Domain/Application.
+
+RU: JsonRequest отвечает за ограниченный UTF-8/camelCase JSON создания/просмотра, SecurityHeaders — за политику ответа перед обработкой ошибок/статикой/маршрутами. HTTP-правила остаются в API; порты Application, доменные инварианты и адаптеры Infrastructure прежние. Запросы используют типизированные сортировки и параметризованные EF-выражения; файлы обрабатываются через интерфейсы Application. Новые зависимости провайдеров/фреймворков в Domain/Application не добавлены.
+
+UA: JsonRequest відповідає за обмежений UTF-8/camelCase JSON створення/перегляду, SecurityHeaders — за політику відповіді перед обробкою помилок/статикою/маршрутами. HTTP-правила залишаються в API; порти Application, доменні інваріанти й адаптери Infrastructure попередні. Запити використовують типізовані сортування та параметризовані EF-вирази; файли обробляються через інтерфейси Application. Нові залежності провайдерів/фреймворків у Domain/Application не додано.

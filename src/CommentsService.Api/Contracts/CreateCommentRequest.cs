@@ -1,6 +1,5 @@
 using CommentsService.Application.Comments.CreateComment;
 using CommentsService.Application.Images;
-using Microsoft.AspNetCore.Http.Features;
 namespace CommentsService.Api.Contracts;
 
 internal static class CreateCommentRequest
@@ -9,9 +8,7 @@ internal static class CreateCommentRequest
     {
         if (context.Request.HasJsonContentType())
         {
-            if (context.Features.Get<IHttpMaxRequestBodySizeFeature>() is { IsReadOnly: false } size) size.MaxRequestBodySize = 1024 * 1024;
-            if (context.Request.ContentLength > 1024 * 1024) throw new BadHttpRequestException("Request too large.", 413);
-            var body = await context.Request.ReadFromJsonAsync<CreateCommentBody>(token);
+            var body = await JsonRequest.ReadAsync<CreateCommentBody>(context, token);
             return body is null ? null : new(body.UserName, body.Email, body.HomePage, body.Text, body.ParentId, body.CaptchaId, body.CaptchaCode);
         }
         IFormCollection form;

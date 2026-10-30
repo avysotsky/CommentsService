@@ -1,3 +1,4 @@
+using CommentsService.Api.Security;
 using CommentsService.Application.Comments.CreateComment;
 using CommentsService.Application.Comments.GetComment;
 using CommentsService.Application.Comments.GetLatestComments;
@@ -37,7 +38,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
 });
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
-builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = 6 * 1024 * 1024);
+builder.WebHost.ConfigureKestrel(options => { options.AddServerHeader = false; options.Limits.MaxRequestBodySize = 6 * 1024 * 1024; });
 await using var app = builder.Build();
 
 if (databaseCommand)
@@ -51,6 +52,7 @@ if (databaseCommand)
     return 0;
 }
 
+app.UseSecurityHeaders();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 app.UseDefaultFiles();

@@ -14,7 +14,7 @@ using Xunit;
 
 namespace CommentsService.Api.Tests;
 
-public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFixture>
+public sealed partial class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 {
     [Fact]
     public async Task PreviewAndCreateShareValidationAndPreviewDoesNotWrite()

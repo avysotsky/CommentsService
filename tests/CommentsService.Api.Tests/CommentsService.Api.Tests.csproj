@@ -13,4 +13,5 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.14" />
     <ProjectReference Include="../../src/CommentsService.Api/CommentsService.Api.csproj" />
   </ItemGroup>
+  <ItemGroup><None Include="../CommentsService.Data.Tests/Fixtures/*" Link="Fixtures/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 </Project>

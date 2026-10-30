@@ -2,13 +2,15 @@
 
 ## English
 
+Domain ImageAttachment enforces one image/comment, bounded dimensions/bytes and defensive byte copies. Application owns ImageUpload/PreparedImage, IImageProcessor/IImageQueries and GetImage. CreateComment verifies CAPTCHA, processes the image before staging and saves the whole graph once. Infrastructure implements codec checks/orientation/resizing/PNG normalization, a two-slot decoder limit, EF bytea mapping and metadata-only comment projections. API owns multipart parsing/limits and inline image responses. No HTTP, EF or Skia dependency enters Domain/Application.
+
 Application defines segregated ICaptchaIssuer/ICaptchaVerifier and challenge DTOs. CreateComment verifies before parent queries/staged writes. Infrastructure implements the bounded atomic hash store, TimeProvider expiry and a PNG-renderer abstraction. API maps challenge bytes to a data URL and no-store headers. Frontend useCaptcha owns refresh, cancellation, expiry and answer state; no persistence or HTTP types enter Domain/Application. Test-only DI doubles isolate legacy use-case suites; production contains no bypass.
 
 GetRootPage validates page/sort/direction and exposes typed query contracts in Application. Infrastructure applies an allowlisted LINQ order, UUID tie-break, offset/25 limit, and repeatable-read count/items snapshot. The API only maps HTTP. Frontend RootPagination controls query state through CommentsClient; drafts and thread rendering remain separate. The compatibility latest-list use case is retained.
 
 Application owns ICommentMarkup/XhtmlCommentMarkup, shared by create and read-only preview. HTTP only maps transport. Frontend uses the CommentsClient port and an allowlisted React renderer, never raw HTML. No provider/HTTP dependency enters the core.
 
-Release **1.1.0.9 Captcha** implements comment use cases inside the Onion core.
+Release **1.1.0.10 ImageAttachments** implements comment use cases inside the Onion core.
 
 - Domain/Entities protects entity invariants and has no external project/package dependencies.
 - Application/Comments contains CreateComment, GetComment, GetReplies, GetRootPage and GetLatestComments, input validation,
@@ -40,13 +42,15 @@ Future EF add commands use --output-dir Persistence/Migrations. Root sorting/pag
 
 ## Русский
 
+Domain ImageAttachment защищает одну картинку на комментарий, пределы размеров/байтов и копирование массива. Application задаёт ImageUpload/PreparedImage, IImageProcessor/IImageQueries и GetImage. CreateComment проверяет CAPTCHA, обрабатывает картинку до подготовки записи и сохраняет граф один раз. Infrastructure реализует кодек/поворот/уменьшение/PNG, два параллельных декодера, EF bytea и проекции только метаданных. API отвечает за multipart/лимиты и inline-выдачу. Domain/Application не зависят от HTTP, EF или Skia.
+
 Application задаёт отдельные ICaptchaIssuer/ICaptchaVerifier и DTO проверки. CreateComment проверяет код до поиска родителя/подготовки записи. Infrastructure содержит ограниченное атомарное хранилище хешей, TimeProvider и абстракцию PNG-рендера. API выдаёт data URL и no-store. useCaptcha управляет обновлением, отменой, просрочкой и вводом; Domain/Application не получают зависимостей HTTP/хранения. Только тесты внедряют заглушки для остальных сценариев; в production обхода нет.
 
 GetRootPage проверяет page/sort/direction и задаёт типизированный запрос в Application. Infrastructure применяет разрешённую LINQ-сортировку, UUID для равных значений, offset/25 и repeatable-read снимок количества/строк. API связывает HTTP. RootPagination управляет запросом через CommentsClient; черновик и ветки отделены. Прежний сценарий последнего списка сохранён.
 
 Application содержит ICommentMarkup/XhtmlCommentMarkup для создания и предпросмотра без записи. HTTP связывает транспорт. Frontend использует контракт CommentsClient и разрешённые React-элементы, без вставки HTML. Зависимости провайдера/HTTP не входят в ядро.
 
-Выпуск **1.1.0.9 Captcha** реализует сценарии комментариев внутри ядра Onion.
+Выпуск **1.1.0.10 ImageAttachments** реализует сценарии комментариев внутри ядра Onion.
 
 - Domain/Entities защищает инварианты сущностей и не имеет внешних зависимостей от проектов/пакетов.
 - Application/Comments содержит CreateComment, GetComment, GetReplies, GetRootPage и GetLatestComments, валидацию ввода,
@@ -78,13 +82,15 @@ GetReplies проверяет курсор/лимит. Infrastructure выпол
 
 ## Українська
 
+Domain ImageAttachment захищає одне зображення на коментар, межі розмірів/байтів і копіювання масиву. Application задає ImageUpload/PreparedImage, IImageProcessor/IImageQueries та GetImage. CreateComment перевіряє CAPTCHA, обробляє зображення до підготовки запису та зберігає граф один раз. Infrastructure реалізує кодек/поворот/зменшення/PNG, два паралельні декодери, EF bytea та проєкції лише метаданих. API відповідає за multipart/ліміти й inline-видачу. Domain/Application не залежать від HTTP, EF чи Skia.
+
 Application задає окремі ICaptchaIssuer/ICaptchaVerifier і DTO перевірки. CreateComment перевіряє код до пошуку батьківського запису/підготовки запису. Infrastructure містить обмежене атомарне сховище хешів, TimeProvider та абстракцію PNG-рендеру. API видає data URL і no-store. useCaptcha керує оновленням, скасуванням, простроченням та введенням; Domain/Application не отримують залежностей HTTP/сховища. Лише тести впроваджують заглушки для решти сценаріїв; у production обходу немає.
 
 GetRootPage перевіряє page/sort/direction і задає типізований запит в Application. Infrastructure застосовує дозволене LINQ-сортування, UUID для однакових значень, offset/25 і repeatable-read знімок кількості/рядків. API пов’язує HTTP. RootPagination керує запитом через CommentsClient; чернетку й гілки відокремлено. Попередній сценарій останнього списку збережено.
 
 Application містить ICommentMarkup/XhtmlCommentMarkup для створення та перегляду без запису. HTTP пов’язує транспорт. Frontend використовує контракт CommentsClient і дозволені React-елементи, без вставлення HTML. Залежності провайдера/HTTP не входять до ядра.
 
-Випуск **1.1.0.9 Captcha** реалізує сценарії коментарів усередині ядра Onion.
+Випуск **1.1.0.10 ImageAttachments** реалізує сценарії коментарів усередині ядра Onion.
 
 - Domain/Entities захищає інваріанти сутностей і не має зовнішніх залежностей від проєктів/пакетів.
 - Application/Comments містить CreateComment, GetComment, GetReplies, GetRootPage і GetLatestComments, валідацію вводу,

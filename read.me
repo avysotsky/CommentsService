@@ -1,7 +1,17 @@
-CommentsService — 1.1.0.9 Captcha
-Branch: CommentsService/v_1.1.0.9_Captcha
+CommentsService — 1.1.0.10 ImageAttachments
+Branch: CommentsService/v_1.1.0.10_ImageAttachments
 
 ENGLISH
+A root or reply can include **one optional JPG/JPEG, GIF or PNG**. Choose the image beside the comment; Remove image clears it. The source limit is 5 MiB, 16 million decoded pixels and 10,000 pixels per side. Images larger than 320×240 are reduced proportionally without cropping; small images are not enlarged. JPEG EXIF orientation is applied; GIF uses its first frame. Every accepted file is re-encoded as a static PNG, removing original metadata and trailing content. Transparency is preserved. These bounds are application choices; the assignment requires supported formats and the 320×240 result.
+
+The server checks the extension against the detected codec, decodes the image and rejects corrupt/truncated data before staging any rows. Browser MIME and accept filters are not trusted. The normalized image and author/comment are committed by the same unit of work to PostgreSQL; no independent filesystem file or new Docker volume is needed. The image row contains bytes (at most 512 KiB), sanitized display filename, dimensions and a unique CommentId. Each comment has at most one image; deleting its owning comment cascades only that image. Parent-comment deletion remains restricted while replies exist. Existing comments receive no image automatically.
+
+JSON POST /api/comments remains available for text-only writes. With an image, use multipart/form-data containing the same text/CAPTCHA fields and one file named `image`; let the browser/curl generate the boundary. Unknown/duplicate fields or multiple files are rejected. JSON retains its 1 MiB limit; multipart requests allow 6 MiB overall, with a 5 MiB file limit. Invalid images return 400 with errors.image; oversized request bodies can return 413. The CAPTCHA is consumed before image processing, so retry with a new code. Errors preserve the draft and selected file; successful submission clears them.
+
+Comment DTOs include nullable `image: {id,fileName,width,height}`; list/page/reply projections never include the binary payload. `GET /api/images/{id}` serves only canonical PNG with image/png, inline generated filename and X-Content-Type-Options: nosniff, or 404. Thumbnails link to the image; the full viewer/effects remain 1.1.0.12. Text attachments remain 1.1.0.11. Processing uses [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) and matching Linux native assets; notices are in [docs/third-party](docs/third-party/README.md) and the runtime image.
+
+Upgrade 1.1.0.9 → 1.1.0.10: stop all writers, including any benchmark preview, restore-verify a current checkpoint (`--include-benchmark` when that DB exists), build the app, migrate development/tests and benchmark (`--benchmark`) explicitly, then restart with the same volumes. Migration `20261030122207_ImageAttachments` adds only the image table/index/checks/FK; original author/comment fields and IDs remain unchanged. Down refuses while image rows exist. Keep verified pre-upgrade copies for recovery; a restore loses changes made after its checkpoint. Backups automatically include image bytes because they reside in the same database.
+
 Every comment/reply requires a fresh verification challenge. `GET /api/captcha` returns `{id,imageDataUrl,expiresAt}` with a raster PNG and no-store headers; the answer is never returned as text or metadata. Enter the six Latin letters/digits from the image, case-insensitively. Codes expire after **5 minutes**. `GET /api/captcha?replace={oldId}` invalidates that challenge and issues a new one.
 
 POST /api/comments additionally requires `captchaId` (UUID) and `captchaCode`. A verification attempt consumes its ID, including a wrong answer; missing, expired, replaced or spent challenges return 400 with `errors.captchaCode` and never stage an author/comment. Other input is validated before verification; after successful verification, parent/storage errors still consume the challenge. Refresh after any uncertain or failed submission before retrying. Preview and read endpoints do not require CAPTCHA.
@@ -12,7 +22,7 @@ The SPA loads `GET /api/comments/page?page=1&sort=createdAt&direction=desc`. All
 
 Sort controls offer all six combinations; sorting returns to page 1. First/Previous/Next/Last and page jump navigate; the address preserves page/sort/direction across reload. Drafts remain while browsing. A new root returns to page 1 with newest-first order; a reply retains its current page and does not change the root count. Replies keep their own Show/Hide/More controls. Failed refresh retains previous results and offers Refresh.
 
-Equal sort values use UUID in the selected direction as a stable tie-breaker. Name/email use the database collation; dates use UTC. Count and rows share a repeatable-read snapshot within a request. Separate page requests are live: concurrent additions can shift offset boundaries. The compatibility route `GET /api/comments?limit=25` retains its bounded latest-root array response. No schema migration is added in 1.1.0.8.
+Equal sort values use UUID in the selected direction as a stable tie-breaker. Name/email use the database collation; dates use UTC. Count and rows share a repeatable-read snapshot within a request. Separate page requests are live: concurrent additions can shift offset boundaries. The compatibility route `GET /api/comments?limit=25` retains its bounded latest-root array response. Sorting itself adds no migration; image attachments add their migration in 1.1.0.10.
 
 [Persistent million-row corpus and measurements](docs/BENCHMARK.md).
 
@@ -27,10 +37,10 @@ Allowed tags: `a`, `i`, `strong`, `code`. Links require an absolute HTTP(S) `hre
 
 Select text and use Bold/Italic/Code/Link. Link inserts an editable HTTPS template. Preview calls `POST /api/comments/preview` with `{ "text": "<strong>Hello</strong>" }` and returns `{ "html": "<strong>Hello</strong>" }` without database access or writes. Saving uses the same Application validator. Editing hides stale previews; request failure preserves the draft. Preview and table render only allowlisted React elements, with safe links and escaped fallback text. Existing stored text is retained; the thread migration extends the schema.
 
-Upgrade from 1.1.0.8: no schema change; retain databases, checkpoints and volumes, build/restart the app.
+Upgrade from 1.1.0.9: stop writers, restore-verify current checkpoints, apply ImageAttachments to all used databases; retain volumes.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Architecture and SOLID boundaries: docs/ARCHITECTURE.md.
-Create/read text/XHTML comments, server validation and client metadata. API contract: docs/API.md. SPA form/table, client validation, async submission and EN/RU/UA are available. Next: 1.1.0.10 ImageAttachments.
+Create/read text/XHTML comments, server validation and client metadata. API contract: docs/API.md. SPA form/table, client validation, async submission and EN/RU/UA are available. Next: 1.1.0.11 TextAttachments.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py
@@ -54,6 +64,16 @@ Stop writes before checkpoint/migration; keep the same project/environment/volum
 Instructions: README.md. Schema/recovery: docs/database. History: change.log.
 
 РУССКИЙ
+К корню или ответу можно добавить **одно необязательное JPG/JPEG, GIF или PNG**. Выберите файл возле комментария; «Убрать изображение» очищает выбор. Предел исходника — 5 МиБ, 16 миллионов декодированных пикселей и 10 000 пикселей по стороне. Большие картинки уменьшаются пропорционально до 320×240 без обрезки; маленькие не увеличиваются. Учитывается поворот JPEG по EXIF; GIF использует первый кадр. Принятый файл заново кодируется в статический PNG, удаляя исходные метаданные и хвостовые данные. Прозрачность сохраняется. Эти пределы выбраны приложением; задание требует поддерживаемые форматы и результат 320×240.
+
+Сервер сверяет расширение с реальным кодеком, декодирует картинку и отклоняет повреждённые/обрезанные данные до подготовки строк БД. MIME браузера и accept не считаются доказательством формата. Нормализованная картинка сохраняется с автором/комментарием одним unit of work в PostgreSQL; отдельного файла или нового Docker-тома нет. Строка содержит байты (до 512 КиБ), безопасное отображаемое имя, размеры и уникальный CommentId. У комментария максимум одна картинка; удаление владельца каскадно удаляет только её. Удаление родителя с ответами остаётся запрещено. Старым комментариям картинки не добавляются.
+
+JSON POST /api/comments сохраняется для текста без файла. С картинкой используйте multipart/form-data: те же текстовые/CAPTCHA-поля и один файл `image`; boundary создаёт браузер/curl. Неизвестные/повторные поля и несколько файлов отклоняются. JSON ограничен 1 МиБ; multipart — 6 МиБ на запрос и 5 МиБ на файл. Неверная картинка даёт 400 с errors.image; слишком большой запрос может дать 413. CAPTCHA расходуется до обработки картинки, поэтому повтор требует нового кода. Ошибка сохраняет черновик и файл; успех очищает их.
+
+DTO комментария содержит nullable `image: {id,fileName,width,height}`; списки/страницы/ответы не содержат бинарные данные. `GET /api/images/{id}` выдаёт только нормализованный PNG с image/png, inline-именем на основе ID и X-Content-Type-Options: nosniff, либо 404. Миниатюра ведёт к картинке; полный просмотр/эффекты — 1.1.0.12. Текстовые вложения — 1.1.0.11. Обработка — [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) и соответствующие Linux native assets; уведомления в [docs/third-party](docs/third-party/README.md) и образе приложения.
+
+Обновление 1.1.0.9 → 1.1.0.10: остановите все записи, включая benchmark-просмотр, проверьте восстановление текущей копии (`--include-benchmark`, если БД существует), соберите приложение, явно мигрируйте рабочую/тестовую БД и benchmark (`--benchmark`), затем запустите прежние тома. Миграция `20261030122207_ImageAttachments` добавляет только таблицу/индекс/проверки/FK картинки; прежние поля/ID авторов/комментариев сохранены. Down запрещён при наличии картинок. Сохраните проверенные копии до обновления; восстановление теряет изменения после контрольной точки. Байты изображений входят в backup той же БД.
+
 Каждый комментарий/ответ требует новой проверки. `GET /api/captcha` возвращает `{id,imageDataUrl,expiresAt}` с растровой PNG-картинкой и заголовками no-store; ответ текстом или метаданными не выдаётся. Введите шесть латинских букв/цифр с картинки, регистр не важен. Код действует **5 минут**. `GET /api/captcha?replace={oldId}` отменяет прежнюю проверку и выдаёт новую.
 
 POST /api/comments дополнительно требует `captchaId` (UUID) и `captchaCode`. Вызов проверки расходует ID, в том числе при неверном ответе; отсутствие, просрочка, замена или повтор дают 400 с `errors.captchaCode`, без подготовки автора/комментария. Остальные поля проверяются до CAPTCHA; после успешной проверки ошибка родителя/хранилища тоже расходует код. После неудачной или неопределённой отправки обновите картинку перед повтором. Предпросмотр и чтение CAPTCHA не требуют.
@@ -64,7 +84,7 @@ SPA загружает `GET /api/comments/page?page=1&sort=createdAt&direction=d
 
 Доступны все шесть сочетаний сортировки; изменение возвращает на первую страницу. Первая/Предыдущая/Следующая/Последняя и переход по номеру управляют страницами; адрес сохраняет page/sort/direction при перезагрузке. Черновик не пропадает. Новый корень возвращает на первую страницу новых записей; ответ сохраняет текущую страницу и не меняет число корней. У ответов прежние кнопки раскрытия/скрытия/дозагрузки. Ошибка обновления сохраняет прежние результаты; повтор — «Обновить».
 
-Равные значения упорядочены по UUID в том же направлении. Имя/email используют сопоставление БД, дата — UTC. Количество и строки читаются в одном repeatable-read снимке запроса. Разные запросы страниц отражают текущие данные: параллельное добавление может сдвигать offset-границы. Совместимый `GET /api/comments?limit=25` сохраняет массив последних корней. В 1.1.0.8 новой миграции схемы нет.
+Равные значения упорядочены по UUID в том же направлении. Имя/email используют сопоставление БД, дата — UTC. Количество и строки читаются в одном repeatable-read снимке запроса. Разные запросы страниц отражают текущие данные: параллельное добавление может сдвигать offset-границы. Совместимый `GET /api/comments?limit=25` сохраняет массив последних корней. Сортировка не меняла схему; в 1.1.0.10 добавлена миграция изображений.
 
 [Постоянный миллионный набор и измерения](docs/BENCHMARK.md).
 
@@ -79,10 +99,10 @@ API: POST /api/comments принимает необязательный parentId
 
 Выделите текст и нажмите «Жирный», «Курсив», «Код» или «Ссылка». Ссылка вставляет редактируемый HTTPS-шаблон. «Предпросмотр» отправляет `POST /api/comments/preview` с `{ "text": "<strong>Hello</strong>" }` и получает `{ "html": "<strong>Hello</strong>" }` без обращения к БД и записи. Сохранение использует тот же валидатор Application. Правка скрывает устаревший просмотр; ошибка сохраняет черновик. Просмотр и таблица создают только разрешённые React-элементы, безопасные ссылки и экранированный текст при отказе. Существующие записи сохранены; схема расширяется миграцией ответов.
 
-Обновление с 1.1.0.8: схема прежняя; сохраните БД, копии и тома, соберите/перезапустите приложение.
+Обновление с 1.1.0.9: остановите запись, проверьте восстановление текущих копий, примените ImageAttachments ко всем используемым БД; сохраните тома.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Архитектура и границы SOLID: docs/ARCHITECTURE.md.
-Создание/чтение текстовых комментариев, серверная валидация и метаданные клиента. Контракт: docs/API.md. SPA-форма/таблица, клиентская валидация, AJAX и EN/RU/UA реализованы. Далее 1.1.0.10 ImageAttachments.
+Создание/чтение текстовых комментариев, серверная валидация и метаданные клиента. Контракт: docs/API.md. SPA-форма/таблица, клиентская валидация, AJAX и EN/RU/UA реализованы. Далее 1.1.0.11 TextAttachments.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py
@@ -106,6 +126,16 @@ npm run build --prefix src/comments-web
 Инструкция: README.RU.md. Схема/восстановление: docs/database. История: change.log.ru.
 
 УКРАЇНСЬКОЮ
+До кореня чи відповіді можна додати **одне необов’язкове JPG/JPEG, GIF або PNG**. Виберіть файл біля коментаря; «Прибрати зображення» очищає вибір. Межа джерела — 5 МіБ, 16 мільйонів декодованих пікселів та 10 000 пікселів на сторону. Великі зображення зменшуються пропорційно до 320×240 без обрізання; малі не збільшуються. Ураховано поворот JPEG за EXIF; GIF використовує перший кадр. Прийнятий файл заново кодується у статичний PNG, видаляючи початкові метадані та хвостові дані. Прозорість зберігається. Ці межі обрано застосунком; завдання потребує підтримувані формати й результат 320×240.
+
+Сервер звіряє розширення з реальним кодеком, декодує зображення та відхиляє пошкоджені/обрізані дані до підготовки рядків БД. MIME браузера й accept не є доказом формату. Нормалізоване зображення зберігається з автором/коментарем одним unit of work у PostgreSQL; окремого файлу чи нового Docker-тому немає. Рядок містить байти (до 512 КіБ), безпечне відображуване ім’я, розміри й унікальний CommentId. У коментаря максимум одне зображення; видалення власника каскадно видаляє лише його. Видалення батьківського запису з відповідями лишається забороненим. Старим коментарям зображення не додаються.
+
+JSON POST /api/comments зберігається для тексту без файлу. Із зображенням використовуйте multipart/form-data: ті самі текстові/CAPTCHA-поля й один файл `image`; boundary створює браузер/curl. Невідомі/повторні поля та кілька файлів відхиляються. JSON обмежено 1 МіБ; multipart — 6 МіБ на запит і 5 МіБ на файл. Хибне зображення дає 400 з errors.image; завеликий запит може дати 413. CAPTCHA витрачається до обробки зображення, тому повтор потребує нового коду. Помилка зберігає чернетку й файл; успіх очищає їх.
+
+DTO коментаря містить nullable `image: {id,fileName,width,height}`; списки/сторінки/відповіді не містять бінарних даних. `GET /api/images/{id}` видає лише нормалізований PNG з image/png, inline-іменем на основі ID та X-Content-Type-Options: nosniff, або 404. Мініатюра веде до зображення; повний перегляд/ефекти — 1.1.0.12. Текстові вкладення — 1.1.0.11. Обробка — [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) і відповідні Linux native assets; повідомлення в [docs/third-party](docs/third-party/README.md) та образі застосунку.
+
+Оновлення 1.1.0.9 → 1.1.0.10: зупиніть усі записи, включно з benchmark-переглядом, перевірте відновлення поточної копії (`--include-benchmark`, якщо БД існує), зберіть застосунок, явно мігруйте робочу/тестову БД та benchmark (`--benchmark`), тоді запустіть попередні томи. Міграція `20261030122207_ImageAttachments` додає лише таблицю/індекс/перевірки/FK зображення; попередні поля/ID авторів/коментарів збережено. Down заборонено за наявності зображень. Збережіть перевірені копії до оновлення; відновлення втрачає зміни після контрольної точки. Байти зображень входять до backup тієї самої БД.
+
 Кожен коментар/відповідь потребує нової перевірки. `GET /api/captcha` повертає `{id,imageDataUrl,expiresAt}` із растровим PNG-зображенням та заголовками no-store; відповідь текстом чи метаданими не надається. Введіть шість латинських літер/цифр із зображення, регістр не важливий. Код діє **5 хвилин**. `GET /api/captcha?replace={oldId}` скасовує попередню перевірку та видає нову.
 
 POST /api/comments додатково потребує `captchaId` (UUID) і `captchaCode`. Виклик перевірки витрачає ID, зокрема за хибної відповіді; відсутність, прострочення, заміна чи повтор дають 400 з `errors.captchaCode`, без підготовки автора/коментаря. Решту полів перевірено до CAPTCHA; після успішної перевірки помилка батьківського запису/сховища також витрачає код. Після невдалої чи невизначеної спроби оновіть зображення перед повтором. Перегляд і читання CAPTCHA не потребують.
@@ -116,7 +146,7 @@ SPA завантажує `GET /api/comments/page?page=1&sort=createdAt&direction
 
 Доступні всі шість поєднань сортування; зміна повертає на першу сторінку. Перша/Попередня/Наступна/Остання та перехід за номером керують сторінками; адреса зберігає page/sort/direction під час перезавантаження. Чернетка не зникає. Новий корінь повертає на першу сторінку нових записів; відповідь зберігає поточну сторінку й не змінює кількість коренів. У відповідей попередні кнопки розгортання/приховування/дозавантаження. Помилка оновлення зберігає попередні результати; повтор — «Оновити».
 
-Однакові значення впорядковано за UUID у тому самому напрямку. Ім’я/email використовують зіставлення БД, дата — UTC. Кількість і рядки читаються в одному repeatable-read знімку запиту. Різні запити сторінок відображають поточні дані: паралельне додавання може зміщувати offset-межі. Сумісний `GET /api/comments?limit=25` зберігає масив останніх коренів. У 1.1.0.8 нової міграції схеми немає.
+Однакові значення впорядковано за UUID у тому самому напрямку. Ім’я/email використовують зіставлення БД, дата — UTC. Кількість і рядки читаються в одному repeatable-read знімку запиту. Різні запити сторінок відображають поточні дані: паралельне додавання може зміщувати offset-межі. Сумісний `GET /api/comments?limit=25` зберігає масив останніх коренів. Сортування не змінювало схему; у 1.1.0.10 додано міграцію зображень.
 
 [Постійний мільйонний набір та вимірювання](docs/BENCHMARK.md).
 
@@ -131,10 +161,10 @@ API: POST /api/comments приймає необов’язковий parentId (U
 
 Виділіть текст і натисніть «Жирний», «Курсив», «Код» або «Посилання». Посилання вставляє редагований HTTPS-шаблон. «Перегляд» надсилає `POST /api/comments/preview` з `{ "text": "<strong>Hello</strong>" }` та отримує `{ "html": "<strong>Hello</strong>" }` без звернення до БД чи запису. Збереження використовує той самий валідатор Application. Редагування приховує застарілий перегляд; помилка зберігає чернетку. Перегляд і таблиця створюють лише дозволені React-елементи, безпечні посилання та екранований текст у разі відмови. Наявні записи збережено; схема розширюється міграцією відповідей.
 
-Оновлення з 1.1.0.8: схема попередня; збережіть БД, копії й томи, зберіть/перезапустіть застосунок.
+Оновлення з 1.1.0.9: зупиніть запис, перевірте відновлення поточних копій, застосуйте ImageAttachments до всіх використаних БД; збережіть томи.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Архітектура та межі SOLID: docs/ARCHITECTURE.md.
-Створення/читання текстових коментарів, серверна валідація та метадані клієнта. Контракт: docs/API.md. SPA-форму/таблицю, клієнтську валідацію, AJAX та EN/RU/UA реалізовано. Далі 1.1.0.10 ImageAttachments.
+Створення/читання текстових коментарів, серверна валідація та метадані клієнта. Контракт: docs/API.md. SPA-форму/таблицю, клієнтську валідацію, AJAX та EN/RU/UA реалізовано. Далі 1.1.0.11 TextAttachments.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py

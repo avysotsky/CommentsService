@@ -35,7 +35,7 @@ public sealed class CommentUseCaseTests
             "homePage" => Input with { HomePage = value },
             _ => Input with { Text = value }
         };
-        var result = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha()).ExecuteAsync(input, Client);
+        var result = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor()).ExecuteAsync(input, Client);
         Assert.False(result.IsValid);
         Assert.Contains(field, result.Errors.Keys);
         Assert.Null(result.Value);
@@ -52,7 +52,7 @@ public sealed class CommentUseCaseTests
     {
         var fake = new Storage();
         using var cancellation = new CancellationTokenSource();
-        var result = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha()).ExecuteAsync(Input with
+        var result = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor()).ExecuteAsync(Input with
             { UserName = " Reader123 ", Email = " reader@example.test ", HomePage = "   ", Text = text }, Client, cancellation.Token);
         Assert.True(result.IsValid);
         var saved = Assert.Single(fake.Comments);
@@ -78,7 +78,7 @@ public sealed class CommentUseCaseTests
             Input with { Text = new string('a', 65537) }, Input with { Text = new string((char)0xD800, 1) } })
         {
             var fake = new Storage();
-            Assert.False((await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha()).ExecuteAsync(input, Client)).IsValid);
+            Assert.False((await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor()).ExecuteAsync(input, Client)).IsValid);
             Assert.Equal(0, fake.SaveCalls);
         }
     }
@@ -87,7 +87,7 @@ public sealed class CommentUseCaseTests
     public async Task MaximumTextLengthAndHttpsHomepageAreAccepted()
     {
         var fake = new Storage();
-        var result = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha()).ExecuteAsync(Input with
+        var result = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor()).ExecuteAsync(Input with
             { Text = new string('a', 65536), HomePage = "https://example.test/path?q=1" }, Client);
         Assert.True(result.IsValid);
         Assert.Equal(65536, result.Value!.Text.Length);
@@ -98,7 +98,7 @@ public sealed class CommentUseCaseTests
     public async Task CancelledCreateDoesNotStageData()
     {
         var fake = new Storage();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha())
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor())
             .ExecuteAsync(Input, Client, new CancellationToken(true)));
         Assert.Empty(fake.Comments);
     }
@@ -107,7 +107,7 @@ public sealed class CommentUseCaseTests
     public async Task FailedSaveCannotReturnSuccess()
     {
         var fake = new Storage { FailSave = true };
-        await Assert.ThrowsAsync<StorageUnavailableException>(() => new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha()).ExecuteAsync(Input, Client));
+        await Assert.ThrowsAsync<StorageUnavailableException>(() => new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor()).ExecuteAsync(Input, Client));
         Assert.Equal(1, fake.SaveCalls);
     }
 
@@ -128,7 +128,7 @@ public sealed class CommentUseCaseTests
     public async Task ReadUseCasesDelegateIdentifiersLimitsAndCancellation()
     {
         var fake = new Storage();
-        var created = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha()).ExecuteAsync(Input, Client);
+        var created = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor()).ExecuteAsync(Input, Client);
         var id = created.Value!.Id;
         using var cancellation = new CancellationTokenSource();
         Assert.Equal(created.Value, await new GetComment(fake).ExecuteAsync(id, cancellation.Token));
@@ -145,12 +145,30 @@ public sealed class CommentUseCaseTests
     public async Task RejectedCaptchaDoesNotStageOrReadStorage()
     {
         var fake = new Storage();
-        var result = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new RejectCaptcha()).ExecuteAsync(Input, Client);
+        var result = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new RejectCaptcha(), new TestImageProcessor()).ExecuteAsync(Input with { Image = new("test.png", 1, new MemoryStream([1])) }, Client);
         Assert.False(result.IsValid); Assert.Contains("captchaCode", result.Errors.Keys);
         Assert.Empty(fake.Comments); Assert.Equal(0, fake.SaveCalls); Assert.Equal(0, fake.QueryCalls);
     }
     private sealed class RejectCaptcha : CommentsService.Application.Captcha.ICaptchaVerifier
     { public bool Verify(Guid? id, string? code) => false; }
+
+    [Theory]
+    [InlineData(true)] [InlineData(false)]
+    public async Task ImageValidationPrecedesStagingAndValidImageSharesCommentGraph(bool valid)
+    {
+        var fake = new Storage(); var processor = new ImageProcessor(valid);
+        var result = await new CreateComment(fake, fake, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha(), processor)
+            .ExecuteAsync(Input with { Image = new("test.png",1,new MemoryStream([1])) }, Client);
+        Assert.Equal(valid,result.IsValid);
+        if(valid) { Assert.NotNull(Assert.Single(fake.Comments).Image); Assert.NotNull(result.Value!.Image); Assert.Equal(1,fake.SaveCalls); }
+        else { Assert.Contains("image",result.Errors.Keys); Assert.Empty(fake.Comments); Assert.Equal(0,fake.SaveCalls); }
+    }
+    private sealed class ImageProcessor(bool valid) : CommentsService.Application.Images.IImageProcessor
+    {
+        public Task<Validated<CommentsService.Application.Images.PreparedImage>> ProcessAsync(CommentsService.Application.Images.ImageUpload upload,CancellationToken cancellationToken=default) =>
+            Task.FromResult(valid ? Validated<CommentsService.Application.Images.PreparedImage>.Success(new("test.png",[1],1,1)) :
+                Validated<CommentsService.Application.Images.PreparedImage>.Invalid(new() { ["image"] = ["Rejected"] }));
+    }
 
     private sealed class Storage : ICommentRepository, IUnitOfWork, ICommentQueries
     {

@@ -20,6 +20,23 @@ public sealed class EntityTests
         }
     }
 
+    [Fact]
+    public void ImageOwnsItsBytesAndOnlyOneCanAttachToAComment()
+    {
+        var comment=new Comment(new Author("Reader","r@example.test"),"text",IPAddress.Loopback,"");
+        byte[] data=[1,2,3]; var image=new ImageAttachment(comment,"picture.png",data,320,240);
+        data[0]=9; var exposed=image.Data; exposed[0]=8;
+        Assert.Equal(1,image.Data[0]); Assert.Same(image,comment.Image); Assert.Equal(comment.Id,image.CommentId);
+        Assert.Throws<InvalidOperationException>(()=>new ImageAttachment(comment,"again.png",[1],1,1));
+    }
+    [Theory]
+    [InlineData(0,1)] [InlineData(321,1)] [InlineData(1,241)]
+    public void ImageBoundsAreDomainInvariants(int width,int height)
+    {
+        var comment=new Comment(new Author("Reader","r@example.test"),"text",IPAddress.Loopback,"");
+        Assert.Throws<ArgumentException>(()=>new ImageAttachment(comment,"picture.png",[1],width,height)); Assert.Null(comment.Image);
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]

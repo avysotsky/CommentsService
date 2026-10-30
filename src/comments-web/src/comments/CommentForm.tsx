@@ -11,6 +11,9 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
   client: CommentsClient; labels: Messages; onCreated: (comment: Comment) => void;
   replyTo: Comment | null; onCancelReply: () => void;
 }) {
+  const [image, setImage] = useState<File | null>(null);
+  const [imageError, setImageError] = useState(false);
+  const imageInput = useRef<HTMLInputElement>(null);
   const captcha = useCaptcha(client);
   const [input, setInput] = useState(emptyInput);
   const [errors, setErrors] = useState<Partial<Record<Field, ValidationCode>>>({});
@@ -64,18 +67,22 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
     const invalid = validate(input);
     setErrors(invalid); setServerErrors({}); setNotice(null);
     if (Object.keys(invalid).length) { setNotice('validationError'); focusField(Object.keys(invalid)[0]); return; }
+    if (image && (image.size === 0 || image.size > 5 * 1024 * 1024 || !/\.(jpe?g|gif|png)$/i.test(image.name))) {
+      setImageError(true); imageInput.current?.focus(); return;
+    }
     if (!captcha.challenge || captcha.expired || !/^[A-Za-z2-9]{6}$/.test(captcha.code.trim())) {
       captcha.setInvalid(true); document.getElementById('captchaCode')?.focus(); return;
     }
     captcha.setInvalid(false);
     locked.current = true; setSending(true);
     try {
-      const comment = await client.create({ ...input, parentId: replyTo?.id ?? null, captchaId: captcha.challenge.id, captchaCode: captcha.code.trim() });
-      changedText(); setInput(previous => ({ ...previous, text: '' }));
+      const comment = await client.create({ ...input, parentId: replyTo?.id ?? null, captchaId: captcha.challenge.id, captchaCode: captcha.code.trim(), image });
+      changedText(); setInput(previous => ({ ...previous, text: '' })); setImage(null); setImageError(false);
+      if (imageInput.current) imageInput.current.value = '';
       setNotice('success'); onCreated(comment);
     } catch (error) {
       const fields = error instanceof CommentsRequestError ? error.fields : {};
-      setServerErrors(fields); if (fields.captchaCode) captcha.setInvalid(true);
+      setServerErrors(fields); if (fields.image) setImageError(true); if (fields.captchaCode) captcha.setInvalid(true);
       setNotice(Object.keys(fields).length ? 'validationError' : 'sendError');
       // Disabled fields can be focused after the pending state is released.
       requestAnimationFrame(() => focusField(Object.keys(fields)[0]));
@@ -125,6 +132,16 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
       {preview && preview.source === input.text && <section className="comment-preview" aria-label={t.preview}>
         <h3>{t.preview}</h3><div className="comment-text" dir="auto"><CommentText text={preview.html} validated /></div>
       </section>}
+      <div className="field image-field">
+        <label htmlFor="image">{t.imageLabel}</label>
+        <input ref={imageInput} id="image" name="image" type="file" accept=".jpg,.jpeg,.gif,.png,image/jpeg,image/gif,image/png" disabled={sending}
+          aria-invalid={imageError} aria-describedby="image-hint image-error" onChange={event => {
+            setImage(event.target.files?.[0] ?? null); setImageError(false); setNotice(null);
+          }} />
+        <small id="image-hint">{t.imageHint}</small>
+        {image && <button type="button" className="secondary" disabled={sending} onClick={() => { setImage(null); setImageError(false); if (imageInput.current) imageInput.current.value = ''; }}>{t.imageRemove}</button>}
+        <small id="image-error" className="error" role="alert">{imageError ? t.imageError : ''}</small>
+      </div>
       <div className="field captcha-field">
         <label htmlFor="captchaCode">{t.captchaLabel} <span aria-hidden="true">*</span></label>
         <div className="captcha-image-row">

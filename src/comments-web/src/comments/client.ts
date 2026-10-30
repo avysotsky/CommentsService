@@ -35,9 +35,16 @@ export class HttpCommentsClient implements CommentsClient {
   }
 
   async create(input: CommentInput): Promise<Comment> {
+    const { image, ...values } = input;
+    const normalized = { ...values, userName: values.userName.trim(), email: values.email.trim(), homePage: values.homePage.trim() || null };
+    if (image) {
+      const body = new FormData();
+      for (const [key, value] of Object.entries(normalized)) if (value !== null && value !== undefined) body.append(key, String(value));
+      body.append('image', image, image.name);
+      return this.read(await this.request('/api/comments', { method: 'POST', body }));
+    }
     return this.read(await this.request('/api/comments', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...input, userName: input.userName.trim(), email: input.email.trim(), homePage: input.homePage.trim() || null }),
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(normalized),
     }));
   }
 
@@ -52,7 +59,7 @@ export class HttpCommentsClient implements CommentsClient {
     const fields: FieldErrors = {};
     if (response.status === 400) {
       const problem = await response.json().catch(() => null);
-      for (const key of ['userName', 'email', 'homePage', 'text', 'parentId', 'captchaCode'] as const) {
+      for (const key of ['userName', 'email', 'homePage', 'text', 'parentId', 'captchaCode', 'image'] as const) {
         const messages: unknown = problem?.errors?.[key];
         if (Array.isArray(messages) && messages.every(message => typeof message === 'string')) fields[key] = messages;
       }

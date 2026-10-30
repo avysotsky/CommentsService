@@ -2,6 +2,18 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.10 ImageAttachments — 2026-10-30
+
+Branch: `CommentsService/v_1.1.0.10_ImageAttachments`
+
+- Added one optional image to root/reply creation through multipart/form-data while preserving JSON text-only writes and required CAPTCHA. Domain image invariants/defensive bytes, Application processing/read ports and transactional graph creation, Infrastructure codec/EF adapters and thin HTTP boundaries preserve Onion/OOP/SOLID.
+- Accepts JPG/JPEG, GIF and PNG after matching extension/actual codec and complete decode. Applies EXIF orientation, proportionally fits within 320×240 without upscaling/cropping, retains transparency and re-encodes PNG without original metadata/trailing bytes. Animated GIF uses its first frame. Bounds: source 5 MiB,16M pixels,10000/side; two decoder slots; normalized payload max512 KiB. SkiaSharp4.154.0/Linux assets and upstream notices are included.
+- Stores image bytes/metadata in the same PostgreSQL transaction/volumes as the comment; no orphan filesystem files or extra volume. GET /api/images/{id} serves canonical inline PNG with nosniff. Public comment projections include nullable image metadata, never payload bytes. Added file picker/remove, localized errors, draft/file retention, reset on success and thumbnails; full viewer remains planned.
+- Migration 20261030122208_ImageAttachments adds only its table, unique CommentId/index, bounds and cascading owner FK; prior comment/author fields and root/reply relationships remain intact. All three persistent DBs were upgraded after current pre-upgrade dumps were restore/fingerprint verified, including paging-v1. An owned restore passed upgrade/empty-image downgrade round trip; downgrade with images is blocked atomically. Previous recovery points were replaced only after successful verification.
+- Passed 208 backend tests (26 domain/architecture,81 application,39 infrastructure/database,62 HTTP),14 frontend tests and frontend/Docker builds. Application was rerun after adding two image-graph tests; final81 pass. Tests cover formats, dimensions, EXIF, alpha/first-frame GIF, corrupt/truncated/spoofed/oversized input, domain ownership/byte isolation, atomic storage/read/cascade, multipart field rules and safe delivery.
+- Edge desktop/360px passed real CAPTCHA + multipart JPG/GIF/PNG, images on roots/replies, metadata/thumbnail/read/reload and identical image bytes after restarting the owned app. Rejected invalid contents/extension and oversized body; kept draft/file on errors, removed selection correctly, EN/RU/UA, no JS errors. Only owned fixtures/container were removed.
+- The retained million-corpus rows/metadata matched full aggregate fingerprints; only the new migration history entry changed. All18 paging benchmark cases passed on the same corpus after upgrade, without reseeding. Verified pre-upgrade checkpoints/volumes retained; paused independent preview restarted with its original image. Documentation/schema/Workbench projection updated EN/RU/UA; VS/Workbench GUI not checked. Next:1.1.0.11 TextAttachments.
+
 ## 1.1.0.9 Captcha — 2026-10-30
 
 Branch: `CommentsService/v_1.1.0.9_Captcha`

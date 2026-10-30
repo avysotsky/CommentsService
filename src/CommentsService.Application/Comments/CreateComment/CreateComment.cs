@@ -4,7 +4,7 @@ using CommentsService.Domain.Entities;
 
 namespace CommentsService.Application.Comments.CreateComment;
 
-public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork, CommentsService.Application.Comments.Markup.ICommentMarkup markup, CommentsService.Application.Captcha.ICaptchaVerifier captcha) : ICreateComment
+public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork, CommentsService.Application.Comments.Markup.ICommentMarkup markup, CommentsService.Application.Captcha.ICaptchaVerifier captcha, CommentsService.Application.Images.IImageProcessor images) : ICreateComment
 {
     public async Task<Validated<CommentDto>> ExecuteAsync(CreateCommentInput input, ClientMetadata client,
         CancellationToken cancellationToken = default)
@@ -24,8 +24,16 @@ public sealed class CreateComment(ICommentRepository repository, IUnitOfWork uni
             parent = await repository.FindByIdAsync(parentId, cancellationToken);
             if (parent is null) return Validated<CommentDto>.Invalid(new() { ["parentId"] = ["Reply target was not found. Choose an existing comment."] });
         }
+        CommentsService.Application.Images.PreparedImage? image = null;
+        if (normalized.Image is not null)
+        {
+            var processed = await images.ProcessAsync(normalized.Image, cancellationToken);
+            if (!processed.IsValid) return Validated<CommentDto>.Invalid(processed.Errors.ToDictionary());
+            image = processed.Value;
+        }
         var author = new Author(normalized.UserName!, normalized.Email!, normalized.HomePage);
         var comment = new Comment(author, normalized.Text!, client.IpAddress, client.UserAgent, parent);
+        if (image is not null) _ = new ImageAttachment(comment, image.FileName, image.Data, image.Width, image.Height);
         repository.Add(comment);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Validated<CommentDto>.Success(CommentDto.From(comment));

@@ -29,6 +29,12 @@ public sealed class Comment
         author.AttachComment(this);
     }
 
+    internal void AttachImage(ImageAttachment image)
+    {
+        if (Image is not null) throw new InvalidOperationException("A comment already has an image.");
+        Image = image;
+    }
+    public ImageAttachment? Image { get; private set; }
     public Guid Id { get; private set; } = Guid.NewGuid();
     public Guid? ParentId { get; private set; }
     public Guid RootId { get; private set; }

@@ -24,6 +24,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0
 RUN apt-get update && apt-get install -y --no-install-recommends libgssapi-krb5-2 && apt-get clean
 WORKDIR /app
 COPY --from=backend /out/ ./
+COPY docs/third-party/ /app/third-party/
 USER $APP_UID
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080

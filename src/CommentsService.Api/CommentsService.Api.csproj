@@ -4,9 +4,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Version>1.1.0.9</Version>
-    <AssemblyVersion>1.1.0.9</AssemblyVersion>
-    <FileVersion>1.1.0.9</FileVersion>
+    <Version>1.1.0.10</Version>
+    <AssemblyVersion>1.1.0.10</AssemblyVersion>
+    <FileVersion>1.1.0.10</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../CommentsService.Application/CommentsService.Application.csproj" />

@@ -1,4 +1,4 @@
--- CommentsService 1.1.0.7: MySQL Workbench visualization only.
+-- CommentsService 1.1.0.10: MySQL Workbench visualization only.
 -- PostgreSQL migrations/postgresql.sql are authoritative for deployment.
 -- uuid -> CHAR(36), inet -> VARCHAR(45), timestamptz -> DATETIME(6) in UTC.
 -- PostgreSQL check constraints are documented in SCHEMA.md.
@@ -35,4 +35,17 @@ CREATE TABLE `__EFMigrationsHistory` (
   `MigrationId` VARCHAR(150) NOT NULL,
   `ProductVersion` VARCHAR(32) NOT NULL,
   PRIMARY KEY (`MigrationId`)
+);
+
+CREATE TABLE `ImageAttachments` (
+  `Id` CHAR(36) NOT NULL,
+  `CommentId` CHAR(36) NOT NULL,
+  `FileName` VARCHAR(128) NOT NULL,
+  `Width` INT NOT NULL,
+  `Height` INT NOT NULL,
+  `Data` MEDIUMBLOB NOT NULL COMMENT 'PostgreSQL bytea; 1..524288 bytes',
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `IX_ImageAttachments_CommentId` (`CommentId`),
+  CONSTRAINT `FK_ImageAttachments_Comments` FOREIGN KEY (`CommentId`)
+    REFERENCES `Comments` (`Id`) ON DELETE CASCADE
 );

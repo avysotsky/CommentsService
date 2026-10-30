@@ -1,0 +1,7 @@
+# Third-party notices / Уведомления / Повідомлення
+
+EN: Image processing uses SkiaSharp 4.154.0 and SkiaSharp.NativeAssets.Linux.NoDependencies 4.154.0. The upstream license/notices are preserved verbatim in this directory and shipped in the runtime image under /app/third-party. Sources: [SkiaSharp](https://www.nuget.org/packages/SkiaSharp/4.154.0), [Linux assets](https://www.nuget.org/packages/SkiaSharp.NativeAssets.Linux.NoDependencies/4.154.0).
+
+RU: Обработка изображений использует SkiaSharp 4.154.0 и SkiaSharp.NativeAssets.Linux.NoDependencies 4.154.0. Исходные лицензия/уведомления сохранены дословно в этом каталоге и включены в образ приложения в /app/third-party. Источники — ссылки выше.
+
+UA: Обробка зображень використовує SkiaSharp 4.154.0 та SkiaSharp.NativeAssets.Linux.NoDependencies 4.154.0. Початкові ліцензію/повідомлення збережено дослівно в цьому каталозі та включено до образу застосунку в /app/third-party. Джерела — посилання вище.

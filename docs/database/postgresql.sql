@@ -148,3 +148,39 @@ BEGIN
     END IF;
 END $EF$;
 COMMIT;
+
+START TRANSACTION;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030122207_ImageAttachments') THEN
+    CREATE TABLE comments."ImageAttachments" (
+        "Id" uuid NOT NULL,
+        "CommentId" uuid NOT NULL,
+        "FileName" character varying(128) NOT NULL,
+        "Width" integer NOT NULL,
+        "Height" integer NOT NULL,
+        "Data" bytea NOT NULL,
+        CONSTRAINT "PK_ImageAttachments" PRIMARY KEY ("Id"),
+        CONSTRAINT "CK_Images_Data" CHECK (octet_length("Data") BETWEEN 1 AND 524288),
+        CONSTRAINT "CK_Images_Dimensions" CHECK ("Width" BETWEEN 1 AND 320 AND "Height" BETWEEN 1 AND 240),
+        CONSTRAINT "FK_ImageAttachments_Comments_CommentId" FOREIGN KEY ("CommentId") REFERENCES comments."Comments" ("Id") ON DELETE CASCADE
+    );
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030122207_ImageAttachments') THEN
+    CREATE UNIQUE INDEX "IX_ImageAttachments_CommentId" ON comments."ImageAttachments" ("CommentId");
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030122207_ImageAttachments') THEN
+    INSERT INTO comments."__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+    VALUES ('20261030122207_ImageAttachments', '10.0.14');
+    END IF;
+END $EF$;
+COMMIT;

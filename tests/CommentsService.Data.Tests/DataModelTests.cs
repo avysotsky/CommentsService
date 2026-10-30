@@ -74,6 +74,21 @@ public sealed class DataModelTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ImagesPersistAtomicallyProjectMetadataAndCascadeOnlyWithTheirComment()
+    {
+        var comment=new Comment(new Author("ImageReader","image@example.test"),"image",IPAddress.Loopback,"");
+        var bytes=await File.ReadAllBytesAsync(Path.Combine(AppContext.BaseDirectory,"Fixtures","tall.png"));
+        var prepared=(await new CommentsService.Infrastructure.Images.SkiaImageProcessor().ProcessAsync(new("tall.png",bytes.Length,new MemoryStream(bytes)))).Value!;
+        var image=new ImageAttachment(comment,prepared.FileName,prepared.Data,prepared.Width,prepared.Height);
+        db.Add(comment); await db.SaveChangesAsync(); db.ChangeTracker.Clear();
+        var queries=scope.ServiceProvider.GetRequiredService<ICommentQueries>(); var projected=await queries.FindByIdAsync(comment.Id);
+        Assert.Equal(image.Id,projected!.Image!.Id); Assert.Equal(30,projected.Image.Width); Assert.Equal(240,projected.Image.Height);
+        var imageQueries=scope.ServiceProvider.GetRequiredService<CommentsService.Application.Images.IImageQueries>();
+        Assert.Equal(prepared.Data,(await imageQueries.FindAsync(image.Id))!.Data);
+        await db.Comments.Where(c=>c.Id==comment.Id).ExecuteDeleteAsync(); Assert.Null(await imageQueries.FindAsync(image.Id));
+    }
+
+    [Fact]
     public async Task ThreadLinksRoundTripAndRootsAreListedSeparately()
     {
         var root = new Comment(new Author("Root", "r@example.test"), "root", IPAddress.Loopback, "");
@@ -210,7 +225,7 @@ public sealed class DataModelTests : IAsyncLifetime
     [Fact]
     public async Task MigrationHistoryAndModelAreCurrent()
     {
-        Assert.Equal(2, (await db.Database.GetAppliedMigrationsAsync()).Count());
+        Assert.Equal(3, (await db.Database.GetAppliedMigrationsAsync()).Count());
         Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         Assert.False(db.Database.HasPendingModelChanges());
     }

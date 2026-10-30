@@ -104,3 +104,14 @@ test('captcha transport replaces a prior challenge and never caches responses', 
   });
   assert.equal((await client.captcha('old', controller.signal)).id, 'new');
 });
+
+test('image upload uses multipart with public fields and browser-generated boundary', async () => {
+  const image = new File(['fixture'], 'sample.png', { type: 'image/png' });
+  const client = new HttpCommentsClient(async (url, options) => {
+    assert.equal(url, '/api/comments'); assert(options.body instanceof FormData); assert.equal(options.headers, undefined);
+    assert.equal(options.body.get('image').name, 'sample.png'); assert.equal(options.body.get('userName'), 'Reader123');
+    assert.equal(options.body.get('captchaId'), 'challenge'); assert.equal(options.body.get('captchaCode'), 'ABC234');
+    return Response.json({ id: 'image-saved' }, { status: 201 });
+  });
+  assert.equal((await client.create({ ...valid, image, captchaId: 'challenge', captchaCode: 'ABC234' })).id, 'image-saved');
+});

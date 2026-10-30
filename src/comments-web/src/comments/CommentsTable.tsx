@@ -72,6 +72,9 @@ export function CommentsTable({ comments, labels: t, language, client, onReply, 
           <strong dir="auto">{comment.userName}</strong><span className="author-email" dir="auto">{comment.email}</span>
           {home && <a href={home} target="_blank" rel="noopener noreferrer">{t.website} ↗</a>}</td>
         <td><div className="comment-text" dir="auto"><CommentText text={comment.text} /></div>
+          {comment.image && <figure className="image-attachment"><a href={`/api/images/${encodeURIComponent(comment.image.id)}`} target="_blank" rel="noopener noreferrer">
+            <img src={`/api/images/${encodeURIComponent(comment.image.id)}`} width={comment.image.width} height={comment.image.height} alt={comment.image.fileName} loading="lazy" />
+          </a><figcaption>{comment.image.fileName} · {comment.image.width} × {comment.image.height}</figcaption></figure>}
           <div className="thread-actions"><button className="secondary" onClick={() => onReply(comment)}>{t.reply}</button>
             <button className="secondary" aria-expanded={branch?.open ?? false} onClick={() => toggle(comment.id)}>{branch?.open ? t.hideReplies : t.showReplies}</button></div>
         </td>

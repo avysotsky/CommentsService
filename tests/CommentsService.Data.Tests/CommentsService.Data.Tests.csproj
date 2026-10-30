@@ -12,4 +12,5 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1"><PrivateAssets>all</PrivateAssets></PackageReference>
     <ProjectReference Include="../../src/CommentsService.Infrastructure/CommentsService.Infrastructure.csproj" />
   </ItemGroup>
+  <ItemGroup><None Update="Fixtures/*" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 </Project>

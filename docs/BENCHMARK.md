@@ -2,7 +2,9 @@
 
 ## English
 
-Opt-in `paging-v1`, version 1: 1,000,000 deterministic comments (800,000 roots, 200,000 replies, four reply levels in 50,000 chains), 10,000 author snapshots and 32,000 root pages. It lives in a separate `comments_benchmark` database inside the persistent test PostgreSQL service/volume. Development `comments` and functional `comments_test` remain unchanged. No additional volume or external service is required. The application schema retains InitialDataModel + CommentThreads; generator-only metadata is in `benchmark.Dataset`.
+Follow-up 1.1.0.10: the same paging-v1 corpus was migrated in place with ImageAttachments (empty image table), then all 18 cases passed again using one sample per case with the metadata-only image projection. No reseeding or corpus row changes occurred. The three-sample table below remains the original 1.1.0.8 measurement.
+
+Opt-in `paging-v1`, version 1: 1,000,000 deterministic comments (800,000 roots, 200,000 replies, four reply levels in 50,000 chains), 10,000 author snapshots and 32,000 root pages. It lives in a separate `comments_benchmark` database inside the persistent test PostgreSQL service/volume. Development `comments` and functional `comments_test` remain unchanged. No additional volume or external service is required. The current application schema includes InitialDataModel + CommentThreads + ImageAttachments; generator-only metadata is in `benchmark.Dataset`.
 
 Preparation creates the owned database only if absent, explicitly migrates it with the ordinary non-superuser application role, and seeds in one transaction under a database-local advisory lock. UUIDs, author metadata and timestamps are deterministic. Subsequent runs verify version/count and **reuse** the completed corpus without row writes; mismatches refuse implicit replacement. `--rows 100..1000000` supports a smaller initial corpus; always reuse the same count afterwards. Do not run the generator as functional-test setup or change/delete this data between measurements.
 
@@ -25,7 +27,9 @@ Recorded on 2026-10-30: one warmed containerized .NET 10/PostgreSQL 17 run, sequ
 
 ## Русский
 
-Необязательный `paging-v1`, версия 1: 1 000 000 детерминированных комментариев (800 000 корней, 200 000 ответов, четыре уровня в 50 000 цепочек), 10 000 снимков авторов, 32 000 страниц корней. Набор хранится в отдельной БД `comments_benchmark` постоянного тестового PostgreSQL/тома. Рабочая `comments` и функциональная `comments_test` не меняются. Дополнительный том/внешний сервис не нужен. Схема приложения — InitialDataModel + CommentThreads; метаданные генератора — `benchmark.Dataset`.
+Проверка 1.1.0.10: к тому же paging-v1 применена ImageAttachments (пустая таблица изображений), затем повторно прошли 18 сценариев по одному замеру с проекцией метаданных картинки. Перегенерации и изменений строк набора не было. Таблица трёх повторов ниже остаётся исходным замером 1.1.0.8.
+
+Необязательный `paging-v1`, версия 1: 1 000 000 детерминированных комментариев (800 000 корней, 200 000 ответов, четыре уровня в 50 000 цепочек), 10 000 снимков авторов, 32 000 страниц корней. Набор хранится в отдельной БД `comments_benchmark` постоянного тестового PostgreSQL/тома. Рабочая `comments` и функциональная `comments_test` не меняются. Дополнительный том/внешний сервис не нужен. Текущая схема приложения — InitialDataModel + CommentThreads + ImageAttachments; метаданные генератора — `benchmark.Dataset`.
 
 Подготовка создаёт свою БД только при отсутствии, явно применяет миграции обычной ролью приложения без суперправ и заполняет данные одной транзакцией с advisory lock внутри БД. UUID, авторы и время детерминированы. Повтор проверяет версию/число строк и **использует сохранённый набор без записи**; несовпадение запрещает неявную замену. `--rows 100..1000000` задаёт меньший первоначальный набор; далее используйте то же число. Не включайте генерацию в setup функциональных тестов и не изменяйте/удаляйте набор между замерами.
 
@@ -48,7 +52,9 @@ python3 scripts/db-command.py check --benchmark
 
 ## Українська
 
-Необов’язковий `paging-v1`, версія 1: 1 000 000 детермінованих коментарів (800 000 коренів, 200 000 відповідей, чотири рівні в 50 000 ланцюжках), 10 000 знімків авторів, 32 000 сторінок коренів. Набір зберігається в окремій БД `comments_benchmark` постійного тестового PostgreSQL/тому. Робоча `comments` і функціональна `comments_test` не змінюються. Додатковий том/зовнішній сервіс не потрібний. Схема застосунку — InitialDataModel + CommentThreads; метадані генератора — `benchmark.Dataset`.
+Перевірка 1.1.0.10: до того самого paging-v1 застосовано ImageAttachments (порожня таблиця зображень), тоді повторно пройшли 18 сценаріїв по одному заміру з проєкцією метаданих зображення. Перегенерації та змін рядків набору не було. Таблиця трьох повторів нижче лишається початковим заміром 1.1.0.8.
+
+Необов’язковий `paging-v1`, версія 1: 1 000 000 детермінованих коментарів (800 000 коренів, 200 000 відповідей, чотири рівні в 50 000 ланцюжках), 10 000 знімків авторів, 32 000 сторінок коренів. Набір зберігається в окремій БД `comments_benchmark` постійного тестового PostgreSQL/тому. Робоча `comments` і функціональна `comments_test` не змінюються. Додатковий том/зовнішній сервіс не потрібний. Поточна схема застосунку — InitialDataModel + CommentThreads + ImageAttachments; метадані генератора — `benchmark.Dataset`.
 
 Підготовка створює власну БД лише за відсутності, явно застосовує міграції звичайною роллю застосунку без суперправ і заповнює дані однією транзакцією з advisory lock усередині БД. UUID, автори й час детерміновані. Повтор перевіряє версію/кількість рядків і **використовує збережений набір без запису**; невідповідність забороняє неявну заміну. `--rows 100..1000000` задає менший початковий набір; далі використовуйте ту саму кількість. Не додавайте генерацію до setup функціональних тестів і не змінюйте/видаляйте набір між замірами.
 

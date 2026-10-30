@@ -101,6 +101,42 @@ namespace CommentsService.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CommentsService.Domain.Entities.ImageAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CommentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId")
+                        .IsUnique();
+
+                    b.ToTable("ImageAttachments", "comments", t =>
+                        {
+                            t.HasCheckConstraint("CK_Images_Data", "octet_length(\"Data\") BETWEEN 1 AND 524288");
+
+                            t.HasCheckConstraint("CK_Images_Dimensions", "\"Width\" BETWEEN 1 AND 320 AND \"Height\" BETWEEN 1 AND 240");
+                        });
+                });
+
             modelBuilder.Entity("CommentsService.Domain.Entities.Comment", b =>
                 {
                     b.HasOne("CommentsService.Domain.Entities.Author", "Author")
@@ -118,9 +154,25 @@ namespace CommentsService.Infrastructure.Persistence.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("CommentsService.Domain.Entities.ImageAttachment", b =>
+                {
+                    b.HasOne("CommentsService.Domain.Entities.Comment", "Comment")
+                        .WithOne("Image")
+                        .HasForeignKey("CommentsService.Domain.Entities.ImageAttachment", "CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+                });
+
             modelBuilder.Entity("CommentsService.Domain.Entities.Author", b =>
                 {
                     b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("CommentsService.Domain.Entities.Comment", b =>
+                {
+                    b.Navigation("Image");
                 });
 #pragma warning restore 612, 618
         }

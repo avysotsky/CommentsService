@@ -1,7 +1,7 @@
-export type CommentInput = { userName: string; email: string; homePage: string; text: string; parentId?: string | null; captchaId?: string; captchaCode?: string };
-export type Comment = Omit<CommentInput, 'homePage' | 'parentId'> & { id: string; homePage: string | null; createdAt: string; parentId: string | null; rootId: string };
+export type CommentInput = { userName: string; email: string; homePage: string; text: string; parentId?: string | null; captchaId?: string; captchaCode?: string; image?: File | null };
+export type Comment = Omit<CommentInput, 'homePage' | 'parentId' | 'image'> & { id: string; homePage: string | null; createdAt: string; parentId: string | null; rootId: string; image: { id: string; fileName: string; width: number; height: number } | null };
 export type Field = 'userName' | 'email' | 'homePage' | 'text';
-export type FieldErrors = Partial<Record<Field | 'parentId' | 'captchaCode', string[]>>;
+export type FieldErrors = Partial<Record<Field | 'parentId' | 'captchaCode' | 'image', string[]>>;
 export type RepliesPage = { items: Comment[]; nextAfter: string | null };
 export type RootSort = 'userName' | 'email' | 'createdAt';
 export type RootPageQuery = { page: number; sort: RootSort; direction: 'asc' | 'desc' };

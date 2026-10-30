@@ -2,6 +2,8 @@
 
 ## English
 
+Image migration `20261030122207_ImageAttachments` adds ImageAttachments (Id, unique CommentId FK CASCADE, FileName varchar128, Width/Height, Data bytea). Dimensions are checked at 1..320/1..240 and payload at 1..524288 bytes. Existing tables/rows and both earlier migration IDs are retained. Upgrade all used databases, including the persistent benchmark. Before upgrade, stop all writers and use a restore-verified current checkpoint; Down is blocked when any image exists. Images are included in database dumps, not stored in a separate volume.
+
 Release 1.1.0.9 stores only expiring CAPTCHA hashes in process memory. No migration/checkpoint rotation is needed; both databases, persistent benchmark, existing migrations and recovery points remain intact.
 
 Release 1.1.0.8 adds no application migration. Retain both existing migration IDs and checkpoints. The optional persistent benchmark database is separate; use db-command.py --benchmark for migration/check, and db-checkpoint.py --include-benchmark before changing its schema/data. See BENCHMARK.md.
@@ -75,6 +77,8 @@ Full thread/attachment preservation checks belong to later schema versions.
 
 ## Русский
 
+Миграция `20261030122207_ImageAttachments` добавляет ImageAttachments (Id, уникальный CommentId FK CASCADE, FileName varchar128, Width/Height, Data bytea). Проверки: размеры 1..320/1..240, байты 1..524288. Прежние таблицы/строки и оба ранних ID миграций сохранены. Обновляйте все используемые БД, включая постоянный benchmark. Перед обновлением остановите запись и проверьте восстановление текущей копии; Down запрещён при наличии картинок. Изображения входят в dump БД, отдельного тома нет.
+
 В 1.1.0.9 хеши CAPTCHA со сроком хранятся только в памяти процесса. Миграция/замена копий не нужна; обе БД, постоянный benchmark, миграции и восстановительные точки сохраняются.
 
 В 1.1.0.8 новой миграции приложения нет. Сохраните оба ID миграций и копии. Необязательная постоянная benchmark-БД отделена; для миграции/проверки используйте db-command.py --benchmark, перед изменением её схемы/данных — db-checkpoint.py --include-benchmark. См. BENCHMARK.md.
@@ -144,6 +148,8 @@ dotnet ef migrations script --idempotent --project src/CommentsService.Infrastru
 Полная проверка сохранности веток ответов/вложений относится к следующим версиям схемы.
 
 ## Українська
+
+Міграція `20261030122207_ImageAttachments` додає ImageAttachments (Id, унікальний CommentId FK CASCADE, FileName varchar128, Width/Height, Data bytea). Перевірки: розміри 1..320/1..240, байти 1..524288. Попередні таблиці/рядки та обидва ранні ID міграцій збережено. Оновлюйте всі використані БД, включно з постійним benchmark. Перед оновленням зупиніть запис і перевірте відновлення поточної копії; Down заборонено за наявності зображень. Зображення входять до dump БД, окремого тому немає.
 
 У 1.1.0.9 хеші CAPTCHA з терміном зберігаються лише в пам’яті процесу. Міграція/заміна копій не потрібна; обидві БД, постійний benchmark, міграції й відновлювальні точки зберігаються.
 

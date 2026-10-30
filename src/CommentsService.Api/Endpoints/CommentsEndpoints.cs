@@ -23,15 +23,17 @@ public static class CommentsEndpoints
         });
         group.MapPost("", async (HttpContext context, ICreateComment create, CancellationToken token) =>
         {
-            if (!context.Request.HasJsonContentType()) return Results.Problem(
-                statusCode: StatusCodes.Status415UnsupportedMediaType, title: "Unsupported media type.");
-            var body = await context.Request.ReadFromJsonAsync<CreateCommentBody>(token);
-            if (body is null) return Results.Problem(statusCode: StatusCodes.Status400BadRequest, title: "Invalid request body.");
+            if (!context.Request.HasJsonContentType() && !(context.Request.HasFormContentType &&
+                context.Request.ContentType!.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase)))
+                return Results.Problem(statusCode: 415, title: "Unsupported media type.");
+            var input = await CreateCommentRequest.ReadAsync(context, token);
+            if (input is null) return Results.Problem(statusCode: 400, title: "Invalid request body.");
+            await using var imageStream = input.Image?.Content;
             var ip = context.Connection.RemoteIpAddress ?? IPAddress.Any;
             if (ip.IsIPv4MappedToIPv6) ip = ip.MapToIPv4();
             var userAgent = context.Request.Headers.UserAgent.ToString();
             var client = new ClientMetadata(ip, userAgent[..Math.Min(userAgent.Length, ClientMetadata.UserAgentMaxLength)]);
-            var result = await create.ExecuteAsync(new(body.UserName, body.Email, body.HomePage, body.Text, body.ParentId, body.CaptchaId, body.CaptchaCode), client, token);
+            var result = await create.ExecuteAsync(input, client, token);
             if (!result.IsValid) return Results.ValidationProblem(result.Errors.ToDictionary());
             return Results.Created($"/api/comments/{result.Value!.Id}", result.Value);
         });

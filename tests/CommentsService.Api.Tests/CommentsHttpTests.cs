@@ -76,7 +76,7 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
         Assert.Equal(HttpStatusCode.OK, get.StatusCode);
         Assert.Equal(created, await get.Content.ReadFromJsonAsync<CommentDto>());
         using var document = JsonDocument.Parse(await get.Content.ReadAsStringAsync());
-        Assert.Equal(new[] { "createdAt", "email", "homePage", "id", "parentId", "rootId", "text", "userName" },
+        Assert.Equal(new[] { "createdAt", "email", "homePage", "id", "image", "parentId", "rootId", "text", "userName" },
             document.RootElement.EnumerateObject().Select(property => property.Name).Order().ToArray());
         await using var db = new CommentsDbContextFactory().CreateDbContext([]);
         var stored = await db.Comments.AsNoTracking().SingleAsync(comment => comment.Id == created.Id);
@@ -376,6 +376,49 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
     {
         public string Code = "";
         public byte[] Render(string code) { Code = code; return new CommentsService.Infrastructure.Captcha.PngCaptchaRenderer().Render(code); }
+    }
+
+    [Theory]
+    [InlineData("wide.jpg",320,160)] [InlineData("small.gif",16,8)] [InlineData("tall.png",30,240)]
+    public async Task MultipartImageCreatesAndServesCanonicalPng(string name,int width,int height)
+    {
+        var payload=ApiFixture.Payload("Image fixture");
+        using var body=new MultipartFormDataContent();
+        foreach(var field in payload.Where(x=>x.Value is not null)) body.Add(new StringContent(field.Value!.ToString()!),field.Key);
+        body.Add(new ByteArrayContent(await File.ReadAllBytesAsync(Path.Combine(AppContext.BaseDirectory,"Fixtures",name))),"image",name);
+        using var response=await fixture.SendAsync(body); Assert.Equal(HttpStatusCode.Created,response.StatusCode);
+        var value=(await response.Content.ReadFromJsonAsync<CommentDto>())!; Assert.NotNull(value.Image);
+        Assert.Equal(width,value.Image.Width); Assert.Equal(height,value.Image.Height);
+        var read=(await fixture.Client.GetFromJsonAsync<CommentDto>("/api/comments/"+value.Id))!; Assert.Equal(value,read);
+        using var file=await fixture.Client.GetAsync("/api/images/"+value.Image.Id); Assert.Equal(HttpStatusCode.OK,file.StatusCode);
+        Assert.Equal("image/png",file.Content.Headers.ContentType!.MediaType); Assert.Equal("nosniff",file.Headers.GetValues("X-Content-Type-Options").Single());
+        var bytes=await file.Content.ReadAsByteArrayAsync(); Assert.Equal(137,bytes[0]);
+        Assert.Equal("inline",file.Content.Headers.ContentDisposition!.DispositionType);
+        Assert.DoesNotContain("data",await response.Content.ReadAsStringAsync(),StringComparison.OrdinalIgnoreCase);
+    }
+    [Theory]
+    [InlineData("evil.svg")] [InlineData("bad.png")] [InlineData("fake.jpg")]
+    public async Task InvalidMultipartImageCannotCreateRows(string name)
+    {
+        await using var db=new CommentsDbContextFactory().CreateDbContext([]); var count=await db.Comments.CountAsync(); var authors=await db.Authors.CountAsync();
+        var payload=ApiFixture.Payload(); using var body=new MultipartFormDataContent();
+        foreach(var field in payload.Where(x=>x.Value is not null))body.Add(new StringContent(field.Value!.ToString()!),field.Key);
+        var bytes=name=="fake.jpg"?await File.ReadAllBytesAsync(Path.Combine(AppContext.BaseDirectory,"Fixtures","tall.png")):Encoding.UTF8.GetBytes("<svg onload='bad'/>");
+        body.Add(new ByteArrayContent(bytes),"image",name); using var response=await fixture.SendAsync(body);
+        Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode); Assert.Equal(count,await db.Comments.CountAsync()); Assert.Equal(authors,await db.Authors.CountAsync());
+    }
+    [Fact]
+    public async Task MultipartRejectsUnknownDuplicateAndMultipleFileFields()
+    {
+        foreach(var kind in new[]{"unknown","duplicate","files"})
+        {
+            using var body=new MultipartFormDataContent(); body.Add(new StringContent("Reader"),"userName");
+            if(kind=="unknown")body.Add(new StringContent("spoof"),"rootId");
+            if(kind=="duplicate")body.Add(new StringContent("Other"),"userName");
+            if(kind=="files") { body.Add(new ByteArrayContent([1]),"image","a.png"); body.Add(new ByteArrayContent([1]),"image","b.png"); }
+            using var response=await fixture.SendAsync(body); Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
+        }
+        using var missing=await fixture.Client.GetAsync("/api/images/"+Guid.NewGuid()); Assert.Equal(HttpStatusCode.NotFound,missing.StatusCode);
     }
 
     private sealed class UnavailableQuery : IGetComment

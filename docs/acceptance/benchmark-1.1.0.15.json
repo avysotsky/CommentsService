@@ -1,0 +1,231 @@
+{
+  "dataset": "paging-v1",
+  "version": 1,
+  "application": {
+    "application": "CommentsService",
+    "version": "1.1.0.15",
+    "stage": "Acceptance"
+  },
+  "measured_at_utc": "2026-10-30T16:28:00.740406+00:00",
+  "roots": 800000,
+  "page_size": 25,
+  "samples": 3,
+  "results": [
+    {
+      "sort": "createdAt",
+      "direction": "asc",
+      "page": 1,
+      "milliseconds": [
+        133.29,
+        56.12,
+        47.62
+      ],
+      "median_ms": 56.12,
+      "max_ms": 133.29
+    },
+    {
+      "sort": "createdAt",
+      "direction": "asc",
+      "page": 16000,
+      "milliseconds": [
+        150.77,
+        125.07,
+        120.53
+      ],
+      "median_ms": 125.07,
+      "max_ms": 150.77
+    },
+    {
+      "sort": "createdAt",
+      "direction": "asc",
+      "page": 32000,
+      "milliseconds": [
+        229.91,
+        231.59,
+        342.74
+      ],
+      "median_ms": 231.59,
+      "max_ms": 342.74
+    },
+    {
+      "sort": "createdAt",
+      "direction": "desc",
+      "page": 1,
+      "milliseconds": [
+        118.81,
+        76.45,
+        75.33
+      ],
+      "median_ms": 76.45,
+      "max_ms": 118.81
+    },
+    {
+      "sort": "createdAt",
+      "direction": "desc",
+      "page": 16000,
+      "milliseconds": [
+        162.37,
+        163.16,
+        151.61
+      ],
+      "median_ms": 162.37,
+      "max_ms": 163.16
+    },
+    {
+      "sort": "createdAt",
+      "direction": "desc",
+      "page": 32000,
+      "milliseconds": [
+        302.67,
+        347.88,
+        305.43
+      ],
+      "median_ms": 305.43,
+      "max_ms": 347.88
+    },
+    {
+      "sort": "userName",
+      "direction": "asc",
+      "page": 1,
+      "milliseconds": [
+        317.01,
+        324.16,
+        392.5
+      ],
+      "median_ms": 324.16,
+      "max_ms": 392.5
+    },
+    {
+      "sort": "userName",
+      "direction": "asc",
+      "page": 16000,
+      "milliseconds": [
+        2203.67,
+        2274.26,
+        1838.52
+      ],
+      "median_ms": 2203.67,
+      "max_ms": 2274.26
+    },
+    {
+      "sort": "userName",
+      "direction": "asc",
+      "page": 32000,
+      "milliseconds": [
+        2101.59,
+        2566.41,
+        2380.35
+      ],
+      "median_ms": 2380.35,
+      "max_ms": 2566.41
+    },
+    {
+      "sort": "userName",
+      "direction": "desc",
+      "page": 1,
+      "milliseconds": [
+        410.37,
+        419.16,
+        416.87
+      ],
+      "median_ms": 416.87,
+      "max_ms": 419.16
+    },
+    {
+      "sort": "userName",
+      "direction": "desc",
+      "page": 16000,
+      "milliseconds": [
+        1763.33,
+        1957.45,
+        1864.0
+      ],
+      "median_ms": 1864.0,
+      "max_ms": 1957.45
+    },
+    {
+      "sort": "userName",
+      "direction": "desc",
+      "page": 32000,
+      "milliseconds": [
+        2715.08,
+        2433.46,
+        3233.8
+      ],
+      "median_ms": 2715.08,
+      "max_ms": 3233.8
+    },
+    {
+      "sort": "email",
+      "direction": "asc",
+      "page": 1,
+      "milliseconds": [
+        363.19,
+        440.76,
+        471.09
+      ],
+      "median_ms": 440.76,
+      "max_ms": 471.09
+    },
+    {
+      "sort": "email",
+      "direction": "asc",
+      "page": 16000,
+      "milliseconds": [
+        2395.25,
+        1645.18,
+        1500.22
+      ],
+      "median_ms": 1645.18,
+      "max_ms": 2395.25
+    },
+    {
+      "sort": "email",
+      "direction": "asc",
+      "page": 32000,
+      "milliseconds": [
+        1524.75,
+        1828.47,
+        1519.79
+      ],
+      "median_ms": 1524.75,
+      "max_ms": 1828.47
+    },
+    {
+      "sort": "email",
+      "direction": "desc",
+      "page": 1,
+      "milliseconds": [
+        322.95,
+        371.77,
+        311.87
+      ],
+      "median_ms": 322.95,
+      "max_ms": 371.77
+    },
+    {
+      "sort": "email",
+      "direction": "desc",
+      "page": 16000,
+      "milliseconds": [
+        1372.4,
+        1342.0,
+        1432.46
+      ],
+      "median_ms": 1372.4,
+      "max_ms": 1432.46
+    },
+    {
+      "sort": "email",
+      "direction": "desc",
+      "page": 32000,
+      "milliseconds": [
+        1900.04,
+        1661.91,
+        1529.78
+      ],
+      "median_ms": 1661.91,
+      "max_ms": 1900.04
+    }
+  ]
+}

@@ -1,4 +1,4 @@
--- CommentsService 1.1.0.11: MySQL Workbench visualization only.
+-- CommentsService 1.1.0.15 (schema unchanged since 1.1.0.11): MySQL Workbench visualization only.
 -- PostgreSQL migrations/postgresql.sql are authoritative for deployment.
 -- uuid -> CHAR(36), inet -> VARCHAR(45), timestamptz -> DATETIME(6) in UTC.
 -- PostgreSQL check constraints are documented in SCHEMA.md.

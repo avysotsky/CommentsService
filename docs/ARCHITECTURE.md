@@ -216,3 +216,12 @@ EN: JsonRequest owns bounded UTF-8/canonical JSON binding for create/preview; Se
 RU: JsonRequest отвечает за ограниченный UTF-8/camelCase JSON создания/просмотра, SecurityHeaders — за политику ответа перед обработкой ошибок/статикой/маршрутами. HTTP-правила остаются в API; порты Application, доменные инварианты и адаптеры Infrastructure прежние. Запросы используют типизированные сортировки и параметризованные EF-выражения; файлы обрабатываются через интерфейсы Application. Новые зависимости провайдеров/фреймворков в Domain/Application не добавлены.
 
 UA: JsonRequest відповідає за обмежений UTF-8/camelCase JSON створення/перегляду, SecurityHeaders — за політику відповіді перед обробкою помилок/статикою/маршрутами. HTTP-правила залишаються в API; порти Application, доменні інваріанти й адаптери Infrastructure попередні. Запити використовують типізовані сортування та параметризовані EF-вирази; файли обробляються через інтерфейси Application. Нові залежності провайдерів/фреймворків у Domain/Application не додано.
+
+
+## Acceptance 1.1.0.15 — EN / RU / UA
+
+EN: Runtime boundaries and dependencies are unchanged. The two verification CLI tools are operational adapters outside Domain/Application: metadata comparison is read-only; checkpoint verification uses an isolated, owned temporary DB and never switches runtime connections. All architecture/domain tests passed again; EF reports no model drift or new migration.
+
+RU: Границы и зависимости приложения прежние. Два CLI-инструмента — операционные адаптеры вне Domain/Application: сравнение метаданных не пишет данные; проверка копии использует собственную временную БД и не переключает рабочие подключения. Доменные/архитектурные тесты прошли; EF не обнаружил изменений модели/новой миграции.
+
+UA: Межі й залежності застосунку попередні. Два CLI-інструменти — операційні адаптери поза Domain/Application: порівняння метаданих не пише дані; перевірка копії використовує власну тимчасову БД і не перемикає робочі підключення. Доменні/архітектурні тести пройшли; EF не знайшов змін моделі/нової міграції.

@@ -2,6 +2,12 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.15 Acceptance — 2026-10-30
+
+`CommentsService/v_1.1.0.15_Acceptance`
+
+Automated local acceptance passed for 1.1.0.15: 268 backend tests (27/84/56/101), 26 frontend tests, frontend/Docker builds and no pending EF model changes. The shipped idempotent SQL equals generated EF SQL apart from trailing whitespace. All four schema upgrades preserved fixtures; three populated-feature downgrade guards and safe feature-empty downgrades passed. Three existing checkpoints, including the retained million-row corpus, restored and upgraded without changing their source files. A separate empty installation followed the README, verified limited application roles, passed FileViewer/ResponsiveUi/Security browser suites, restored current data with 7 exact attachments and retained them across container recreation. Pagination UI passed 27 roots/25-per-page/all 6 sorts/URL/draft/new-root/reply behavior. All 18 retained-million measurements passed without reseeding. Metadata parity passed for 5 tables/25 columns/12 indexes/4 FKs/6 checks. Original databases, corpus, volumes, environment, checkpoint hashes and existing preview identity/state were preserved. New portable tools: scripts/verify-schema.py and scripts/verify-checkpoint.py. No migration/dependency changes; Onion/OOP/SOLID retained. GUI import in MySQL Workbench remains unverified because the app/UI automation was unavailable; SQL parity is not a substitute for that check. Next planned stage: 1.1.0.16 Deployment. [Acceptance details](docs/ACCEPTANCE.md).
+
 ## 1.1.0.14 SecurityReview — 2026-10-30
 
 `CommentsService/v_1.1.0.14_SecurityReview`

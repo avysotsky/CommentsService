@@ -1,55 +1,25 @@
 # CommentsService
 
-Version: **1.1.0.14** · Branch: `CommentsService/v_1.1.0.14_SecurityReview`
+Version: **1.1.0.15** · Branch: `CommentsService/v_1.1.0.15_Acceptance`
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 
-[Change log](change.log) · [Quick reference](read.me) · [Plan](docs/PLAN.md)
+[Change log](change.log) · [Quick reference](read.me) · [Acceptance report](docs/ACCEPTANCE.md) · [Plan](docs/PLAN.md)
 
-SecurityReview (1.1.0.14): the API adds CSP, nosniff, frame denial, no-referrer and restricted browser permissions; API responses use no-store and the Kestrel server banner is disabled. The SPA policy allows only its own scripts/styles/API plus data/blob images needed by CAPTCHA and the viewer. TXT retains its stricter sandbox policy. Creating and previewing comments share a UTF-8 JSON reader capped at 1 MiB, including chunked bodies. Use exact camelCase fields: duplicate keys, case aliases, unknown fields, malformed JSON and invalid UTF-8 return 400; unsupported media/charset returns 415; oversized JSON returns 413. The existing 6 MiB total multipart, 5 MiB image and 100 KiB TXT bounds remain.
+A .NET 10 / React SPA with PostgreSQL 17, packaged with Docker. Domain, Application, Infrastructure and API follow Onion Architecture, OOP and SOLID.
 
-XHTML allowlisting/XXE prevention, safe links, literal client rendering, parameterized EF queries/allowlisted sorts, atomic single attachments, image normalization and strict TXT bytes were reviewed and tested. Onion/OOP/SOLID boundaries are preserved: HTTP parsing/headers stay in API. No dependency or schema changes; latest migration remains `20261030130243_TextAttachments`. Upgrade 1.1.0.13 → 1.1.0.14 by rebuilding/restarting the app with the same environment, Compose overrides, databases and volumes. Retain existing corpus/checkpoints.
+## Features
 
-Verification: 268 backend tests (27/84/56/101), 26 frontend tests, frontend/Docker builds, native HTTP size/charset/header checks and Edge desktop/360px passed. Browser tests confirmed normal SPA/CAPTCHA/preview/viewer behavior without CSP violations, literal hostile DTO/TXT handling, CAPTCHA replay rejection, exact downloads, blocked injected inline script and refused framing. All 18 retained-million paging cases passed; rows/schema/history of three databases, volumes, private environment, checkpoint hashes and the existing preview state were preserved. Scope and deployment limits: [security review](docs/SECURITY.md). Next: 1.1.0.15 Acceptance.
+- Comments and replies at any thread depth; 25 roots per page, newest first by default; username/e-mail/date sorting in both directions.
+- Required Latin-alphanumeric user name, e-mail, text and image CAPTCHA; optional full HTTP(S) homepage. Submitted e-mail is public; an author is not an authenticated account.
+- Safe XHTML: `a` (`href`, `title`), `i`, `strong`, `code`; formatting toolbar, nesting checks and asynchronous preview. Drafts remain after failures.
+- One optional image **or** TXT. JPG/JPEG/GIF/PNG: maximum 5 MiB, 16 million decoded pixels and 10,000 pixels per side; proportional fit within 320×240, no upscale, EXIF orientation, first GIF frame, canonical PNG without original metadata. TXT: 1–102400 bytes, strict UTF-8; BOM/Unicode/CRLF/tabs remain exact.
+- Image/TXT modal viewer, effects, arrows/Escape, focus management, exact downloads and reduced motion. EN/RU/UA, mobile stacked rows and mixed RTL text.
+- Server/client validation, parameterized EF queries, bounded requests, CSP, safe file headers and generic errors. [Security scope](docs/SECURITY.md).
 
-ResponsiveUi (1.1.0.13): desktop comments remain a table; at widths up to 700px, rows stack with visible author/comment/date labels while retaining table roles and column headers. Controls provide 44px targets, visible keyboard focus, a skip-to-comments link, required-field hints and associated validation messages. Arabic/Hebrew and mixed text use automatic direction; filenames and e-mail are isolated from adjacent content. English is the default; EN/RU/UA remain available. Server field failures use localized UI messages instead of provider text; drafts are retained. Reduced-motion behavior remains supported.
+## First installation
 
-No schema, data or dependency changes. Latest migration: `20261030130243_TextAttachments`. Upgrade 1.1.0.12 → 1.1.0.13 by rebuilding/restarting the app with the same environment, Compose overrides and persistent volumes. Keep existing databases, corpus and verified checkpoints. Domain/Application/Infrastructure boundaries, Onion/OOP/SOLID and the injected HTTP adapters remain unchanged.
-
-Verification: 26 frontend tests, 27 domain/architecture tests, solution build with zero warnings/errors, frontend/Docker builds, and Edge at 320/360/390/640/768/1280px passed. Browser checks cover reflow, table semantics, target sizes, keyboard/focus, RTL editor/preview/viewer, real CAPTCHA-backed reply, localization/error/draft handling, depth15 and failure/recovery. All 18 paging scenarios passed on the retained million-comment corpus; original rows/schema/history of all three DBs, volumes, environment and checkpoint hashes were preserved. Other backend suites were unchanged and not rerun; the previous 235-test full run belongs to 1.1.0.12. Manual screen-reader and VS/Workbench GUI checks were not performed. Next: 1.1.0.15 Acceptance.
-
-FileViewer (1.1.0.12): click an image or TXT filename to open a modal with fade/scale effects. Previous/Next and Left/Right cycle through attachments in currently visible comments, including expanded replies; hidden/unloaded replies and other pages are not fetched. Escape, Close viewer or the backdrop closes it. Focus stays inside and returns to the opener; background scrolling is locked. Reduced-motion preferences disable animations. Downloads preserve the stored normalized PNG or the original TXT bytes, using generated UUID filenames. TXT is decoded as strict UTF-8 and rendered as literal text, never HTML; a leading BOM is not displayed. Loading, failure and Retry states preserve the comment draft. Requests are bounded and canceled on navigation/close; temporary image URLs are revoked.
-
-`GET /api/images/{id}?download=true` adds attachment disposition; without it the existing inline PNG route is unchanged. TXT continues to use `/api/text-files/{id}` with its safe headers and exact bytes. FileClient separates the viewer from HTTP; backend Domain/Application/Infrastructure boundaries and Onion/OOP/SOLID remain intact. No new dependency or migration. Upgrade 1.1.0.11 → 1.1.0.12 by rebuilding/restarting the app with the same environment, Compose overrides and volumes; retain existing databases and verified checkpoints. Latest migration remains `20261030130243_TextAttachments`.
-
-Validation for 1.1.0.12: 235 backend tests (27/84/56/68), 23 frontend tests, frontend/Docker builds and Edge desktop/360px passed. Browser coverage includes real CAPTCHA-backed image/TXT/reply fixtures, 100 KiB, literal Unicode/HTML, exact downloads, arrows/wrap, close paths, focus, draft retention, 404/503/retry, stale requests, URL cleanup, EN/RU/UA, reduced motion and reload. All 18 paging scenarios passed on the retained million-comment corpus without reseeding. All three databases, volumes and checkpoint hashes were preserved. No migration/restore rehearsal was needed for this code-only change. VS/Workbench GUI was not checked. Next: 1.1.0.15 Acceptance.
-
-TXT attachments (1.1.0.11): roots and replies accept one optional attachment: an image OR a `.txt` file. TXT must contain 1..102400 bytes (100 KiB), strict UTF-8; BOM, Unicode, CR/LF and tabs are preserved byte-for-byte. Invalid encoding and control characters other than CR/LF/tab are rejected; HTML/script text is accepted as literal text. Filename/MIME do not establish content validity. Multipart uses `textFile` with the usual comment/CAPTCHA fields; never send both file parts. JSON text-only creation remains available. Invalid TXT returns 400/errors.textFile. CAPTCHA is consumed before content processing; retry with a fresh code. The localized picker keeps draft/file on errors, clears on success and permits removing/replacing a selection.
-
-DTOs add nullable `textFile: {id,fileName,sizeBytes}`; list/page/reply projections omit file bytes. `GET /api/text-files/{id}` downloads exact bytes as `text/plain; charset=utf-8`, generated UUID `.txt` filename, attachment disposition, nosniff, no-store and sandbox CSP; missing files return 404. HTML is never rendered. FileViewer is available in 1.1.0.12.
-
-Upgrade 1.1.0.10 → 1.1.0.11: stop all writers, restore-verify a current checkpoint (include the benchmark when present), build, explicitly migrate every used database, then restart using the existing volumes. Migration `20261030130243_TextAttachments` adds TextAttachments: Id, unique CommentId FK CASCADE, sanitized FileName varchar128, SizeBytes, Data bytea; checks enforce 1..102400 bytes and matching size. Existing authors/comments/images and migration IDs are preserved. Down refuses while TXT rows exist. Bytes and comment are committed atomically in the same PostgreSQL database/backup; no filesystem volume. Preserve verified pre-upgrade copies, accounting for changes after their checkpoint.
-
-Onion: Domain enforces immutable ownership/defensive bytes and one attachment per comment; Application defines processing/read ports and coordinates the transaction; Infrastructure validates UTF-8 and implements EF storage/queries; API binds streams and sets download headers. No new external dependency.
-
-TextAttachments 1.1.0.11 verification: 235 backend tests (27 Domain,84 Application,56 Infrastructure/database,68 HTTP),16 frontend tests, frontend/Docker builds, restore upgrade/downgrade round trip and populated-TXT downgrade guard passed. Edge desktop/360px passed real CAPTCHA, TXT root/reply, boundary size, exact Unicode/BOM/CRLF/HTML download, restart persistence, safe headers, rejection/draft retention/removal, exclusive selection and EN/RU/UA without JavaScript errors. All 18 retained-million-corpus paging scenarios passed without reseeding; original row fingerprints, metadata, volumes and restore-verified checkpoints were retained. GUI import in VS/Workbench is not checked.
-
-
-React and .NET 10 run in one Docker container with persistent PostgreSQL 17.
-This release creates and reads text/XHTML comments through the API, validates input,
-and captures server-side client metadata. Onion boundaries isolate Domain/Application
-from EF and HTTP. The SPA provides a form, latest-comments table, client validation,
-async submission, draft retention on failure and EN/RU/UA interface selection.
-TXT attachments and the file viewer are implemented.
-
-Upgrade 1.1.0.9 → 1.1.0.10 requires the image migration and a restore-verified current checkpoint. See Image attachments below.
-
-[API contract and examples](docs/API.md) · [Architecture](docs/ARCHITECTURE.md)
-
-## Deploy on your own infrastructure
-
-Requires Docker Engine, Compose v2.24+, Git and Python 3. Docker builds .NET/React;
-host SDK/Node installations are not required for deployment. From the repository root:
+Requires Docker Engine, Compose v2.24+ and Python 3. Docker builds the application; host .NET/Node are needed only for host-side tests. Run from the repository root:
 
 ```bash
 python3 scripts/init-env.py
@@ -58,140 +28,60 @@ python3 scripts/db-checkpoint.py
 docker compose -p commentsservice build app
 python3 scripts/db-command.py migrate
 python3 scripts/db-command.py migrate --service test-database
-docker compose -p commentsservice up -d --no-build --wait
+docker compose -p commentsservice up -d --no-build --wait app
 curl --fail http://127.0.0.1:8080/health/database
 ```
 
-Open http://localhost:8080 on the Docker host. Use sudo for Docker if required.
-The example project name is `commentsservice`; keep it and the environment file
-unchanged across updates to reuse the same volumes. An alternative app port can
-be selected once with `python3 scripts/init-env.py --port 8081`.
+Open [localhost:8080](http://localhost:8080/) on the Docker host. Use sudo for Docker where needed. Credentials are generated once in the private `.env`; never publish it or overwrite credentials for existing volumes. To select unused ports **before first generation**, use `python3 scripts/init-env.py --port 8081 --test-db-port 55435`. An existing environment file is preserved, including its ports.
 
-The test database is a separate persistent service under the `testing` profile.
-The checkpoint command verifies both databases, so start both before running it.
-Migrations are explicit; application startup never applies them automatically.
-Before schema/data-changing upgrades, stop writes and verify a checkpoint before migration.
-The 1.1.0.6 → 1.1.0.7 upgrade added migration `20261030101720_CommentThreads`.
-Stop the app (`docker compose -p commentsservice stop app`), verify a current checkpoint,
-build the release, migrate both databases explicitly, then restart with the same volumes.
-Existing comments retain all original fields and become roots (`parentId=null`, `rootId=id`).
-The reverse migration refuses to remove thread metadata while replies exist; restore a
-verified pre-upgrade checkpoint if necessary, accounting for changes since that checkpoint.
+Keep the same Compose project name and environment file on updates. Development uses `commentsservice_development_data`; tests use the separate `commentsservice_test_data`. Both contain persistent PostgreSQL data. The app uses the non-superuser `comments_app` role. Startup never applies migrations automatically.
 
-## Data and recovery
+## Updates and recovery
 
-- Development: database `comments`, volume `commentsservice_development_data`.
-- Tests: `comments_test`, volume `commentsservice_test_data`, loopback port 55434.
-- Application role: `comments_app`, without superuser, role or database creation privileges.
-- Tables: `comments.Authors`, `comments.Comments`; history: `comments.__EFMigrationsHistory`.
-- Migrations: `20261029195935_InitialDataModel`, `20261030101720_CommentThreads`, `20261030122207_ImageAttachments` (additive).
-- Checkpoints: `artifacts/checkpoints`, one verified previous dump/manifest per database.
-  The script restores into uniquely named temporary databases, compares row fingerprints,
-  then removes only those temporary databases. Existing checkpoints are replaced after verification.
+1. For code-only updates, rebuild and restart the app with the same environment, project and volumes. Version 1.1.0.15 has no new migration or dependency.
+2. Before schema/data-changing updates, stop every writer, run `scripts/db-checkpoint.py`, then explicitly migrate every used database. Add `--include-benchmark` if the retained benchmark database exists. Restart with the same volumes.
+3. Retain one restore-verified previous checkpoint and the current databases. Never reset shared data for routine tests or remove persistent volumes. Stop services with `docker compose -p commentsservice --profile testing down` when needed; do not delete their volumes.
+4. Verify an existing checkpoint without replacing it:
 
-Keep checkpoint files private and copy them to protected storage for important data.
-Quiesce writers during a checkpoint; changes detected during verification cause failure.
-Routine startup/tests retain databases and volumes. Never use `down -v` or truncate shared tables.
-See [schema and diagrams](docs/database/SCHEMA.md) and [migration/recovery details](docs/database/MIGRATIONS.md).
+```bash
+python3 scripts/verify-checkpoint.py artifacts/checkpoints/database.dump --upgrade
+```
+
+This restores only into a uniquely named temporary database, checks manifest/SHA-256 and row fingerprints, optionally applies the current idempotent SQL export, then removes only its own temporary database. It never switches the application database. A restore returns checkpoint-time data; later writes are absent. Read [migration/recovery details](docs/database/MIGRATIONS.md).
+
+All four migrations remain current:
+
+- `20261029195935_InitialDataModel`
+- `20261030101720_CommentThreads`
+- `20261030122207_ImageAttachments`
+- `20261030130243_TextAttachments`
 
 ## Verification
+
+Host tests need .NET 10 SDK and Node.js 24; install frontend dependencies with `npm --prefix src/comments-web ci` if absent. Keep the testing profile running.
 
 ```bash
 python3 scripts/db-command.py check
 python3 scripts/db-command.py check --service test-database
+python3 scripts/verify-schema.py
+python3 scripts/verify-schema.py --service test-database --database comments_test
 python3 scripts/test-backend.py
+npm --prefix src/comments-web test
+npm --prefix src/comments-web run build
 ```
 
-The four test suites require a host .NET 10 SDK. Tests read the generated credential
-file and use `comments_test`. Database tests roll back; HTTP tests delete only their
-own comments and unreferenced author snapshots.
-Override `--host`/`--port` on the test command if the database is on another host.
-Database command/checkpoint scripts support `--env-file`, `--project` and repeated
-`--compose-file` options. Use matching options on every deployment command.
-The credential reader expects the literal KEY=value format generated by `init-env.py`.
+Database tests roll back; HTTP fixtures remove only their own rows. `verify-schema.py` compares the live PostgreSQL catalog with the shipped Workbench projection; it does not certify GUI import. Deployment/checkpoint/schema commands accept `--env-file`, `--project` and repeated `--compose-file`; use the same options on every command. Backend tests additionally accept `--host`/`--port`.
 
-`GET /api/status` returns `{"application":"CommentsService","version":"1.1.0.10","stage":"ImageAttachments"}`.
-`GET /health` checks the API process; `/health/database` checks connectivity and pending
-migrations, returning 503 when unavailable or outdated. Unknown API routes return 404; comments routes are documented in docs/API.md.
+In Visual Studio 2026 open `CommentsService.slnx`; it contains backend/test projects and frontend source items. Solution builds backend/tests; Docker builds the complete app. Windows/Linux build outputs are separate.
 
-## Frontend verification
+## Runtime and acceptance
 
-With Node.js 24, run `npm ci`, `npm test` and `npm run build` in `src/comments-web`.
-The form submits plain text or allowed XHTML; required fields are marked. Emails are public. The table
-shows 25 roots per page with local timestamps. Refresh retries failed reads.
-Server field errors are displayed as returned; the interface supports EN/RU/UA.
-A failed submission keeps the draft in the form; refresh before retrying an uncertain
-request to avoid duplicates. CAPTCHA and image attachments are implemented; TextAttachments stores optional TXT files.
+`GET /api/status` returns `{"application":"CommentsService","version":"1.1.0.15","stage":"Acceptance"}`. `/health` checks the process; `/health/database` checks connectivity and current migrations (503 when unavailable/outdated). [API contract](docs/API.md).
 
-## Credentials, stop and IDE
+JSON create/preview requires UTF-8, exact camelCase fields and at most 1 MiB, including chunked bodies. Unknown/duplicate/case-variant fields and invalid input return 400; oversized JSON 413; unsupported media/charset 415. CAPTCHA is process-local, expires after five minutes and is consumed by a verification attempt. Refresh after uncertain/failed submission. File bytes are stored transactionally in PostgreSQL, included in its backups, and omitted from list DTOs.
 
-`init-env.py` generates a private `.env` once and preserves existing files. Do not
-publish credentials or checkpoints. Changing .env does not update existing database passwords.
-The app binds to loopback; configure your own HTTPS reverse proxy for external access.
-Stop containers while retaining data:
+Automated acceptance passed: 268 backend and 26 frontend tests; frontend/Docker builds; all four migration stages and downgrade guards; restore/upgrade of three preserved checkpoints; independent empty installation; least-privilege roles; current-data recovery with 7 exact attachments and container recreation; browser viewers/RTL/security/pagination; 18 retained-million paging scenarios. Original databases, corpus, volumes, environment and checkpoint hashes remained unchanged.
 
-```bash
-docker compose -p commentsservice --profile testing down
-```
+**Pending:** importing the schema in the MySQL Workbench GUI was not verified. SQL catalog parity passed. External hosting/HTTPS remains 1.1.0.16 Deployment. See [acceptance report and limitations](docs/ACCEPTANCE.md).
 
-Open `CommentsService.slnx` in Visual Studio 2026 with the ASP.NET/web workload and
-.NET 10 SDK. The solution builds API and tests; Frontend holds editable React files.
-Docker builds the complete app. Windows and Linux intermediate outputs are separated.
-Without database variables the API/status page still starts; database health returns 503.
-To connect from the IDE, set `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`
-in your private launch environment. Never commit those values.
-
-## Onion architecture
-
-The backend has four projects: Domain, Application, Infrastructure and Api.
-Application implements create/read use cases, validation and DTOs; EF adapters implement its persistence ports.
-Infrastructure/Persistence contains Configurations, Repositories and Migrations.
-HTTP endpoints use application/framework contracts; Infrastructure is connected in Program.cs.
-See [architecture and dependency rules](docs/ARCHITECTURE.md). This release preserves
-the initial migration and existing content; the thread migration extends the schema. The next milestone is 1.1.0.13 ResponsiveUi.
-
-## XHTML editor
-
-Allowed tags: `a`, `i`, `strong`, `code`. Links require an absolute HTTP(S) `href` without credentials; `title` is optional. Other attributes, namespaces, nested links, comments, DTD/CDATA, malformed tags and unsafe URLs are rejected. XHTML uses closed, correctly nested lowercase tags and XML entities (`&amp;`, `&lt;`, `&quot;`); plain text such as `1 < 2 && 3 > 1` still works. The limit is 65,536 UTF-16 units, depth 32 and 4096 parser nodes.
-
-Select text and use Bold/Italic/Code/Link. Link inserts an editable HTTPS template. Preview calls `POST /api/comments/preview` with `{ "text": "<strong>Hello</strong>" }` and returns `{ "html": "<strong>Hello</strong>" }` without database access or writes. Saving uses the same Application validator. Editing hides stale previews; request failure preserves the draft. Preview and table render only allowlisted React elements, with safe links and escaped fallback text. Existing stored text is retained; the thread migration extends the schema.
-
-The optional homepage field explains that a full address is required, for example `https://example.com`; `http://` is also supported. The form does not choose a protocol or check website availability.
-
-## Comment threads
-
-Replies can target any existing comment. Choose Reply beneath a comment; the form identifies the recipient. Cancel reply returns to root posting and preserves the draft. Successful replies appear under their parent; missing targets produce an error without creating an author or comment.
-
-The root table shows 25 roots per page in the selected order. Show/Hide replies expands or collapses direct replies; More replies loads the next 25. Replies use descending UTC time and UUID; roots use the selected order. Expanding descendants has no application depth limit: rendering is iterative, and visual indentation stops growing after six levels while the numeric level continues. Refresh reloads roots and open branches; branch failures offer Retry and preserve loaded content. Full root pagination/sorting is implemented in this release.
-
-API: POST /api/comments accepts optional parentId (UUID/null); rootId is derived by the server and cannot be supplied. GET /api/comments/{id}/replies?limit=25&after={replyId} returns {items,nextAfter}; omit after for the first page. Limit is 1–100; after must be a direct child of that parent. Missing parent is 404 for reads and a parentId validation error (400) for writes. Unknown/foreign cursors are 400. Pages limit direct siblings, not thread depth. No delete/edit API is introduced.
-
-## Root sorting and pagination
-
-The SPA loads `GET /api/comments/page?page=1&sort=createdAt&direction=desc`. Allowed sort fields: `userName`, `email`, `createdAt`; direction: `asc` or `desc`. Date descending is default LIFO. Each page contains **25 roots**, excluding replies. The response contains `items`, `page`, `pageSize`, `totalCount` (roots only), `totalPages`. Page must be an integer from 1 to 85,899,345; invalid fields/directions return 400. Beyond the last page, the API returns an empty items array with the real totals; the SPA corrects stale bookmarks to the last page, or page 1 for an empty list. An empty list has totalPages=0.
-
-Sort controls offer all six combinations; sorting returns to page 1. First/Previous/Next/Last and page jump navigate; the address preserves page/sort/direction across reload. Drafts remain while browsing. A new root returns to page 1 with newest-first order; a reply retains its current page and does not change the root count. Replies keep their own Show/Hide/More controls. Failed refresh retains previous results and offers Refresh.
-
-Equal sort values use UUID in the selected direction as a stable tie-breaker. Name/email use the database collation; dates use UTC. Count and rows share a repeatable-read snapshot within a request. Separate page requests are live: concurrent additions can shift offset boundaries. The compatibility route `GET /api/comments?limit=25` retains its bounded latest-root array response. Sorting itself adds no migration; image attachments add their migration in 1.1.0.10.
-
-[Persistent million-row corpus and measurements](docs/BENCHMARK.md).
-
-## CAPTCHA
-
-Every comment/reply requires a fresh verification challenge. `GET /api/captcha` returns `{id,imageDataUrl,expiresAt}` with a raster PNG and no-store headers; the answer is never returned as text or metadata. Enter the six Latin letters/digits from the image, case-insensitively. Codes expire after **5 minutes**. `GET /api/captcha?replace={oldId}` invalidates that challenge and issues a new one.
-
-POST /api/comments additionally requires `captchaId` (UUID) and `captchaCode`. A verification attempt consumes its ID, including a wrong answer; missing, expired, replaced or spent challenges return 400 with `errors.captchaCode` and never stage an author/comment. Other input is validated before verification; after successful verification, parent/storage errors still consume the challenge. Refresh after any uncertain or failed submission before retrying. Preview and read endpoints do not require CAPTCHA.
-
-The form loads/refreshes the picture, blocks submission while loading/expired/unavailable, and preserves the draft after errors. It obtains a new challenge after every POST attempt. EN/RU/UA labels and errors are provided. The store is process-local, holds at most 2,048 challenges, reclaims expired entries, and returns 429 at capacity. Restarting/recreating the app invalidates outstanding challenges. Multiple app instances have separate challenges; use one instance for this release. The renderer uses portable .NET PNG primitives without platform graphics dependencies. Only answer hashes and expiry are retained in memory; no CAPTCHA data or migration is added to PostgreSQL.
-
-## Image attachments
-
-A root or reply can include **one optional JPG/JPEG, GIF or PNG**. Choose the image beside the comment; Remove image clears it. The source limit is 5 MiB, 16 million decoded pixels and 10,000 pixels per side. Images larger than 320×240 are reduced proportionally without cropping; small images are not enlarged. JPEG EXIF orientation is applied; GIF uses its first frame. Every accepted file is re-encoded as a static PNG, removing original metadata and trailing content. Transparency is preserved. These bounds are application choices; the assignment requires supported formats and the 320×240 result.
-
-The server checks the extension against the detected codec, decodes the image and rejects corrupt/truncated data before staging any rows. Browser MIME and accept filters are not trusted. The normalized image and author/comment are committed by the same unit of work to PostgreSQL; no independent filesystem file or new Docker volume is needed. The image row contains bytes (at most 512 KiB), sanitized display filename, dimensions and a unique CommentId. Each comment has at most one image; deleting its owning comment cascades only that image. Parent-comment deletion remains restricted while replies exist. Existing comments receive no image automatically.
-
-JSON POST /api/comments remains available for text-only writes. With an image, use multipart/form-data containing the same text/CAPTCHA fields and one file named `image`; let the browser/curl generate the boundary. Unknown/duplicate fields or multiple files are rejected. JSON retains its 1 MiB limit; multipart requests allow 6 MiB overall, with a 5 MiB file limit. Invalid images return 400 with errors.image; oversized request bodies can return 413. The CAPTCHA is consumed before image processing, so retry with a new code. Errors preserve the draft and selected file; successful submission clears them.
-
-Comment DTOs include nullable `image: {id,fileName,width,height}`; list/page/reply projections never include the binary payload. `GET /api/images/{id}` serves only canonical PNG with image/png, inline generated filename and X-Content-Type-Options: nosniff, or 404. Thumbnails open the modal viewer implemented in 1.1.0.12. TXT attachments are implemented in 1.1.0.11. Processing uses [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) and matching Linux native assets; notices are in [docs/third-party](docs/third-party/README.md) and the runtime image.
-
-Upgrade 1.1.0.9 → 1.1.0.10: stop all writers, including any benchmark preview, restore-verify a current checkpoint (`--include-benchmark` when that DB exists), build the app, migrate development/tests and benchmark (`--benchmark`) explicitly, then restart with the same volumes. Migration `20261030122207_ImageAttachments` adds only the image table/index/checks/FK; original author/comment fields and IDs remain unchanged. Down refuses while image rows exist. Keep verified pre-upgrade copies for recovery; a restore loses changes made after its checkpoint. Backups automatically include image bytes because they reside in the same database.
+[PostgreSQL schema / Workbench projection](docs/database/SCHEMA.md) · [Architecture](docs/ARCHITECTURE.md) · [Benchmark](docs/BENCHMARK.md)

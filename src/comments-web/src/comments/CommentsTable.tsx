@@ -1,3 +1,6 @@
+import { FileViewer } from '../files/FileViewer';
+import { attachments } from '../files/model';
+import type { FileClient } from '../files/model';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CommentText } from './CommentText';
 import type { Language, Messages } from '../messages';
@@ -6,10 +9,11 @@ import type { Comment, CommentsClient } from './model';
 
 type Branch = { items: Comment[]; nextAfter: string | null; open: boolean; loaded: boolean; busy: boolean; failed: boolean; retryAfter: string | null };
 const emptyBranch = (): Branch => ({ items: [], nextAfter: null, open: true, loaded: false, busy: false, failed: false, retryAfter: null });
-export function CommentsTable({ comments, labels: t, language, client, onReply, lastCreated, refreshVersion }: {
-  comments: Comment[]; labels: Messages; language: Language; client: CommentsClient;
+export function CommentsTable({ comments, labels: t, language, client, onReply, lastCreated, refreshVersion, fileClient }: {
+  fileClient: FileClient; comments: Comment[]; labels: Messages; language: Language; client: CommentsClient;
   onReply: (comment: Comment) => void; lastCreated: Comment | null; refreshVersion: number;
 }) {
+  const [viewer, setViewer] = useState<{ files: ReturnType<typeof attachments>; initial: number } | null>(null);
   const [branches, setBranches] = useState<Record<string, Branch>>({});
   const branchSnapshot = useRef(branches); branchSnapshot.current = branches;
   const pending = useRef(new Map<string, AbortController>());
@@ -55,7 +59,12 @@ export function CommentsTable({ comments, labels: t, language, client, onReply, 
       for (const child of branch.items.slice().reverse()) stack.push({ comment: child, depth: row.depth + 1, controls: false });
     }
   }
-  return <div className="table-scroll"><table>
+  function openFile(id: string) {
+    const files = attachments(rows.filter(row => !row.controls).map(row => row.comment));
+    const initial = files.findIndex(file => file.id === id);
+    if (initial >= 0) setViewer({ files, initial });
+  }
+  return <><div className="table-scroll"><table>
     <thead><tr><th scope="col">{t.author}</th><th scope="col">{t.text}</th><th scope="col">{t.posted}</th></tr></thead>
     <tbody>{rows.map(({ comment, depth, controls }) => {
       const branch = branches[comment.id];
@@ -72,16 +81,16 @@ export function CommentsTable({ comments, labels: t, language, client, onReply, 
           <strong dir="auto">{comment.userName}</strong><span className="author-email" dir="auto">{comment.email}</span>
           {home && <a href={home} target="_blank" rel="noopener noreferrer">{t.website} ↗</a>}</td>
         <td><div className="comment-text" dir="auto"><CommentText text={comment.text} /></div>
-          {comment.image && <figure className="image-attachment"><a href={`/api/images/${encodeURIComponent(comment.image.id)}`} target="_blank" rel="noopener noreferrer">
+          {comment.image && <figure className="image-attachment"><button className="attachment-open" aria-label={`${t.viewerOpen}: ${comment.image.fileName}`} onClick={() => openFile(comment.image!.id)}>
             <img src={`/api/images/${encodeURIComponent(comment.image.id)}`} width={comment.image.width} height={comment.image.height} alt={comment.image.fileName} loading="lazy" />
-          </a><figcaption>{comment.image.fileName} · {comment.image.width} × {comment.image.height}</figcaption></figure>}
-          {comment.textFile && <p className="text-attachment"><a href={`/api/text-files/${encodeURIComponent(comment.textFile.id)}`}>
-            {comment.textFile.fileName}</a> · {comment.textFile.sizeBytes.toLocaleString()} {t.fileBytes}</p>}
+          </button><figcaption>{comment.image.fileName} · {comment.image.width} × {comment.image.height}</figcaption></figure>}
+          {comment.textFile && <p className="text-attachment"><button className="attachment-open" onClick={() => openFile(comment.textFile!.id)}>
+            {comment.textFile.fileName}</button> · {comment.textFile.sizeBytes.toLocaleString()} {t.fileBytes}</p>}
           <div className="thread-actions"><button className="secondary" onClick={() => onReply(comment)}>{t.reply}</button>
             <button className="secondary" aria-expanded={branch?.open ?? false} onClick={() => toggle(comment.id)}>{branch?.open ? t.hideReplies : t.showReplies}</button></div>
         </td>
         <td><time dateTime={comment.createdAt}>{new Date(comment.createdAt).toLocaleString(language)}</time></td>
       </tr>;
     })}</tbody>
-  </table></div>;
+  </table></div>{viewer && <FileViewer files={viewer.files} initial={viewer.initial} client={fileClient} labels={t} onClose={() => setViewer(null)} />}</>;
 }

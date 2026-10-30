@@ -22,7 +22,13 @@
     <File Path="src/comments-web/src/comments/useCaptcha.ts" />
     <File Path="src/comments-web/src/comments/CommentText.tsx" />
   </Folder>
+  <Folder Name="/Frontend/src/files/">
+    <File Path="src/comments-web/src/files/model.ts" />
+    <File Path="src/comments-web/src/files/client.ts" />
+    <File Path="src/comments-web/src/files/FileViewer.tsx" />
+  </Folder>
   <Folder Name="/Frontend/tests/">
+    <File Path="src/comments-web/tests/files.test.mjs" />
     <File Path="src/comments-web/tests/comments.test.mjs" />
   </Folder>
   <Folder Name="/src/">

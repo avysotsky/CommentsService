@@ -73,3 +73,23 @@ footer { color: #5c6b59; font-size: 12px; border-top: 1px solid #dfe4d7; padding
 .image-field input { letter-spacing:normal; }
 
 .text-attachment { font-size:12px; overflow-wrap:anywhere; margin:.75rem 0; }
+
+.attachment-open { padding:0; background:transparent; border:0; color:#38693d; text-align:start; max-width:100%; text-decoration:underline; overflow-wrap:anywhere; }
+.image-attachment .attachment-open { display:block; line-height:0; }
+.file-viewer { box-sizing:border-box; width:min(840px, calc(100vw - 24px)); max-height:calc(100dvh - 24px); padding:20px; border:1px solid #bac5b5; border-radius:12px; color:#263c32; background:#fff; overflow:auto; box-shadow:0 20px 80px #0005; }
+.file-viewer[open] { animation:viewer-in 160ms ease-out; }
+.file-viewer::backdrop { background:#14251de0; animation:backdrop-in 160ms ease-out; }
+.file-viewer.closing { animation:viewer-out 160ms ease-in forwards; }
+.file-viewer.closing::backdrop { animation:backdrop-in 160ms ease-in reverse forwards; }
+.viewer-heading { display:flex; align-items:start; gap:12px; justify-content:space-between; }
+.viewer-heading h2 { margin:0; font-size:20px; overflow-wrap:anywhere; min-width:0; }
+.viewer-heading button { flex-shrink:0; }
+.viewer-actions { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin:16px 0; }
+.viewer-content { background:#f4f6ed; border-radius:8px; padding:16px; min-height:120px; overflow:auto; }
+.viewer-content img { display:block; margin:auto; max-width:100%; height:auto; animation:viewer-in 160ms ease-out; }
+.viewer-content pre { white-space:pre-wrap; overflow-wrap:anywhere; font:14px/1.6 monospace; margin:0; unicode-bidi:plaintext; animation:viewer-in 160ms ease-out; }
+@keyframes viewer-in { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+@keyframes viewer-out { to { opacity:0; transform:scale(.96); } }
+@keyframes backdrop-in { from { opacity:0; } to { opacity:1; } }
+@media (prefers-reduced-motion:reduce) { .file-viewer[open], .file-viewer::backdrop, .viewer-content img, .viewer-content pre { animation:none; } }
+@media (max-width:600px) { .file-viewer { padding:14px; } .viewer-heading { flex-wrap:wrap; } }

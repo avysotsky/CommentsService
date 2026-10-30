@@ -19,6 +19,7 @@ export const messages = {
     captchaLabel: 'Verification code', captchaImage: 'CAPTCHA image. Enter its six characters below.', captchaRefresh: 'New code', captchaLoading: 'Loading verification image…', captchaHint: '6 letters/digits from the picture, case-insensitive. Valid for 5 minutes and one attempt.', captchaUnavailable: 'Could not load verification. Request a new code.', captchaExpired: 'Code expired. Request a new code.', captchaInvalid: 'Enter the picture code. If it was rejected, use the new picture.',
     imageLabel: 'Image (optional)', imageHint: 'JPG/GIF/PNG up to 5 MiB; resized proportionally to 320×240. GIF uses its first frame. Saved as PNG.', imageRemove: 'Remove image', imageError: 'Choose a valid JPG, GIF or PNG up to 5 MiB. The server checks its contents and dimensions.',
     textFileLabel: 'TXT file (optional)', textFileHint: 'UTF-8 TXT, 1–102,400 bytes (100 KiB). Choose an image OR a TXT file. Downloads as plain text.', textFileRemove: 'Remove TXT', textFileError: 'Choose a valid UTF-8 TXT up to 100 KiB, without binary control characters. Only one attachment is allowed.', fileBytes: 'bytes',
+    viewerOpen: 'View file', viewerClose: 'Close viewer', viewerPrevious: 'Previous file', viewerNext: 'Next file', viewerDownload: 'Download', viewerLoading: 'Loading file…', viewerError: 'Could not load this file.', viewerHelp: 'Esc to close · ← → to browse attachments in visible comments. TXT is shown as plain text.',
     author: 'Author', posted: 'Posted', website: 'Website', language: 'Language',
   },
   ru: {
@@ -41,6 +42,7 @@ export const messages = {
     captchaLabel: 'Проверочный код', captchaImage: 'Картинка CAPTCHA. Введите шесть символов ниже.', captchaRefresh: 'Новый код', captchaLoading: 'Загрузка проверочной картинки…', captchaHint: '6 букв/цифр с картинки, регистр не важен. Срок — 5 минут, одна попытка.', captchaUnavailable: 'Не удалось загрузить проверку. Запросите новый код.', captchaExpired: 'Код просрочен. Запросите новый.', captchaInvalid: 'Введите код с картинки. После отказа используйте новую картинку.',
     imageLabel: 'Изображение (необязательно)', imageHint: 'JPG/GIF/PNG до 5 МиБ; пропорциональное уменьшение до 320×240. GIF — первый кадр. Сохранение в PNG.', imageRemove: 'Убрать изображение', imageError: 'Выберите корректный JPG, GIF или PNG до 5 МиБ. Сервер проверяет содержимое и размеры.',
     textFileLabel: 'TXT-файл (необязательно)', textFileHint: 'UTF-8 TXT, 1–102 400 байт (100 КиБ). Картинка ИЛИ TXT-файл. Скачивается как обычный текст.', textFileRemove: 'Убрать TXT', textFileError: 'Выберите корректный UTF-8 TXT до 100 КиБ без двоичных управляющих символов. Допустимо одно вложение.', fileBytes: 'байт',
+    viewerOpen: 'Просмотреть файл', viewerClose: 'Закрыть просмотр', viewerPrevious: 'Предыдущий файл', viewerNext: 'Следующий файл', viewerDownload: 'Скачать', viewerLoading: 'Загрузка файла…', viewerError: 'Не удалось загрузить файл.', viewerHelp: 'Esc — закрыть · ← → — вложения видимых комментариев. TXT отображается обычным текстом.',
     author: 'Автор', posted: 'Дата', website: 'Сайт', language: 'Язык',
   },
   uk: {
@@ -63,6 +65,7 @@ export const messages = {
     captchaLabel: 'Перевірочний код', captchaImage: 'Зображення CAPTCHA. Введіть шість символів нижче.', captchaRefresh: 'Новий код', captchaLoading: 'Завантаження перевірочного зображення…', captchaHint: '6 літер/цифр із зображення, регістр не важливий. Термін — 5 хвилин, одна спроба.', captchaUnavailable: 'Не вдалося завантажити перевірку. Запросіть новий код.', captchaExpired: 'Термін коду минув. Запросіть новий.', captchaInvalid: 'Введіть код із зображення. Після відмови використовуйте нове зображення.',
     imageLabel: 'Зображення (необов’язково)', imageHint: 'JPG/GIF/PNG до 5 МіБ; пропорційне зменшення до 320×240. GIF — перший кадр. Збереження в PNG.', imageRemove: 'Прибрати зображення', imageError: 'Виберіть коректний JPG, GIF або PNG до 5 МіБ. Сервер перевіряє вміст і розміри.',
     textFileLabel: 'TXT-файл (необов’язково)', textFileHint: 'UTF-8 TXT, 1–102 400 байтів (100 КіБ). Зображення АБО TXT-файл. Завантажується як звичайний текст.', textFileRemove: 'Прибрати TXT', textFileError: 'Виберіть коректний UTF-8 TXT до 100 КіБ без двійкових керівних символів. Дозволено одне вкладення.', fileBytes: 'байтів',
+    viewerOpen: 'Переглянути файл', viewerClose: 'Закрити перегляд', viewerPrevious: 'Попередній файл', viewerNext: 'Наступний файл', viewerDownload: 'Завантажити', viewerLoading: 'Завантаження файлу…', viewerError: 'Не вдалося завантажити файл.', viewerHelp: 'Esc — закрити · ← → — вкладення видимих коментарів. TXT відображається звичайним текстом.',
     author: 'Автор', posted: 'Дата', website: 'Сайт', language: 'Мова',
   },
 };

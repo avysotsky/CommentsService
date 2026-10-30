@@ -394,6 +394,13 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
         Assert.Equal("image/png",file.Content.Headers.ContentType!.MediaType); Assert.Equal("nosniff",file.Headers.GetValues("X-Content-Type-Options").Single());
         var bytes=await file.Content.ReadAsByteArrayAsync(); Assert.Equal(137,bytes[0]);
         Assert.Equal("inline",file.Content.Headers.ContentDisposition!.DispositionType);
+        using var download=await fixture.Client.GetAsync("/api/images/"+value.Image.Id+"?download=true");
+        Assert.Equal(HttpStatusCode.OK,download.StatusCode);
+        Assert.Equal("attachment",download.Content.Headers.ContentDisposition!.DispositionType);
+        Assert.Equal(value.Image.Id.ToString("N")+".png",download.Content.Headers.ContentDisposition.FileName!.Trim('"'));
+        Assert.Equal(bytes,await download.Content.ReadAsByteArrayAsync());
+        Assert.Equal("image/png",download.Content.Headers.ContentType!.MediaType);
+        Assert.Equal("nosniff",download.Headers.GetValues("X-Content-Type-Options").Single());
         Assert.DoesNotContain("data",await response.Content.ReadAsStringAsync(),StringComparison.OrdinalIgnoreCase);
     }
     [Theory]

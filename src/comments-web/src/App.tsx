@@ -1,3 +1,4 @@
+import type { FileClient } from './files/model';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { messages } from './messages';
 import type { Language } from './messages';
@@ -7,7 +8,7 @@ import { RootPagination } from './comments/RootPagination';
 import { defaultRootQuery, readRootQuery } from './comments/model';
 import type { Comment, CommentsClient, RootPage, RootPageQuery } from './comments/model';
 
-export function App({ client }: { client: CommentsClient }) {
+export function App({ client, fileClient }: { client: CommentsClient; fileClient: FileClient }) {
   const [language, setLanguage] = useState<Language>('en');
   const [query, setQuery] = useState<RootPageQuery>(() => readRootQuery(location.search));
   const [data, setData] = useState<RootPage | null>(null);
@@ -61,7 +62,7 @@ export function App({ client }: { client: CommentsClient }) {
       <label className="language" htmlFor="language">{t.language}<select id="language" aria-label={t.language} value={language} onChange={event => setLanguage(event.target.value as Language)}>
         <option value="en">English</option><option value="ru">Русский</option><option value="uk">Українська</option>
       </select></label></header>
-    <div className="hero"><p className="eyebrow">1.1.0.11 / TEXT ATTACHMENTS</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
+    <div className="hero"><p className="eyebrow">1.1.0.12 / FILE VIEWER</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
     <CommentForm client={client} labels={t} onCreated={created} replyTo={replyTo} onCancelReply={() => setReplyTo(null)} />
     <section className="panel comments" aria-labelledby="recent-title" aria-busy={loading}>
       <div className="section-heading"><h2 id="recent-title">{t.recent}</h2><button className="secondary" onClick={() => { setThreadRefresh(value => value + 1); void load(query); }} disabled={loading}>{t.refresh}</button></div>
@@ -70,11 +71,11 @@ export function App({ client }: { client: CommentsClient }) {
       <p role="status">{loading ? t.loading : !failed && data?.items.length === 0 ? t.empty : ''}</p>
       {failed && <p role="alert" className="error">{t.loadError} {data && t.previousResults}</p>}
       {data && data.items.length > 0 && <CommentsTable key={`${loadedQuery?.page}:${loadedQuery?.sort}:${loadedQuery?.direction}`}
-        comments={data.items} labels={t} language={language} client={client} lastCreated={lastCreated} refreshVersion={threadRefresh} onReply={comment => {
+        comments={data.items} fileClient={fileClient} labels={t} language={language} client={client} lastCreated={lastCreated} refreshVersion={threadRefresh} onReply={comment => {
           setReplyTo(comment); document.querySelector('#compose-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           requestAnimationFrame(() => document.getElementById('text')?.focus());
         }} />}
     </section>
-    <footer>CommentsService · 1.1.0.11</footer>
+    <footer>CommentsService · 1.1.0.12</footer>
   </main>;
 }

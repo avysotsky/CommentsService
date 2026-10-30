@@ -1,6 +1,6 @@
 # CommentsService
 
-Version: **1.1.0.6** · Branch: `CommentsService/v_1.1.0.6_XhtmlEditor`
+Version: **1.1.0.6** · Branch: `CommentsService/v_1.1.0.6_HomepageHint`
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 
@@ -120,3 +120,5 @@ the migration ID, schema and existing data unchanged. The next milestone is 1.1.
 Allowed tags: `a`, `i`, `strong`, `code`. Links require an absolute HTTP(S) `href` without credentials; `title` is optional. Other attributes, namespaces, nested links, comments, DTD/CDATA, malformed tags and unsafe URLs are rejected. XHTML uses closed, correctly nested lowercase tags and XML entities (`&amp;`, `&lt;`, `&quot;`); plain text such as `1 < 2 && 3 > 1` still works. The limit is 65,536 UTF-16 units, depth 32 and 4096 parser nodes.
 
 Select text and use Bold/Italic/Code/Link. Link inserts an editable HTTPS template. Preview calls `POST /api/comments/preview` with `{ "text": "<strong>Hello</strong>" }` and returns `{ "html": "<strong>Hello</strong>" }` without database access or writes. Saving uses the same Application validator. Editing hides stale previews; request failure preserves the draft. Preview and table render only allowlisted React elements, with safe links and escaped fallback text. Existing stored text and schema are unchanged.
+
+The optional homepage field explains that a full address is required, for example `https://example.com`; `http://` is also supported. The form does not choose a protocol or check website availability.

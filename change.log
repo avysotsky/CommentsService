@@ -2,6 +2,14 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.6 HomepageHint — 2026-10-30
+
+Branch: `CommentsService/v_1.1.0.6_HomepageHint`
+
+- Added a permanent accessible homepage hint with a full HTTPS example and explicit HTTP support; clarified the validation error in EN/RU/UA. Users supply the protocol; no automatic prefix or website-availability check.
+- Verified 8 frontend tests, frontend/Docker builds, and Edge desktop/360 px: hints/errors in all languages, bare-domain rejection, unchanged HTTP/HTTPS input, empty optional field and draft retention. Browser submissions were mocked without database writes. Backend logic is unchanged; its suites were not repeated.
+- Both database data/schema/history baselines, persistent volume identities and checkpoint hashes matched. Schema and version stay unchanged; next planned milestone remains 1.1.0.7 CommentThreads.
+
 ## 1.1.0.6 XhtmlEditor — 2026-10-30
 
 Branch: `CommentsService/v_1.1.0.6_XhtmlEditor`

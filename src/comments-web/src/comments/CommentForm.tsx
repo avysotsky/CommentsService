@@ -102,7 +102,7 @@ export function CommentForm({ client, labels: t, onCreated }: {
     <h2 id="compose-title">{t.compose}</h2>
     <form noValidate onSubmit={submit} ref={form} aria-busy={sending}>
       <div className="form-grid">{field('userName', t.name, t.nameHint)}{field('email', t.email, t.emailHint)}</div>
-      {field('homePage', t.home)}
+      {field('homePage', t.home, t.homeHint)}
       <div className="editor-toolbar" role="group" aria-label={t.formatting}>
         {(['strong', 'i', 'code', 'a'] as const).map(tag => <button key={tag} type="button" disabled={sending}
           onMouseDown={event => event.preventDefault()} onClick={() => format(tag)}>{t[tag]}</button>)}

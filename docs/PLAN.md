@@ -2,6 +2,8 @@
 
 ## Status and version rules
 
+Completed correction: `CommentsService/v_1.1.0.6_HomepageHint` clarifies homepage hints/errors in EN/RU/UA; version/schema unchanged.
+
 The approved sequence starts at `CommentsService/v_1.1.0.1_Init`.
 Current milestone: 1.1.0.6 XhtmlEditor completed. Onion architecture is preserved. Next: 1.1.0.7 CommentThreads.
 Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
@@ -86,6 +88,8 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 # CommentsService — План разработки
 
 ## Статус и правила версий
+
+Завершена доработка `CommentsService/v_1.1.0.6_HomepageHint`: понятные подсказки/ошибки сайта на EN/RU/UA; версия/схема прежние.
 
 Согласованная последовательность начинается с `CommentsService/v_1.1.0.1_Init`.
 Текущий этап 1.1.0.6 XhtmlEditor завершён. Onion сохранён. Далее — 1.1.0.7 CommentThreads.
@@ -173,6 +177,8 @@ README и change.log. README.md — английский, README.RU.md — ру�
 # CommentsService — План розробки
 
 ## Статус і правила версій
+
+Завершено доопрацювання `CommentsService/v_1.1.0.6_HomepageHint`: зрозумілі підказки/помилки сайту на EN/RU/UA; версія/схема попередні.
 
 Погоджена послідовність починається з `CommentsService/v_1.1.0.1_Init`.
 Поточний етап 1.1.0.6 XhtmlEditor завершено. Onion збережено. Далі — 1.1.0.7 CommentThreads.

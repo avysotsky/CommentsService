@@ -5,6 +5,7 @@ export type FieldErrors = Partial<Record<Field, string[]>>;
 export interface CommentsClient {
   latest(signal?: AbortSignal): Promise<Comment[]>;
   create(input: CommentInput): Promise<Comment>;
+  preview(text: string, signal?: AbortSignal): Promise<{ html: string }>;
 }
 
 export const emptyInput = (): CommentInput => ({ userName: '', email: '', homePage: '', text: '' });
@@ -25,6 +26,6 @@ export function validate(input: CommentInput): Partial<Record<Field, ValidationC
   if (email.length > 254 || !/^[^\s<>@\u0000-\u001f\u007f]+@[^\s<>@\u0000-\u001f\u007f]+$/u.test(email)) errors.email = 'emailError';
   if (home && (home.length > 2048 || !safeHomePage(home))) errors.homePage = 'homeError';
   if (!input.text.trim() || input.text.length > 65536 || input.text.includes('\0') || !input.text.isWellFormed()) errors.text = 'textError';
-  else if (/<\s*[/!?\p{L}]/u.test(input.text)) errors.text = 'plainError';
+
   return errors;
 }

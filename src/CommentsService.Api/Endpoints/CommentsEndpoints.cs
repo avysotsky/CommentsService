@@ -11,6 +11,16 @@ public static class CommentsEndpoints
     public static IEndpointRouteBuilder MapCommentsEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("/api/comments");
+        group.MapPost("/preview", async (HttpContext context,
+            CommentsService.Application.Comments.Markup.ICommentMarkup markup, CancellationToken token) =>
+        {
+            if (!context.Request.HasJsonContentType()) return Results.Problem(
+                statusCode: StatusCodes.Status415UnsupportedMediaType, title: "Unsupported media type.");
+            var body = await context.Request.ReadFromJsonAsync<PreviewCommentBody>(token);
+            if (body is null) return Results.Problem(statusCode: StatusCodes.Status400BadRequest, title: "Invalid request body.");
+            var result = markup.Validate(body.Text);
+            return result.IsValid ? Results.Ok(result.Value) : Results.ValidationProblem(result.Errors.ToDictionary());
+        });
         group.MapPost("", async (HttpContext context, ICreateComment create, CancellationToken token) =>
         {
             if (!context.Request.HasJsonContentType()) return Results.Problem(

@@ -2,7 +2,9 @@
 
 ## English
 
-Release **1.1.0.5 CommentsUi** implements comment use cases inside the Onion core.
+Application owns ICommentMarkup/XhtmlCommentMarkup, shared by create and read-only preview. HTTP only maps transport. Frontend uses the CommentsClient port and an allowlisted React renderer, never raw HTML. No provider/HTTP dependency enters the core.
+
+Release **1.1.0.6 XhtmlEditor** implements comment use cases inside the Onion core.
 
 - Domain/Entities protects entity invariants and has no external project/package dependencies.
 - Application/Comments contains CreateComment, GetComment and GetLatestComments, input validation,
@@ -28,12 +30,14 @@ Architecture tests guard inward references, core independence, public port types
 
 Migration 20261029195935_InitialDataModel and SQL are unchanged from 1.1.0.3. No artificial
 migration/checkpoint rotation is required. Future EF add commands use --output-dir Persistence/Migrations
-with Infrastructure as target and Api as startup. CommentsUi is implemented; XHTML, threads and full
+with Infrastructure as target and Api as startup. XhtmlEditor is implemented; threads and full
 sorting/pagination remain their planned milestones. OOP/SOLID/Onion apply to all subsequent changes.
 
 ## Русский
 
-Выпуск **1.1.0.5 CommentsUi** реализует сценарии комментариев внутри ядра Onion.
+Application содержит ICommentMarkup/XhtmlCommentMarkup для создания и предпросмотра без записи. HTTP связывает транспорт. Frontend использует контракт CommentsClient и разрешённые React-элементы, без вставки HTML. Зависимости провайдера/HTTP не входят в ядро.
+
+Выпуск **1.1.0.6 XhtmlEditor** реализует сценарии комментариев внутри ядра Onion.
 
 - Domain/Entities защищает инварианты сущностей и не имеет внешних зависимостей от проектов/пакетов.
 - Application/Comments содержит CreateComment, GetComment и GetLatestComments, валидацию ввода,
@@ -59,12 +63,14 @@ Data.Tests (PostgreSQL с откатом) и Api.Tests (HTTP с удаление
 
 Миграция 20261029195935_InitialDataModel и SQL не меняются относительно 1.1.0.3. Искусственная
 миграция/замена контрольных копий не нужна. При будущей генерации указывать --output-dir Persistence/Migrations,
-цель Infrastructure, стартовый проект Api. CommentsUi реализован; XHTML, ответы и полные
+цель Infrastructure, стартовый проект Api. XhtmlEditor реализован; ответы и полные
 сортировки/пагинация остаются в своих этапах. OOP/SOLID/Onion обязательны при последующих изменениях.
 
 ## Українська
 
-Випуск **1.1.0.5 CommentsUi** реалізує сценарії коментарів усередині ядра Onion.
+Application містить ICommentMarkup/XhtmlCommentMarkup для створення та перегляду без запису. HTTP пов’язує транспорт. Frontend використовує контракт CommentsClient і дозволені React-елементи, без вставлення HTML. Залежності провайдера/HTTP не входять до ядра.
+
+Випуск **1.1.0.6 XhtmlEditor** реалізує сценарії коментарів усередині ядра Onion.
 
 - Domain/Entities захищає інваріанти сутностей і не має зовнішніх залежностей від проєктів/пакетів.
 - Application/Comments містить CreateComment, GetComment і GetLatestComments, валідацію вводу,
@@ -90,7 +96,7 @@ Data.Tests (PostgreSQL із відкатом) та Api.Tests (HTTP з видал
 
 Міграція 20261029195935_InitialDataModel та SQL не змінюються відносно 1.1.0.3. Штучна
 міграція/заміна контрольних копій не потрібна. Під час майбутньої генерації вказувати --output-dir Persistence/Migrations,
-ціль Infrastructure, стартовий проєкт Api. CommentsUi реалізовано; XHTML, відповіді й повні
+ціль Infrastructure, стартовий проєкт Api. XhtmlEditor реалізовано; відповіді й повні
 сортування/пагінація залишаються у своїх етапах. OOP/SOLID/Onion обов’язкові під час наступних змін.
 
 ## Dependencies / Зависимости / Залежності

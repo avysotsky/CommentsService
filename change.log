@@ -2,6 +2,16 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.6 XhtmlEditor — 2026-10-30
+
+Branch: `CommentsService/v_1.1.0.6_XhtmlEditor`
+
+- Added strict, bounded XHTML validation for a (href/title), i, strong and code; checked nesting, HTTP(S) URLs and XML characters; rejected unsafe markup, namespaces, DTD/CDATA and nested links.
+- Shared the Application ICommentMarkup policy between create and POST /api/comments/preview. Preview performs no persistence. Existing text and migration remain unchanged; Onion/OOP/SOLID boundaries are preserved.
+- Added selection-aware toolbar buttons, editable HTTPS link templates, server-validated preview, stale-preview cancellation and EN/RU/UA editor labels. Render only allowlisted React elements with safe links and escaped fallback; preserve legacy literal entities/plain text.
+- Passed 131 backend tests (21 domain/architecture, 62 application, 10 database, 38 HTTP), 8 frontend tests, frontend and Docker builds. Edge checks passed toolbar/preview/create/read/reload, invalid markup/links, stale preview, draft retention, localization and desktop/360 px without JavaScript errors.
+- Both database data/schema/history baselines, volume identities and checkpoint hashes matched. Removed only this run’s browser fixtures and temporary app container. Migration 20261029195935_InitialDataModel is unchanged. Next: 1.1.0.7 CommentThreads.
+
 ## 1.1.0.5 CommentsUi — 2026-10-30
 
 Branch: `CommentsService/v_1.1.0.5_CommentsUi`

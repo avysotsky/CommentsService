@@ -1,11 +1,15 @@
-CommentsService — 1.1.0.5 CommentsUi
-Branch: CommentsService/v_1.1.0.5_CommentsUi
+CommentsService — 1.1.0.6 XhtmlEditor
+Branch: CommentsService/v_1.1.0.6_XhtmlEditor
 
 ENGLISH
-Upgrade from 1.1.0.4: same schema; reuse existing checkpoints/volumes.
+Allowed tags: `a`, `i`, `strong`, `code`. Links require an absolute HTTP(S) `href` without credentials; `title` is optional. Other attributes, namespaces, nested links, comments, DTD/CDATA, malformed tags and unsafe URLs are rejected. XHTML uses closed, correctly nested lowercase tags and XML entities (`&amp;`, `&lt;`, `&quot;`); plain text such as `1 < 2 && 3 > 1` still works. The limit is 65,536 UTF-16 units, depth 32 and 4096 parser nodes.
+
+Select text and use Bold/Italic/Code/Link. Link inserts an editable HTTPS template. Preview calls `POST /api/comments/preview` with `{ "text": "<strong>Hello</strong>" }` and returns `{ "html": "<strong>Hello</strong>" }` without database access or writes. Saving uses the same Application validator. Editing hides stale previews; request failure preserves the draft. Preview and table render only allowlisted React elements, with safe links and escaped fallback text. Existing stored text and schema are unchanged.
+
+Upgrade from 1.1.0.5: same schema; reuse existing checkpoints/volumes.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Architecture and SOLID boundaries: docs/ARCHITECTURE.md.
-Create/read plain-text comments, server validation and client metadata. API contract: docs/API.md. SPA form/table, client validation, async submission and EN/RU/UA are available. Next: 1.1.0.6 XhtmlEditor.
+Create/read text/XHTML comments, server validation and client metadata. API contract: docs/API.md. SPA form/table, client validation, async submission and EN/RU/UA are available. Next: 1.1.0.7 CommentThreads.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py
@@ -29,10 +33,14 @@ Stop writes before checkpoint/migration; keep the same project/environment/volum
 Instructions: README.md. Schema/recovery: docs/database. History: change.log.
 
 РУССКИЙ
-Обновление с 1.1.0.4: прежняя схема; сохраняйте копии/тома.
+Разрешены `a`, `i`, `strong`, `code`. Для ссылки обязателен абсолютный HTTP(S) `href` без учётных данных; `title` необязателен. Остальные атрибуты, пространства имён, вложенные ссылки, комментарии, DTD/CDATA, неправильная вложенность и опасные адреса запрещены. XHTML требует закрытых строчных тегов и XML-сущностей (`&amp;`, `&lt;`, `&quot;`); обычный текст `1 < 2 && 3 > 1` также допустим. Лимиты: 65 536 единиц UTF-16, глубина 32 и 4096 узлов парсера.
+
+Выделите текст и нажмите «Жирный», «Курсив», «Код» или «Ссылка». Ссылка вставляет редактируемый HTTPS-шаблон. «Предпросмотр» отправляет `POST /api/comments/preview` с `{ "text": "<strong>Hello</strong>" }` и получает `{ "html": "<strong>Hello</strong>" }` без обращения к БД и записи. Сохранение использует тот же валидатор Application. Правка скрывает устаревший просмотр; ошибка сохраняет черновик. Просмотр и таблица создают только разрешённые React-элементы, безопасные ссылки и экранированный текст при отказе. Существующие записи и схема не меняются.
+
+Обновление с 1.1.0.5: прежняя схема; сохраняйте копии/тома.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Архитектура и границы SOLID: docs/ARCHITECTURE.md.
-Создание/чтение текстовых комментариев, серверная валидация и метаданные клиента. Контракт: docs/API.md. SPA-форма/таблица, клиентская валидация, AJAX и EN/RU/UA реализованы. Далее 1.1.0.6 XhtmlEditor.
+Создание/чтение текстовых комментариев, серверная валидация и метаданные клиента. Контракт: docs/API.md. SPA-форма/таблица, клиентская валидация, AJAX и EN/RU/UA реализованы. Далее 1.1.0.7 CommentThreads.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py
@@ -56,10 +64,14 @@ npm run build --prefix src/comments-web
 Инструкция: README.RU.md. Схема/восстановление: docs/database. История: change.log.ru.
 
 УКРАЇНСЬКОЮ
-Оновлення з 1.1.0.4: попередня схема; зберігайте копії/томи.
+Дозволено `a`, `i`, `strong`, `code`. Посилання потребує абсолютного HTTP(S) `href` без облікових даних; `title` необов’язковий. Решту атрибутів, простори імен, вкладені посилання, коментарі, DTD/CDATA, неправильну вкладеність і небезпечні адреси заборонено. XHTML потребує закритих тегів нижнього регістру та XML-сутностей (`&amp;`, `&lt;`, `&quot;`); звичайний текст `1 < 2 && 3 > 1` також дозволено. Обмеження: 65 536 одиниць UTF-16, глибина 32 та 4096 вузлів парсера.
+
+Виділіть текст і натисніть «Жирний», «Курсив», «Код» або «Посилання». Посилання вставляє редагований HTTPS-шаблон. «Перегляд» надсилає `POST /api/comments/preview` з `{ "text": "<strong>Hello</strong>" }` та отримує `{ "html": "<strong>Hello</strong>" }` без звернення до БД чи запису. Збереження використовує той самий валідатор Application. Редагування приховує застарілий перегляд; помилка зберігає чернетку. Перегляд і таблиця створюють лише дозволені React-елементи, безпечні посилання та екранований текст у разі відмови. Наявні записи й схема не змінюються.
+
+Оновлення з 1.1.0.5: попередня схема; зберігайте копії/томи.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Архітектура та межі SOLID: docs/ARCHITECTURE.md.
-Створення/читання текстових коментарів, серверна валідація та метадані клієнта. Контракт: docs/API.md. SPA-форму/таблицю, клієнтську валідацію, AJAX та EN/RU/UA реалізовано. Далі 1.1.0.6 XhtmlEditor.
+Створення/читання текстових коментарів, серверна валідація та метадані клієнта. Контракт: docs/API.md. SPA-форму/таблицю, клієнтську валідацію, AJAX та EN/RU/UA реалізовано. Далі 1.1.0.7 CommentThreads.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py

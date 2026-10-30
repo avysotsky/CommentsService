@@ -25,6 +25,12 @@ export class HttpCommentsClient implements CommentsClient {
     }));
   }
 
+  async preview(text: string, signal?: AbortSignal): Promise<{ html: string }> {
+    return this.read(await this.request('/api/comments/preview', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }), signal,
+    }));
+  }
+
   private async read<T>(response: Response): Promise<T> {
     if (response.ok) return response.json() as Promise<T>;
     const fields: FieldErrors = {};

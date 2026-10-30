@@ -2,7 +2,7 @@
 
 ## English
 
-Current release 1.1.0.5 keeps the 1.1.0.3 schema/migration unchanged. The API adds
+Current release 1.1.0.6 keeps the 1.1.0.3 schema/migration unchanged. The API adds
 validated writes/read projections; no new migration or checkpoint rotation is required.
 HTTP tests remove only their own comments/unreferenced author snapshots.
 
@@ -65,7 +65,7 @@ Full thread/attachment preservation checks belong to later schema versions.
 
 ## Русский
 
-Текущий выпуск 1.1.0.5 сохраняет схему/миграцию 1.1.0.3. API добавляет проверяемую
+Текущий выпуск 1.1.0.6 сохраняет схему/миграцию 1.1.0.3. API добавляет проверяемую
 запись и проекции чтения; новая миграция и замена копий не нужны.
 HTTP-тесты удаляют только свои комментарии и записи авторов без ссылок.
 
@@ -125,7 +125,7 @@ dotnet ef migrations script --idempotent --project src/CommentsService.Infrastru
 
 ## Українська
 
-Поточний випуск 1.1.0.5 зберігає схему/міграцію 1.1.0.3. API додає перевірюваний
+Поточний випуск 1.1.0.6 зберігає схему/міграцію 1.1.0.3. API додає перевірюваний
 запис і проєкції читання; нова міграція та заміна копій не потрібні.
 HTTP-тести видаляють лише власні коментарі й записи авторів без посилань.
 

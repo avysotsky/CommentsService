@@ -18,6 +18,7 @@
     <File Path="src/comments-web/src/comments/client.ts" />
     <File Path="src/comments-web/src/comments/CommentForm.tsx" />
     <File Path="src/comments-web/src/comments/CommentsTable.tsx" />
+    <File Path="src/comments-web/src/comments/CommentText.tsx" />
   </Folder>
   <Folder Name="/Frontend/tests/">
     <File Path="src/comments-web/tests/comments.test.mjs" />

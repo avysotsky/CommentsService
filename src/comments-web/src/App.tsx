@@ -42,7 +42,7 @@ export function App({ client }: { client: CommentsClient }) {
       <label className="language" htmlFor="language">{t.language}<select id="language" aria-label={t.language} value={language} onChange={event => setLanguage(event.target.value as Language)}>
         <option value="en">English</option><option value="ru">Русский</option><option value="uk">Українська</option>
       </select></label></header>
-    <div className="hero"><p className="eyebrow">1.1.0.5 / COMMENTS UI</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
+    <div className="hero"><p className="eyebrow">1.1.0.6 / XHTML EDITOR</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
     <CommentForm client={client} labels={t} onCreated={created} />
     <section className="panel comments" aria-labelledby="recent-title" aria-busy={loading}>
       <div className="section-heading"><h2 id="recent-title">{t.recent}</h2><button className="secondary" onClick={() => void load()} disabled={loading}>{t.refresh}</button></div>
@@ -51,6 +51,6 @@ export function App({ client }: { client: CommentsClient }) {
       {failed && <p role="alert" className="error">{t.loadError}</p>}
       {comments.length > 0 && <CommentsTable comments={comments} labels={t} language={language} />}
     </section>
-    <footer>CommentsService · 1.1.0.5</footer>
+    <footer>CommentsService · 1.1.0.6</footer>
   </main>;
 }

@@ -17,6 +17,45 @@ namespace CommentsService.Api.Tests;
 public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFixture>
 {
     [Fact]
+    public async Task PreviewAndCreateShareValidationAndPreviewDoesNotWrite()
+    {
+        const string text = "<strong>Привіт <i>😀</i></strong> <a href=\"https://example.test/?a=1&amp;b=2\">link</a>";
+        await using var db = new CommentsDbContextFactory().CreateDbContext([]);
+        var count = await db.Comments.CountAsync();
+        using var preview = await fixture.Client.PostAsJsonAsync("/api/comments/preview", new { text });
+        Assert.Equal(HttpStatusCode.OK, preview.StatusCode);
+        using var json = JsonDocument.Parse(await preview.Content.ReadAsStringAsync());
+        Assert.Contains("<strong>", json.RootElement.GetProperty("html").GetString());
+        Assert.Equal(count, await db.Comments.CountAsync());
+        using var created = await fixture.PostAsync(ApiFixture.Payload(text));
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        var value = (await created.Content.ReadFromJsonAsync<CommentDto>())!;
+        Assert.Equal(text, (await fixture.Client.GetFromJsonAsync<CommentDto>("/api/comments/" + value.Id))!.Text);
+    }
+
+    [Theory]
+    [InlineData("<i>x</strong>")]
+    [InlineData("<a href=\"javascript:alert(1)\">x</a>")]
+    [InlineData("<code onmouseover=\"bad\">x</code>")]
+    public async Task PreviewAndCreateRejectTheSameInvalidBody(string text)
+    {
+        using var preview = await fixture.Client.PostAsJsonAsync("/api/comments/preview", new { text });
+        using var created = await fixture.PostAsync(ApiFixture.Payload(text));
+        Assert.Equal(HttpStatusCode.BadRequest, preview.StatusCode);
+        Assert.Equal(preview.StatusCode, created.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("null")]
+    [InlineData("{}")]
+    [InlineData("{\"text\":\"hello\",\"html\":\"spoofed\"}")]
+    public async Task PreviewRejectsMissingOrUnknownFields(string body)
+    {
+        using var response = await fixture.Client.PostAsync("/api/comments/preview", new StringContent(body, Encoding.UTF8, "application/json"));
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task CreateAndReadPreserveUnicodeAndCaptureServerMetadata()
     {
         var payload = ApiFixture.Payload("  Привіт / Привет / مرحبا / 😀\nДругий рядок ' OR '1'='1  ");
@@ -69,7 +108,7 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
     [InlineData("homePage", "ftp://example.test/")]
     [InlineData("text", " ")]
     [InlineData("text", "<script>alert(1)</script>")]
-    [InlineData("text", "<strong>Not enabled yet</strong>")]
+    [InlineData("text", "<strong onclick=\"bad\">Forbidden attribute</strong>")]
     [InlineData("text", "bad\0text")]
     public async Task InvalidFieldsReturnValidationProblems(string field, string value)
     {

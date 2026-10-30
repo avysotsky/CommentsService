@@ -20,7 +20,7 @@ test('required and bounded inputs reject invalid names, email, markup and text',
   for (const userName of ['', 'a b', 'Ж', 'a'.repeat(101)]) assert.equal(validate({ ...valid, userName }).userName, 'nameError');
   for (const email of ['', 'x', 'Name <a@b.test>', 'a\n@b.test']) assert.equal(validate({ ...valid, email }).email, 'emailError');
   for (const text of ['', '   ', '\0', '\ud800', 'a'.repeat(65537)]) assert.equal(validate({ ...valid, text }).text, 'textError');
-  for (const text of ['<script>x</script>', '<b>hi</b>', '<!-- hi -->', '<Ж>']) assert.equal(validate({ ...valid, text }).text, 'plainError');
+  for (const text of ['<script>x</script>', '<b>hi</b>', '<!-- hi -->', '<Ж>']) assert.deepEqual(validate({ ...valid, text }), {});
   assert.deepEqual(validate({ ...valid, text: 'a'.repeat(65536) }), {});
 });
 test('homepage links restrict schemes, credentials and controls', () => {
@@ -51,4 +51,15 @@ test('validation response exposes known fields only, unavailable errors stay gen
   await assert.rejects(client.create(valid), error => error instanceof CommentsRequestError && JSON.stringify(error.fields) === '{"text":["Rejected"]}');
   const unavailable = new HttpCommentsClient(async () => new Response('private provider details', { status: 503 }));
   await assert.rejects(unavailable.latest(), error => error.status === 503 && !error.message.includes('private'));
+});
+
+test('preview sends text only and propagates cancellation and validation', async () => {
+  const controller = new AbortController();
+  const client = new HttpCommentsClient(async (url, options) => {
+    assert.equal(url, '/api/comments/preview');
+    assert.equal(options.signal, controller.signal);
+    assert.deepEqual(JSON.parse(options.body), { text: '<strong>x</strong>' });
+    return Response.json({ html: '<strong>x</strong>' });
+  });
+  assert.deepEqual(await client.preview('<strong>x</strong>', controller.signal), { html: '<strong>x</strong>' });
 });

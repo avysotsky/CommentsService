@@ -1,13 +1,14 @@
-# Comments API — 1.1.0.5
+# Comments API — 1.1.0.6
 
 ## English
 
-The API creates and reads plain-text comments. API handlers call Application use cases;
+The API creates and reads text/XHTML comments. API handlers call Application use cases;
 validation, normalization and public DTOs are independent of ASP.NET/EF.
 
 | Method | Route | Result |
 |---|---|---|
 | POST | `/api/comments` | 201, public comment and relative Location header |
+| POST | `/api/comments/preview` | 200 `{html}`, 400 validation errors; `{text}` only, no persistence |
 | GET | `/api/comments/{id}` | 200, public comment; 404 for a missing UUID |
 | GET | `/api/comments?limit=25` | 200, array of latest comments; default 25, range 1–100 |
 
@@ -20,9 +21,7 @@ are trimmed; an empty homepage becomes null. Text whitespace, Unicode, RTL and e
 are preserved. Required name: Latin letters/digits, 1–100 characters. Email: plain address,
 up to 254 characters, without display name/control characters. Homepage: absolute HTTP(S),
 up to 2048 characters, without embedded credentials. Text: non-whitespace, at most 65536
-UTF-16 units; null characters, invalid Unicode and tag-like HTML markup are rejected.
-Even the eventual XHTML allowlist is not enabled until 1.1.0.6. Numeric comparisons such
-as `1 < 2` remain plain text. Request bodies are limited to 1 MiB, including JSON encoding.
+UTF-16 units. XHTML validation and escaping rules are in [XHTML editor](../README.md#xhtml-editor). Request bodies are limited to 1 MiB, including JSON encoding.
 
 The server generates UUID/time, captures the socket peer IP and User-Agent (up to 2048
 characters), and saves author/comment together. If peer IP is unavailable, 0.0.0.0 records
@@ -37,8 +36,8 @@ Errors use ProblemDetails JSON: 400 for invalid input/JSON/limit, 404 for missin
 Validation responses include an errors dictionary keyed by JSON field name. Internal
 exception/connection details are not included. Caller cancellation reaches data operations.
 
-The SPA form/table uses these endpoints in 1.1.0.5;
-replies, CAPTCHA, XHTML and attachments remain later milestones. No schema change is
+The SPA form/table uses these endpoints in 1.1.0.6;
+replies, CAPTCHA and attachments remain later milestones. No schema change is
 needed from 1.1.0.3; migration 20261029195935_InitialDataModel is unchanged.
 
 ## Русский
@@ -49,6 +48,7 @@ API создаёт и читает текстовые комментарии. HT
 | Метод | Маршрут | Результат |
 |---|---|---|
 | POST | `/api/comments` | 201, публичный комментарий и относительный заголовок Location |
+| POST | `/api/comments/preview` | 200 `{html}`, 400 при ошибке; только `{text}`, без записи |
 | GET | `/api/comments/{id}` | 200, публичный комментарий; 404 для отсутствующего UUID |
 | GET | `/api/comments?limit=25` | 200, массив последних комментариев; по умолчанию 25, диапазон 1–100 |
 
@@ -61,9 +61,8 @@ POST принимает только JSON: userName, email, необязател
 Unicode, RTL и emoji сохраняются. Имя обязательно: 1–100 латинских букв/цифр. Email:
 адрес до 254 символов без отображаемого имени и управляющих символов. Homepage: абсолютный
 HTTP(S) URL до 2048 символов без учётных данных. Текст: не только пробелы, до 65536 единиц
-UTF-16; нулевые символы, некорректный Unicode и похожая на HTML разметка отклоняются.
-Даже будущие разрешённые XHTML-теги включаются только в 1.1.0.6. Числовые сравнения
-`1 < 2` остаются обычным текстом. Предел тела запроса — 1 МиБ с учётом JSON-кодирования.
+UTF-16; нулевые символы, некорректный Unicode и недопустимые XML-символы отклоняются.
+Правила XHTML, ссылок, вложенности и экранирования: [XHTML-редактор](../README.RU.md#xhtml-редактор). Размер JSON-запроса — до 1 МиБ.
 
 Сервер создаёт UUID/время, получает IP сетевого соединения и User-Agent (до 2048 символов),
 сохраняет автора/комментарий вместе. Если IP недоступен, записывается 0.0.0.0.
@@ -78,8 +77,8 @@ UTF-16; нулевые символы, некорректный Unicode и по�
 Ответ валидации содержит errors с именами JSON-полей. Внутренние исключения и параметры
 подключения не выдаются. Отмена запроса передаётся операциям данных.
 
-SPA-форма/таблица использует эти маршруты в 1.1.0.5; ответы,
-CAPTCHA, XHTML и вложения остаются последующими этапами. Схема 1.1.0.3 сохраняется;
+SPA-форма/таблица использует эти маршруты в 1.1.0.6; ответы,
+CAPTCHA и вложения остаются последующими этапами. Схема 1.1.0.3 сохраняется;
 миграция 20261029195935_InitialDataModel не меняется.
 
 ## Українська
@@ -90,6 +89,7 @@ API створює та читає текстові коментарі. HTTP-о�
 | Метод | Маршрут | Результат |
 |---|---|---|
 | POST | `/api/comments` | 201, публічний коментар і відносний заголовок Location |
+| POST | `/api/comments/preview` | 200 `{html}`, 400 за помилки; лише `{text}`, без запису |
 | GET | `/api/comments/{id}` | 200, публічний коментар; 404 для відсутнього UUID |
 | GET | `/api/comments?limit=25` | 200, масив останніх коментарів; типово 25, діапазон 1–100 |
 
@@ -102,9 +102,8 @@ POST приймає лише JSON: userName, email, необов’язкови�
 Unicode, RTL та emoji зберігаються. Ім’я обов’язкове: 1–100 латинських літер/цифр. Email:
 адреса до 254 символів без відображуваного імені та керувальних символів. Homepage: абсолютний
 HTTP(S) URL до 2048 символів без облікових даних. Текст: не лише пробіли, до 65536 одиниць
-UTF-16; нульові символи, некоректний Unicode та схожа на HTML розмітка відхиляються.
-Навіть майбутні дозволені XHTML-теги вмикаються лише в 1.1.0.6. Числові порівняння
-`1 < 2` залишаються звичайним текстом. Межа тіла запиту — 1 МіБ з урахуванням JSON-кодування.
+UTF-16; нульові символи, некоректний Unicode та недопустимі XML-символи відхиляються.
+Правила XHTML, посилань, вкладеності й екранування: [XHTML-редактор](../README.UA.md#xhtml-редактор). Розмір JSON-запиту — до 1 МіБ.
 
 Сервер створює UUID/час, отримує IP мережевого з’єднання та User-Agent (до 2048 символів),
 зберігає автора/коментар разом. Якщо IP недоступний, записується 0.0.0.0.
@@ -119,8 +118,8 @@ UTF-16; нульові символи, некоректний Unicode та сх�
 Відповідь валідації містить errors з іменами JSON-полів. Внутрішні винятки й параметри
 підключення не надаються. Скасування запиту передається операціям даних.
 
-SPA-форма/таблиця використовує ці маршрути в 1.1.0.5; відповіді,
-CAPTCHA, XHTML і вкладення залишаються наступними етапами. Схема 1.1.0.3 зберігається;
+SPA-форма/таблиця використовує ці маршрути в 1.1.0.6; відповіді,
+CAPTCHA і вкладення залишаються наступними етапами. Схема 1.1.0.3 зберігається;
 міграція 20261029195935_InitialDataModel не змінюється.
 
 ## Example / Пример / Приклад

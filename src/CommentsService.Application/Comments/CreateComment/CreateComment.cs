@@ -4,7 +4,7 @@ using CommentsService.Domain.Entities;
 
 namespace CommentsService.Application.Comments.CreateComment;
 
-public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork) : ICreateComment
+public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork, CommentsService.Application.Comments.Markup.ICommentMarkup markup) : ICreateComment
 {
     public async Task<Validated<CommentDto>> ExecuteAsync(CreateCommentInput input, ClientMetadata client,
         CancellationToken cancellationToken = default)
@@ -14,7 +14,7 @@ public sealed class CreateComment(ICommentRepository repository, IUnitOfWork uni
         cancellationToken.ThrowIfCancellationRequested();
         var normalized = input with { UserName = input.UserName?.Trim(), Email = input.Email?.Trim(),
             HomePage = string.IsNullOrWhiteSpace(input.HomePage) ? null : input.HomePage.Trim() };
-        var errors = CreateCommentValidator.Validate(normalized);
+        var errors = CreateCommentValidator.Validate(normalized, markup);
         if (errors.Count != 0) return Validated<CommentDto>.Invalid(errors);
         var author = new Author(normalized.UserName!, normalized.Email!, normalized.HomePage);
         var comment = new Comment(author, normalized.Text!, client.IpAddress, client.UserAgent);

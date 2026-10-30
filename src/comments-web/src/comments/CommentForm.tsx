@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
+import { CommentText } from './CommentText';
 import type { Messages } from '../messages';
 import { CommentsRequestError } from './client';
 import { emptyInput, validate } from './model';
@@ -13,11 +14,45 @@ export function CommentForm({ client, labels: t, onCreated }: {
   const [serverErrors, setServerErrors] = useState<FieldErrors>({});
   const [notice, setNotice] = useState<'success' | 'sendError' | 'validationError' | null>(null);
   const [sending, setSending] = useState(false);
+  const [preview, setPreview] = useState<{ source: string; html: string } | null>(null);
+  const [previewing, setPreviewing] = useState(false);
+  const [previewError, setPreviewError] = useState(false);
+  const previewRequest = useRef<AbortController | null>(null);
+  const textVersion = useRef(0);
   const locked = useRef(false);
   const form = useRef<HTMLFormElement>(null);
 
   function focusField(field?: string) {
     if (field) (form.current?.elements.namedItem(field) as HTMLElement | null)?.focus();
+  }
+
+  function changedText() {
+    textVersion.current++; previewRequest.current?.abort(); setPreview(null); setPreviewError(false); setPreviewing(false);
+  }
+
+  function format(tag: 'strong' | 'i' | 'code' | 'a') {
+    const textarea = form.current?.elements.namedItem('text') as HTMLTextAreaElement;
+    const start = textarea.selectionStart, end = textarea.selectionEnd;
+    const open = tag === 'a' ? '<a href="https://example.com/" title="">' : `<${tag}>`;
+    const close = `</${tag}>`;
+    const text = input.text.slice(0, start) + open + input.text.slice(start, end) + close + input.text.slice(end);
+    if (text.length > 65536) return;
+    changedText(); setInput(previous => ({ ...previous, text })); setNotice(null);
+    setErrors(previous => ({ ...previous, text: undefined })); setServerErrors(previous => ({ ...previous, text: undefined }));
+    requestAnimationFrame(() => { textarea.focus(); textarea.setSelectionRange(start + open.length, end + open.length); });
+  }
+
+  async function showPreview() {
+    previewRequest.current?.abort();
+    const controller = new AbortController(); previewRequest.current = controller;
+    const version = textVersion.current, source = input.text;
+    setPreview(null); setPreviewError(false); setPreviewing(true);
+    try {
+      const result = await client.preview(source, controller.signal);
+      if (version === textVersion.current && !controller.signal.aborted) setPreview({ source, html: result.html });
+    } catch {
+      if (!controller.signal.aborted) setPreviewError(true);
+    } finally { if (previewRequest.current === controller) setPreviewing(false); }
   }
 
   async function submit(event: FormEvent) {
@@ -29,7 +64,7 @@ export function CommentForm({ client, labels: t, onCreated }: {
     locked.current = true; setSending(true);
     try {
       const comment = await client.create(input);
-      setInput(previous => ({ ...previous, text: '' }));
+      changedText(); setInput(previous => ({ ...previous, text: '' }));
       setNotice('success'); onCreated(comment);
     } catch (error) {
       const fields = error instanceof CommentsRequestError ? error.fields : {};
@@ -46,6 +81,7 @@ export function CommentForm({ client, labels: t, onCreated }: {
       id: name, name, value: input[name], disabled: sending,
       'aria-invalid': !!error, 'aria-describedby': `${name}-hint ${name}-error`,
       onChange: (event: { target: { value: string } }) => {
+        if (name === 'text') changedText();
         setInput(previous => ({ ...previous, [name]: event.target.value }));
         setErrors(previous => ({ ...previous, [name]: undefined }));
         setServerErrors(previous => ({ ...previous, [name]: undefined })); setNotice(null);
@@ -66,7 +102,17 @@ export function CommentForm({ client, labels: t, onCreated }: {
     <h2 id="compose-title">{t.compose}</h2>
     <form noValidate onSubmit={submit} ref={form} aria-busy={sending}>
       <div className="form-grid">{field('userName', t.name, t.nameHint)}{field('email', t.email, t.emailHint)}</div>
-      {field('homePage', t.home)}{field('text', t.text, t.textHint)}
+      {field('homePage', t.home)}
+      <div className="editor-toolbar" role="group" aria-label={t.formatting}>
+        {(['strong', 'i', 'code', 'a'] as const).map(tag => <button key={tag} type="button" disabled={sending}
+          onMouseDown={event => event.preventDefault()} onClick={() => format(tag)}>{t[tag]}</button>)}
+        <button type="button" disabled={sending || previewing} onClick={showPreview}>{previewing ? t.previewing : t.preview}</button>
+      </div>
+      {field('text', t.text, t.textHint)}
+      {previewError && <p role="alert" className="error">{t.previewError}</p>}
+      {preview && preview.source === input.text && <section className="comment-preview" aria-label={t.preview}>
+        <h3>{t.preview}</h3><div className="comment-text" dir="auto"><CommentText text={preview.html} validated /></div>
+      </section>}
       <div className="form-bottom"><span className="counter">{input.text.length.toLocaleString()} / 65,536</span>
         <button type="submit" disabled={sending}>{sending ? t.sending : t.submit} <span aria-hidden="true">↗</span></button></div>
       <div role={notice === 'success' ? 'status' : 'alert'} className={notice === 'success' ? 'success' : 'error'}>{notice && t[notice]}</div>

@@ -44,3 +44,9 @@ th:first-child { width: 25%; } th:last-child { width: 20%; }
 a { color: #38693d; } td a, time { font-size: 12px; }
 footer { color: #5c6b59; font-size: 12px; border-top: 1px solid #dfe4d7; padding: 20px 0; }
 @media (max-width: 600px) { main { padding: 20px 16px; } header { flex-wrap: wrap; gap: 20px; } .brand { font-size: 23px; } .hero { padding-top: 26px; } .panel { padding: 22px 16px; } .form-grid { grid-template-columns: 1fr; gap: 0; } table { min-width: 540px; } .form-bottom { align-items: flex-start; flex-direction: column; } }
+
+.editor-toolbar { display:flex; flex-wrap:wrap; gap:.5rem; margin:1rem 0 .5rem; }
+.editor-toolbar button { padding:.5rem .8rem; font-size:.85rem; }
+.comment-preview { border:1px solid #cbd5df; border-radius:.6rem; padding:1rem; margin-bottom:1rem; overflow-wrap:anywhere; }
+.comment-text code { background:#edf1f5; padding:.1em .25em; border-radius:.2em; }
+.comment-text a { overflow-wrap:anywhere; }

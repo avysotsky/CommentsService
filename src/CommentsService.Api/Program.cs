@@ -21,6 +21,7 @@ if (args is ["--healthcheck"])
 var databaseCommand = args is ["--migrate"] or ["--check-database"];
 var builder = WebApplication.CreateBuilder(databaseCommand ? [] : args);
 builder.Services.AddInfrastructure();
+builder.Services.AddSingleton<CommentsService.Application.Comments.Markup.ICommentMarkup, CommentsService.Application.Comments.Markup.XhtmlCommentMarkup>();
 builder.Services.AddScoped<ICreateComment, CreateComment>();
 builder.Services.AddScoped<IGetComment, GetComment>();
 builder.Services.AddScoped<IGetLatestComments, GetLatestComments>();

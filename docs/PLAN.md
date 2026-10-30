@@ -5,7 +5,7 @@
 Completed correction: `CommentsService/v_1.1.0.6_HomepageHint` clarifies homepage hints/errors in EN/RU/UA; version/schema unchanged.
 
 The approved sequence starts at `CommentsService/v_1.1.0.1_Init`.
-Current milestone: 1.1.0.6 XhtmlEditor completed. Onion architecture is preserved. Next: 1.1.0.7 CommentThreads.
+Current milestone: 1.1.0.7 CommentThreads completed. Onion architecture is preserved. Next: 1.1.0.8 SortingPagination.
 Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
 Each completed iteration is pushed to its own branch with current read.me,
 README and change.log. README.md is English, README.RU.md Russian, README.UA.md
@@ -92,7 +92,7 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 Завершена доработка `CommentsService/v_1.1.0.6_HomepageHint`: понятные подсказки/ошибки сайта на EN/RU/UA; версия/схема прежние.
 
 Согласованная последовательность начинается с `CommentsService/v_1.1.0.1_Init`.
-Текущий этап 1.1.0.6 XhtmlEditor завершён. Onion сохранён. Далее — 1.1.0.7 CommentThreads.
+Текущий этап 1.1.0.7 CommentThreads завершён. Onion сохранён. Далее — 1.1.0.8 SortingPagination.
 w=1, x=1, y=0 сохраняются, увеличивается только ревизия z. Вынос в конфиг отложен.
 Каждая завершённая итерация отправляется в свою ветку с актуальными read.me,
 README и change.log. README.md — английский, README.RU.md — русский, README.UA.md —
@@ -181,7 +181,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 Завершено доопрацювання `CommentsService/v_1.1.0.6_HomepageHint`: зрозумілі підказки/помилки сайту на EN/RU/UA; версія/схема попередні.
 
 Погоджена послідовність починається з `CommentsService/v_1.1.0.1_Init`.
-Поточний етап 1.1.0.6 XhtmlEditor завершено. Onion збережено. Далі — 1.1.0.7 CommentThreads.
+Поточний етап 1.1.0.7 CommentThreads завершено. Onion збережено. Далі — 1.1.0.8 SortingPagination.
 w=1, x=1, y=0 зберігаються, збільшується лише ревізія z. Винесення даних у конфігурацію відкладено.
 Кожна завершена ітерація публікується у своїй гілці з актуальними read.me,
 README і change.log. README.md — англійською, README.RU.md — російською, README.UA.md —

@@ -1,8 +1,10 @@
-export type CommentInput = { userName: string; email: string; homePage: string; text: string };
-export type Comment = Omit<CommentInput, 'homePage'> & { id: string; homePage: string | null; createdAt: string };
-export type Field = keyof CommentInput;
-export type FieldErrors = Partial<Record<Field, string[]>>;
+export type CommentInput = { userName: string; email: string; homePage: string; text: string; parentId?: string | null };
+export type Comment = Omit<CommentInput, 'homePage' | 'parentId'> & { id: string; homePage: string | null; createdAt: string; parentId: string | null; rootId: string };
+export type Field = 'userName' | 'email' | 'homePage' | 'text';
+export type FieldErrors = Partial<Record<Field | 'parentId', string[]>>;
+export type RepliesPage = { items: Comment[]; nextAfter: string | null };
 export interface CommentsClient {
+  replies(parentId: string, after?: string | null, signal?: AbortSignal): Promise<RepliesPage>;
   latest(signal?: AbortSignal): Promise<Comment[]>;
   create(input: CommentInput): Promise<Comment>;
   preview(text: string, signal?: AbortSignal): Promise<{ html: string }>;

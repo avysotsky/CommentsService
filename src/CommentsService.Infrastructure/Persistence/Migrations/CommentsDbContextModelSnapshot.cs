@@ -66,6 +66,12 @@ namespace CommentsService.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RootId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(65536)
@@ -83,9 +89,15 @@ namespace CommentsService.Infrastructure.Persistence.Migrations
                     b.HasIndex("CreatedAt", "Id")
                         .IsDescending();
 
+                    b.HasIndex("ParentId", "RootId");
+
+                    b.HasIndex("ParentId", "CreatedAt", "Id");
+
                     b.ToTable("Comments", "comments", t =>
                         {
                             t.HasCheckConstraint("CK_Comments_Text", "length(btrim(\"Text\")) > 0");
+
+                            t.HasCheckConstraint("CK_Comments_Thread", "(\"ParentId\" IS NULL AND \"RootId\" = \"Id\") OR (\"ParentId\" IS NOT NULL AND \"ParentId\" <> \"Id\" AND \"RootId\" <> \"Id\")");
                         });
                 });
 
@@ -96,6 +108,12 @@ namespace CommentsService.Infrastructure.Persistence.Migrations
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("CommentsService.Domain.Entities.Comment", null)
+                        .WithMany()
+                        .HasForeignKey("ParentId", "RootId")
+                        .HasPrincipalKey("Id", "RootId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Author");
                 });

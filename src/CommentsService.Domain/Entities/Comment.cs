@@ -9,7 +9,7 @@ public sealed class Comment
 
     private Comment() { }
 
-    public Comment(Author author, string text, IPAddress clientIp, string userAgent)
+    public Comment(Author author, string text, IPAddress clientIp, string userAgent, Comment? parent = null)
     {
         ArgumentNullException.ThrowIfNull(author);
         ArgumentException.ThrowIfNullOrWhiteSpace(text);
@@ -19,6 +19,8 @@ public sealed class Comment
             throw new ArgumentException("Comment text is too long.", nameof(text));
         if (userAgent.Length > UserAgentMaxLength)
             throw new ArgumentException("User agent is too long.", nameof(userAgent));
+        ParentId = parent?.Id;
+        RootId = parent?.RootId ?? Id;
         Author = author;
         AuthorId = author.Id;
         Text = text;
@@ -28,6 +30,8 @@ public sealed class Comment
     }
 
     public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid? ParentId { get; private set; }
+    public Guid RootId { get; private set; }
     public Guid AuthorId { get; private set; }
     public Author Author { get; private set; } = null!;
     public string Text { get; private set; } = null!;

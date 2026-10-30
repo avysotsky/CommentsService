@@ -2,6 +2,18 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.7 CommentThreads — 2026-10-30
+
+Branch: `CommentsService/v_1.1.0.7_CommentThreads`
+
+- Added immutable parent/root relationships and reply creation for any existing comment without an application depth limit. Missing parents are rejected before staging author/comment; rootId is derived by Domain and cannot be supplied by HTTP clients.
+- Added GetReplies in Application and bounded, no-tracking cursor queries in Infrastructure. Latest list contains roots only; direct replies use descending UTC time/UUID, 25 by default and 100 maximum. Invalid/foreign cursors are rejected. Onion/OOP/SOLID boundaries remain intact.
+- Added Reply/Cancel, recipient indication, lazy Show/Hide/More replies, branch retry and refresh, draft retention and EN/RU/UA messages. Iterative rendering has no thread depth cap; visual indentation is capped, with the actual level displayed.
+- Added migration 20261030101720_CommentThreads: ParentId nullable, RootId backfilled from each old Id, composite parent/root RESTRICT foreign key, alternate key, check and indexes. All previous fields/rows survived upgrades of both persistent databases. Current pre-upgrade checkpoints replaced older candidates only after successful restore/fingerprint verification.
+- Rehearsed upgrade and roots-only downgrade on an owned restore: data/schema/history round trip passed; downgrade with replies was refused atomically. Only the owned restore was removed; checkpoint hashes and persistent volumes were retained.
+- Passed 150 backend tests (22 domain/architecture, 68 application, 14 database, 46 HTTP), 10 frontend tests, frontend/Docker builds and runtime readiness. Unit tests cover depth 1000; HTTP/PostgreSQL cover 40 levels, keyset ties, root isolation, invalid parents and restricted deletion.
+- Edge desktop/360 px passed real root/reply/nested XHTML create/read/reload, hide/show, cancel/draft/missing-target, 27 siblings as 25+2, live refresh, read failure/retry, EN/RU/UA and a read-only 60-level rendering fixture without JS errors. Owned browser rows were removed leaf-first; migrated data/schema/history baselines, volumes and checkpoint hashes matched afterward. VS/Workbench GUI was not checked. Next: 1.1.0.8 SortingPagination.
+
 ## 1.1.0.6 HomepageHint — 2026-10-30
 
 Branch: `CommentsService/v_1.1.0.6_HomepageHint`

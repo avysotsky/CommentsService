@@ -1,6 +1,13 @@
-# Comments API — 1.1.0.6
+# Comments API — 1.1.0.7
 
 ## English
+
+Replies can target any existing comment. Choose Reply beneath a comment; the form identifies the recipient. Cancel reply returns to root posting and preserves the draft. Successful replies appear under their parent; missing targets produce an error without creating an author or comment.
+
+The root table shows up to 25 newest roots. Show/Hide replies expands or collapses direct replies; More replies loads the next 25. Both roots and siblings use descending UTC time and UUID. Expanding descendants has no application depth limit: rendering is iterative, and visual indentation stops growing after six levels while the numeric level continues. Refresh reloads roots and open branches; branch failures offer Retry and preserve loaded content. Full root pagination/sort controls remain 1.1.0.8.
+
+API: POST /api/comments accepts optional parentId (UUID/null); rootId is derived by the server and cannot be supplied. GET /api/comments/{id}/replies?limit=25&after={replyId} returns {items,nextAfter}; omit after for the first page. Limit is 1–100; after must be a direct child of that parent. Missing parent is 404 for reads and a parentId validation error (400) for writes. Unknown/foreign cursors are 400. Pages limit direct siblings, not thread depth. No delete/edit API is introduced.
+
 
 The API creates and reads text/XHTML comments. API handlers call Application use cases;
 validation, normalization and public DTOs are independent of ASP.NET/EF.
@@ -9,14 +16,15 @@ validation, normalization and public DTOs are independent of ASP.NET/EF.
 |---|---|---|
 | POST | `/api/comments` | 201, public comment and relative Location header |
 | POST | `/api/comments/preview` | 200 `{html}`, 400 validation errors; `{text}` only, no persistence |
+| GET | `/api/comments/{id}/replies?limit=25&after={replyId}` | 200 `{items,nextAfter}`; 404 / 400 |
 | GET | `/api/comments/{id}` | 200, public comment; 404 for a missing UUID |
-| GET | `/api/comments?limit=25` | 200, array of latest comments; default 25, range 1–100 |
+| GET | `/api/comments?limit=25` | 200, array of latest root comments; default 25, range 1–100 |
 
 The list orders by CreatedAt descending, then UUID descending. It is a bounded recent
 window; page navigation and all sort directions are scheduled for 1.1.0.8.
 
-POST accepts JSON only: userName, email, optional homePage and text. Unknown fields,
-including clientIp, userAgent, createdAt and parentId, are rejected. Names/email/homepage
+POST accepts JSON only: userName, email, optional homePage, text and optional parentId. Unknown fields,
+including clientIp, userAgent, createdAt and rootId, are rejected. Names/email/homepage
 are trimmed; an empty homepage becomes null. Text whitespace, Unicode, RTL and emoji
 are preserved. Required name: Latin letters/digits, 1–100 characters. Email: plain address,
 up to 254 characters, without display name/control characters. Homepage: absolute HTTP(S),
@@ -27,7 +35,7 @@ The server generates UUID/time, captures the socket peer IP and User-Agent (up t
 characters), and saves author/comment together. If peer IP is unavailable, 0.0.0.0 records
 that fact. Untrusted X-Forwarded-For is ignored; deployment behind a trusted proxy needs
 explicit proxy configuration. IP/User-Agent and author persistence IDs are never public
-response fields. Public fields are id, userName, email, homePage, text, createdAt.
+response fields. Public fields are id, userName, email, homePage, text, createdAt, parentId, rootId.
 Timestamps use UTC ISO 8601 with microsecond precision, stable across create/read.
 Email is submitted metadata, not proof of account ownership.
 
@@ -36,11 +44,18 @@ Errors use ProblemDetails JSON: 400 for invalid input/JSON/limit, 404 for missin
 Validation responses include an errors dictionary keyed by JSON field name. Internal
 exception/connection details are not included. Caller cancellation reaches data operations.
 
-The SPA form/table uses these endpoints in 1.1.0.6;
-replies, CAPTCHA and attachments remain later milestones. No schema change is
-needed from 1.1.0.3; migration 20261029195935_InitialDataModel is unchanged.
+The SPA form/table uses these endpoints in 1.1.0.7;
+CAPTCHA and attachments remain later milestones. Thread migration: 20261030101720_CommentThreads;
+initial migration 20261029195935_InitialDataModel is retained.
 
 ## Русский
+
+Ответить можно на любой существующий комментарий. Нажмите «Ответить» под записью; форма покажет адресата. «Отменить ответ» возвращает создание корня и сохраняет черновик. Успешный ответ появляется под родителем; отсутствующий адресат вызывает ошибку без создания автора или комментария.
+
+Таблица показывает до 25 новых корней. «Показать/Скрыть ответы» раскрывает прямые ответы; «Ещё ответы» загружает следующие 25. Корни и соседи упорядочены по времени UTC и UUID по убыванию. Глубина обсуждения не ограничена приложением: вывод итеративный, визуальный отступ перестаёт расти после шести уровней, числовой уровень продолжает расти. «Обновить» перечитывает корни и открытые ветки; ошибка ветки предлагает «Повторить» и сохраняет загруженное содержимое. Полные страницы/сортировки корней — этап 1.1.0.8.
+
+API: POST /api/comments принимает необязательный parentId (UUID/null); rootId определяет сервер, передавать его нельзя. GET /api/comments/{id}/replies?limit=25&after={replyId} возвращает {items,nextAfter}; для первой порции after не указывается. Limit — 1–100; after должен быть прямым ответом этому родителю. Нет родителя: 404 при чтении, ошибка parentId (400) при записи. Неизвестный/чужой курсор — 400. Порции ограничивают соседние ответы, а не глубину. API удаления/редактирования не добавлен.
+
 
 API создаёт и читает текстовые комментарии. HTTP-обработчики вызывают сценарии Application;
 валидация, нормализация и публичные DTO не зависят от ASP.NET/EF.
@@ -49,14 +64,15 @@ API создаёт и читает текстовые комментарии. HT
 |---|---|---|
 | POST | `/api/comments` | 201, публичный комментарий и относительный заголовок Location |
 | POST | `/api/comments/preview` | 200 `{html}`, 400 при ошибке; только `{text}`, без записи |
+| GET | `/api/comments/{id}/replies?limit=25&after={replyId}` | 200 `{items,nextAfter}`; 404 / 400 |
 | GET | `/api/comments/{id}` | 200, публичный комментарий; 404 для отсутствующего UUID |
-| GET | `/api/comments?limit=25` | 200, массив последних комментариев; по умолчанию 25, диапазон 1–100 |
+| GET | `/api/comments?limit=25` | 200, массив последних корневых комментариев; по умолчанию 25, диапазон 1–100 |
 
 Список отсортирован по CreatedAt, затем UUID по убыванию. Это ограниченное окно последних
 записей; переходы по страницам и все направления сортировки относятся к 1.1.0.8.
 
-POST принимает только JSON: userName, email, необязательный homePage и text. Неизвестные
-поля, включая clientIp, userAgent, createdAt и parentId, отклоняются. Пробелы по краям
+POST принимает только JSON: userName, email, необязательный homePage, text и необязательный parentId. Неизвестные
+поля, включая clientIp, userAgent, createdAt и rootId, отклоняются. Пробелы по краям
 имени/email/homepage удаляются; пустой homepage превращается в null. Пробелы текста,
 Unicode, RTL и emoji сохраняются. Имя обязательно: 1–100 латинских букв/цифр. Email:
 адрес до 254 символов без отображаемого имени и управляющих символов. Homepage: абсолютный
@@ -68,7 +84,7 @@ UTF-16; нулевые символы, некорректный Unicode и не�
 сохраняет автора/комментарий вместе. Если IP недоступен, записывается 0.0.0.0.
 Непроверенный X-Forwarded-For игнорируется; для доверенного reverse proxy нужна явная
 настройка. IP/User-Agent и внутренний ID автора не выдаются в публичных ответах.
-Публичные поля: id, userName, email, homePage, text, createdAt. Время — UTC ISO 8601
+Публичные поля: id, userName, email, homePage, text, createdAt, parentId, rootId. Время — UTC ISO 8601
 с точностью до микросекунд, одинаковое при создании/чтении. Email — введённые данные,
 а не подтверждение владения учётной записью.
 
@@ -77,11 +93,17 @@ UTF-16; нулевые символы, некорректный Unicode и не�
 Ответ валидации содержит errors с именами JSON-полей. Внутренние исключения и параметры
 подключения не выдаются. Отмена запроса передаётся операциям данных.
 
-SPA-форма/таблица использует эти маршруты в 1.1.0.6; ответы,
-CAPTCHA и вложения остаются последующими этапами. Схема 1.1.0.3 сохраняется;
-миграция 20261029195935_InitialDataModel не меняется.
+SPA-форма/таблица использует эти маршруты в 1.1.0.7; CAPTCHA и вложения остаются последующими этапами. Миграция ответов: 20261030101720_CommentThreads;
+первая миграция 20261029195935_InitialDataModel сохранена.
 
 ## Українська
+
+Відповісти можна на будь-який наявний коментар. Натисніть «Відповісти» під записом; форма покаже адресата. «Скасувати відповідь» повертає створення кореня й зберігає чернетку. Успішна відповідь з’являється під батьківським записом; відсутній адресат спричиняє помилку без створення автора чи коментаря.
+
+Таблиця показує до 25 нових коренів. «Показати/Приховати відповіді» розгортає прямі відповіді; «Ще відповіді» завантажує наступні 25. Корені й сусіди впорядковано за часом UTC та UUID за спаданням. Глибина обговорення не обмежена застосунком: виведення ітеративне, візуальний відступ перестає зростати після шести рівнів, числовий рівень продовжує зростати. «Оновити» перечитує корені й відкриті гілки; помилка гілки пропонує «Повторити» та зберігає завантажений вміст. Повні сторінки/сортування коренів — етап 1.1.0.8.
+
+API: POST /api/comments приймає необов’язковий parentId (UUID/null); rootId визначає сервер, передавати його не можна. GET /api/comments/{id}/replies?limit=25&after={replyId} повертає {items,nextAfter}; для першої порції after не вказується. Limit — 1–100; after має бути прямою відповіддю цьому батьківському запису. Немає батьківського запису: 404 під час читання, помилка parentId (400) під час запису. Невідомий/чужий курсор — 400. Порції обмежують сусідні відповіді, а не глибину. API видалення/редагування не додано.
+
 
 API створює та читає текстові коментарі. HTTP-обробники викликають сценарії Application;
 валідація, нормалізація та публічні DTO не залежать від ASP.NET/EF.
@@ -90,14 +112,15 @@ API створює та читає текстові коментарі. HTTP-о�
 |---|---|---|
 | POST | `/api/comments` | 201, публічний коментар і відносний заголовок Location |
 | POST | `/api/comments/preview` | 200 `{html}`, 400 за помилки; лише `{text}`, без запису |
+| GET | `/api/comments/{id}/replies?limit=25&after={replyId}` | 200 `{items,nextAfter}`; 404 / 400 |
 | GET | `/api/comments/{id}` | 200, публічний коментар; 404 для відсутнього UUID |
-| GET | `/api/comments?limit=25` | 200, масив останніх коментарів; типово 25, діапазон 1–100 |
+| GET | `/api/comments?limit=25` | 200, масив останніх кореневих коментарів; типово 25, діапазон 1–100 |
 
 Список відсортований за CreatedAt, потім UUID за спаданням. Це обмежене вікно останніх
 записів; переходи між сторінками та всі напрями сортування належать до 1.1.0.8.
 
 POST приймає лише JSON: userName, email, необов’язковий homePage та text. Невідомі
-поля, включно з clientIp, userAgent, createdAt і parentId, відхиляються. Пробіли навколо
+поля, включно з clientIp, userAgent, createdAt і rootId, відхиляються. Пробіли навколо
 імені/email/homepage видаляються; порожній homepage перетворюється на null. Пробіли тексту,
 Unicode, RTL та emoji зберігаються. Ім’я обов’язкове: 1–100 латинських літер/цифр. Email:
 адреса до 254 символів без відображуваного імені та керувальних символів. Homepage: абсолютний
@@ -109,7 +132,7 @@ UTF-16; нульові символи, некоректний Unicode та не�
 зберігає автора/коментар разом. Якщо IP недоступний, записується 0.0.0.0.
 Неперевірений X-Forwarded-For ігнорується; для довіреного reverse proxy потрібне явне
 налаштування. IP/User-Agent і внутрішній ID автора не надаються в публічних відповідях.
-Публічні поля: id, userName, email, homePage, text, createdAt. Час — UTC ISO 8601
+Публічні поля: id, userName, email, homePage, text, createdAt, parentId, rootId. Час — UTC ISO 8601
 з точністю до мікросекунд, однаковий під час створення/читання. Email — введені дані,
 а не підтвердження володіння обліковим записом.
 
@@ -118,9 +141,8 @@ UTF-16; нульові символи, некоректний Unicode та не�
 Відповідь валідації містить errors з іменами JSON-полів. Внутрішні винятки й параметри
 підключення не надаються. Скасування запиту передається операціям даних.
 
-SPA-форма/таблиця використовує ці маршрути в 1.1.0.6; відповіді,
-CAPTCHA і вкладення залишаються наступними етапами. Схема 1.1.0.3 зберігається;
-міграція 20261029195935_InitialDataModel не змінюється.
+SPA-форма/таблиця використовує ці маршрути в 1.1.0.7; CAPTCHA і вкладення залишаються наступними етапами. Міграція відповідей: 20261030101720_CommentThreads;
+першу міграцію 20261029195935_InitialDataModel збережено.
 
 ## Example / Пример / Приклад
 

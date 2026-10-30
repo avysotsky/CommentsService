@@ -4,10 +4,10 @@
 
 Application owns ICommentMarkup/XhtmlCommentMarkup, shared by create and read-only preview. HTTP only maps transport. Frontend uses the CommentsClient port and an allowlisted React renderer, never raw HTML. No provider/HTTP dependency enters the core.
 
-Release **1.1.0.6 XhtmlEditor** implements comment use cases inside the Onion core.
+Release **1.1.0.7 CommentThreads** implements comment use cases inside the Onion core.
 
 - Domain/Entities protects entity invariants and has no external project/package dependencies.
-- Application/Comments contains CreateComment, GetComment and GetLatestComments, input validation,
+- Application/Comments contains CreateComment, GetComment, GetReplies and GetLatestComments, input validation,
   normalization, public DTOs and validation outcomes. Application references Domain only.
 - Application/Abstractions/Persistence owns ICommentRepository, ICommentQueries and IUnitOfWork.
   These ports expose no EF/HTTP/provider types or IQueryable.
@@ -28,19 +28,21 @@ Tests are split into Domain.Tests (domain/architecture), Application.Tests (in-m
 Data.Tests (PostgreSQL with rollback), and Api.Tests (HTTP with cleanup of owned rows only).
 Architecture tests guard inward references, core independence, public port types and endpoint boundaries.
 
-Migration 20261029195935_InitialDataModel and SQL are unchanged from 1.1.0.3. No artificial
-migration/checkpoint rotation is required. Future EF add commands use --output-dir Persistence/Migrations
-with Infrastructure as target and Api as startup. XhtmlEditor is implemented; threads and full
-sorting/pagination remain their planned milestones. OOP/SOLID/Onion apply to all subsequent changes.
+Migration 20261030101720_CommentThreads extends the initial schema with immutable parent/root fields,
+backfills old roots and preserves original content. Create validates the parent before staging an author;
+GetReplies owns cursor/limit validation. Infrastructure implements bounded direct-child queries and projects
+flat DTOs; no recursive EF navigation graphs are serialized. The UI flattens expanded branches iteratively.
+Future EF add commands use --output-dir Persistence/Migrations. Full root sorting/pagination remains
+1.1.0.8; OOP/SOLID/Onion remain mandatory. See database/MIGRATIONS.md for verified upgrade/rollback.
 
 ## Русский
 
 Application содержит ICommentMarkup/XhtmlCommentMarkup для создания и предпросмотра без записи. HTTP связывает транспорт. Frontend использует контракт CommentsClient и разрешённые React-элементы, без вставки HTML. Зависимости провайдера/HTTP не входят в ядро.
 
-Выпуск **1.1.0.6 XhtmlEditor** реализует сценарии комментариев внутри ядра Onion.
+Выпуск **1.1.0.7 CommentThreads** реализует сценарии комментариев внутри ядра Onion.
 
 - Domain/Entities защищает инварианты сущностей и не имеет внешних зависимостей от проектов/пакетов.
-- Application/Comments содержит CreateComment, GetComment и GetLatestComments, валидацию ввода,
+- Application/Comments содержит CreateComment, GetComment, GetReplies и GetLatestComments, валидацию ввода,
   нормализацию, публичные DTO и результаты валидации. Application ссылается только на Domain.
 - Application/Abstractions/Persistence содержит ICommentRepository, ICommentQueries и IUnitOfWork.
   Контракты не раскрывают типы EF/HTTP/провайдера и IQueryable.
@@ -61,19 +63,21 @@ Application содержит ICommentMarkup/XhtmlCommentMarkup для созда
 Data.Tests (PostgreSQL с откатом) и Api.Tests (HTTP с удалением только своих записей).
 Архитектурные тесты контролируют ссылки внутрь, независимость ядра, типы контрактов и границы endpoints.
 
-Миграция 20261029195935_InitialDataModel и SQL не меняются относительно 1.1.0.3. Искусственная
-миграция/замена контрольных копий не нужна. При будущей генерации указывать --output-dir Persistence/Migrations,
-цель Infrastructure, стартовый проект Api. XhtmlEditor реализован; ответы и полные
-сортировки/пагинация остаются в своих этапах. OOP/SOLID/Onion обязательны при последующих изменениях.
+Миграция 20261030101720_CommentThreads расширяет схему неизменяемыми полями родителя/корня,
+заполняет старые корни и сохраняет прежние данные. Create проверяет родителя до подготовки автора;
+GetReplies проверяет курсор/лимит. Infrastructure выполняет ограниченные запросы прямых ответов и выдаёт
+плоские DTO без рекурсивного графа EF. UI итеративно разворачивает открытые ветки.
+При генерации EF указывать --output-dir Persistence/Migrations. Полные сортировки/страницы корней —
+1.1.0.8; OOP/SOLID/Onion обязательны. Обновление/откат: database/MIGRATIONS.md.
 
 ## Українська
 
 Application містить ICommentMarkup/XhtmlCommentMarkup для створення та перегляду без запису. HTTP пов’язує транспорт. Frontend використовує контракт CommentsClient і дозволені React-елементи, без вставлення HTML. Залежності провайдера/HTTP не входять до ядра.
 
-Випуск **1.1.0.6 XhtmlEditor** реалізує сценарії коментарів усередині ядра Onion.
+Випуск **1.1.0.7 CommentThreads** реалізує сценарії коментарів усередині ядра Onion.
 
 - Domain/Entities захищає інваріанти сутностей і не має зовнішніх залежностей від проєктів/пакетів.
-- Application/Comments містить CreateComment, GetComment і GetLatestComments, валідацію вводу,
+- Application/Comments містить CreateComment, GetComment, GetReplies і GetLatestComments, валідацію вводу,
   нормалізацію, публічні DTO та результати валідації. Application посилається лише на Domain.
 - Application/Abstractions/Persistence містить ICommentRepository, ICommentQueries та IUnitOfWork.
   Контракти не розкривають типи EF/HTTP/провайдера та IQueryable.
@@ -94,10 +98,12 @@ Application містить ICommentMarkup/XhtmlCommentMarkup для створе
 Data.Tests (PostgreSQL із відкатом) та Api.Tests (HTTP з видаленням лише власних записів).
 Архітектурні тести контролюють посилання всередину, незалежність ядра, типи контрактів і межі endpoints.
 
-Міграція 20261029195935_InitialDataModel та SQL не змінюються відносно 1.1.0.3. Штучна
-міграція/заміна контрольних копій не потрібна. Під час майбутньої генерації вказувати --output-dir Persistence/Migrations,
-ціль Infrastructure, стартовий проєкт Api. XhtmlEditor реалізовано; відповіді й повні
-сортування/пагінація залишаються у своїх етапах. OOP/SOLID/Onion обов’язкові під час наступних змін.
+Міграція 20261030101720_CommentThreads розширює схему незмінними полями батьківського запису/кореня,
+заповнює старі корені та зберігає попередні дані. Create перевіряє батьківський запис до підготовки автора;
+GetReplies перевіряє курсор/ліміт. Infrastructure виконує обмежені запити прямих відповідей та видає
+плоскі DTO без рекурсивного графа EF. UI ітеративно розгортає відкриті гілки.
+Під час генерації EF вказувати --output-dir Persistence/Migrations. Повні сортування/сторінки коренів —
+1.1.0.8; OOP/SOLID/Onion обов’язкові. Оновлення/відкат: database/MIGRATIONS.md.
 
 ## Dependencies / Зависимости / Залежності
 

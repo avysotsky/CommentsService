@@ -6,8 +6,9 @@ import { CommentsRequestError } from './client';
 import { emptyInput, validate } from './model';
 import type { Comment, CommentsClient, Field, FieldErrors, ValidationCode } from './model';
 
-export function CommentForm({ client, labels: t, onCreated }: {
+export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelReply }: {
   client: CommentsClient; labels: Messages; onCreated: (comment: Comment) => void;
+  replyTo: Comment | null; onCancelReply: () => void;
 }) {
   const [input, setInput] = useState(emptyInput);
   const [errors, setErrors] = useState<Partial<Record<Field, ValidationCode>>>({});
@@ -63,7 +64,7 @@ export function CommentForm({ client, labels: t, onCreated }: {
     if (Object.keys(invalid).length) { setNotice('validationError'); focusField(Object.keys(invalid)[0]); return; }
     locked.current = true; setSending(true);
     try {
-      const comment = await client.create(input);
+      const comment = await client.create({ ...input, parentId: replyTo?.id ?? null });
       changedText(); setInput(previous => ({ ...previous, text: '' }));
       setNotice('success'); onCreated(comment);
     } catch (error) {
@@ -101,6 +102,11 @@ export function CommentForm({ client, labels: t, onCreated }: {
   return <section className="panel" aria-labelledby="compose-title">
     <h2 id="compose-title">{t.compose}</h2>
     <form noValidate onSubmit={submit} ref={form} aria-busy={sending}>
+      {replyTo && <div className="reply-target" role="status">
+        <span>{t.replyingTo} <strong dir="auto">{replyTo.userName}</strong></span>
+        <button type="button" className="secondary" disabled={sending} onClick={onCancelReply}>{t.cancelReply}</button>
+      </div>}
+      {serverErrors.parentId && <p role="alert" className="error">{t.replyTargetError}</p>}
       <div className="form-grid">{field('userName', t.name, t.nameHint)}{field('email', t.email, t.emailHint)}</div>
       {field('homePage', t.home, t.homeHint)}
       <div className="editor-toolbar" role="group" aria-label={t.formatting}>

@@ -2,9 +2,15 @@
 
 ## English
 
-Current release 1.1.0.6 keeps the 1.1.0.3 schema/migration unchanged. The API adds
-validated writes/read projections; no new migration or checkpoint rotation is required.
-HTTP tests remove only their own comments/unreferenced author snapshots.
+Release 1.1.0.7 adds `20261030101720_CommentThreads` after `20261029195935_InitialDataModel`.
+Stop writes and restore-verify a current checkpoint before migrating both persistent databases.
+The migration adds nullable ParentId and backfills required RootId with each existing Id;
+all previous content, metadata, identities and times are retained. It adds a composite parent/root
+foreign key with RESTRICT, an (Id,RootId) alternate key, consistency check and reply indexes.
+Upgrading a restored copy and reversing with roots only preserves rows/schema/history. Down
+explicitly refuses while replies exist and rolls back atomically; do not bypass this guard.
+Restore a verified pre-upgrade checkpoint into a separate recovery database if necessary,
+accounting for all changes after the checkpoint. HTTP cleanup removes only owned leaves first.
 
 For future schema changes use `--output-dir Persistence/Migrations` on the EF add command.
 
@@ -65,9 +71,15 @@ Full thread/attachment preservation checks belong to later schema versions.
 
 ## Русский
 
-Текущий выпуск 1.1.0.6 сохраняет схему/миграцию 1.1.0.3. API добавляет проверяемую
-запись и проекции чтения; новая миграция и замена копий не нужны.
-HTTP-тесты удаляют только свои комментарии и записи авторов без ссылок.
+Выпуск 1.1.0.7 добавляет `20261030101720_CommentThreads` после `20261029195935_InitialDataModel`.
+Остановите запись и проверьте восстановление текущей копии перед миграцией обеих постоянных БД.
+Добавляются nullable ParentId и обязательный RootId, заполняемый прежним Id; старые тексты,
+метаданные, идентификаторы и время сохранены. Добавляются составной FK родитель/корень с RESTRICT,
+альтернативный ключ (Id,RootId), проверка согласованности и индексы ответов.
+Обновление восстановленной копии и откат только с корнями сохраняют строки/схему/историю.
+Down явно запрещён при наличии ответов и откатывается атомарно; запрет не обходить.
+При необходимости восстанавливайте проверенную копию до обновления в отдельную БД,
+учитывая изменения после неё. HTTP-тесты удаляют только свои записи начиная с листьев.
 
 Для будущих изменений схемы указывайте `--output-dir Persistence/Migrations` при создании миграции EF.
 
@@ -125,9 +137,15 @@ dotnet ef migrations script --idempotent --project src/CommentsService.Infrastru
 
 ## Українська
 
-Поточний випуск 1.1.0.6 зберігає схему/міграцію 1.1.0.3. API додає перевірюваний
-запис і проєкції читання; нова міграція та заміна копій не потрібні.
-HTTP-тести видаляють лише власні коментарі й записи авторів без посилань.
+Випуск 1.1.0.7 додає `20261030101720_CommentThreads` після `20261029195935_InitialDataModel`.
+Зупиніть запис і перевірте відновлення поточної копії перед міграцією обох постійних БД.
+Додаються nullable ParentId та обов’язковий RootId, заповнений попереднім Id; старі тексти,
+метадані, ідентифікатори й час збережено. Додаються складений FK батьківський запис/корінь із RESTRICT,
+альтернативний ключ (Id,RootId), перевірка узгодженості та індекси відповідей.
+Оновлення відновленої копії й відкат лише з коренями зберігають рядки/схему/історію.
+Down явно заборонено за наявності відповідей та відкочується атомарно; заборону не обходити.
+За потреби відновлюйте перевірену копію до оновлення в окрему БД,
+враховуючи зміни після неї. HTTP-тести видаляють лише власні записи починаючи з листків.
 
 Для майбутніх змін схеми вказуйте `--output-dir Persistence/Migrations` під час створення міграції EF.
 

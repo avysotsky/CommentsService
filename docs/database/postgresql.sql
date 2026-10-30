@@ -1,4 +1,4 @@
-DO $EF$
+﻿DO $EF$
 BEGIN
     IF NOT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'comments') THEN
         CREATE SCHEMA comments;
@@ -71,6 +71,80 @@ BEGIN
     IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261029195935_InitialDataModel') THEN
     INSERT INTO comments."__EFMigrationsHistory" ("MigrationId", "ProductVersion")
     VALUES ('20261029195935_InitialDataModel', '10.0.14');
+    END IF;
+END $EF$;
+COMMIT;
+
+START TRANSACTION;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    ALTER TABLE comments."Comments" ADD "ParentId" uuid;
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    ALTER TABLE comments."Comments" ADD "RootId" uuid;
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    UPDATE comments."Comments" SET "RootId" = "Id";
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    ALTER TABLE comments."Comments" ALTER COLUMN "RootId" SET NOT NULL;
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    ALTER TABLE comments."Comments" ADD CONSTRAINT "AK_Comments_Id_RootId" UNIQUE ("Id", "RootId");
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    CREATE INDEX "IX_Comments_ParentId_CreatedAt_Id" ON comments."Comments" ("ParentId", "CreatedAt", "Id");
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    CREATE INDEX "IX_Comments_ParentId_RootId" ON comments."Comments" ("ParentId", "RootId");
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    ALTER TABLE comments."Comments" ADD CONSTRAINT "CK_Comments_Thread" CHECK (("ParentId" IS NULL AND "RootId" = "Id") OR ("ParentId" IS NOT NULL AND "ParentId" <> "Id" AND "RootId" <> "Id"));
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    ALTER TABLE comments."Comments" ADD CONSTRAINT "FK_Comments_Comments_ParentId_RootId" FOREIGN KEY ("ParentId", "RootId") REFERENCES comments."Comments" ("Id", "RootId") ON DELETE RESTRICT;
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030101720_CommentThreads') THEN
+    INSERT INTO comments."__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+    VALUES ('20261030101720_CommentThreads', '10.0.14');
     END IF;
 END $EF$;
 COMMIT;

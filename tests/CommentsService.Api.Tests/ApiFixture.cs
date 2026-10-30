@@ -58,7 +58,12 @@ public sealed class ApiFixture : IAsyncLifetime
         await using var db = new CommentsDbContextFactory().CreateDbContext([]);
         await using var transaction = await db.Database.BeginTransactionAsync();
         var authorIds = await db.Comments.Where(comment => owned.Contains(comment.Id)).Select(comment => comment.AuthorId).ToArrayAsync();
-        await db.Comments.Where(comment => owned.Contains(comment.Id)).ExecuteDeleteAsync();
+        while (await db.Comments.AnyAsync(comment => owned.Contains(comment.Id)))
+        {
+            var removed = await db.Comments.Where(comment => owned.Contains(comment.Id) &&
+                !db.Comments.Any(child => child.ParentId == comment.Id)).ExecuteDeleteAsync();
+            if (removed == 0) throw new InvalidOperationException("Owned test comments still have external dependents.");
+        }
         await db.Authors.Where(author => authorIds.Contains(author.Id) && !db.Comments.Any(comment => comment.AuthorId == author.Id)).ExecuteDeleteAsync();
         await transaction.CommitAsync();
     }

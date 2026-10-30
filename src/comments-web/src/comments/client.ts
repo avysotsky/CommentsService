@@ -14,6 +14,12 @@ export class HttpCommentsClient implements CommentsClient {
   private readonly request: typeof fetch;
   constructor(request: typeof fetch = (...args) => fetch(...args)) { this.request = request; }
 
+  async replies(parentId: string, after?: string | null, signal?: AbortSignal) {
+    const query = new URLSearchParams({ limit: '25' });
+    if (after) query.set('after', after);
+    return this.read<import('./model').RepliesPage>(await this.request(`/api/comments/${encodeURIComponent(parentId)}/replies?${query}`, { signal, cache: 'no-store' }));
+  }
+
   async latest(signal?: AbortSignal): Promise<Comment[]> {
     return this.read(await this.request('/api/comments?limit=25', { signal, cache: 'no-store' }));
   }
@@ -36,7 +42,7 @@ export class HttpCommentsClient implements CommentsClient {
     const fields: FieldErrors = {};
     if (response.status === 400) {
       const problem = await response.json().catch(() => null);
-      for (const key of ['userName', 'email', 'homePage', 'text'] as const) {
+      for (const key of ['userName', 'email', 'homePage', 'text', 'parentId'] as const) {
         const messages: unknown = problem?.errors?.[key];
         if (Array.isArray(messages) && messages.every(message => typeof message === 'string')) fields[key] = messages;
       }

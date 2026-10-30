@@ -76,7 +76,7 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
         Assert.Equal(HttpStatusCode.OK, get.StatusCode);
         Assert.Equal(created, await get.Content.ReadFromJsonAsync<CommentDto>());
         using var document = JsonDocument.Parse(await get.Content.ReadAsStringAsync());
-        Assert.Equal(new[] { "createdAt", "email", "homePage", "id", "text", "userName" },
+        Assert.Equal(new[] { "createdAt", "email", "homePage", "id", "parentId", "rootId", "text", "userName" },
             document.RootElement.EnumerateObject().Select(property => property.Name).Order().ToArray());
         await using var db = new CommentsDbContextFactory().CreateDbContext([]);
         var stored = await db.Comments.AsNoTracking().SingleAsync(comment => comment.Id == created.Id);
@@ -124,7 +124,7 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
     [InlineData("createdAt")]
     [InlineData("clientIp")]
     [InlineData("userAgent")]
-    [InlineData("parentId")]
+    [InlineData("rootId")]
     public async Task ClientCannotSupplyServerMetadataOrUnimplementedFields(string field)
     {
         var payload = ApiFixture.Payload(); payload[field] = "spoofed";
@@ -223,6 +223,83 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
         using var write = await client.PostAsJsonAsync("/api/comments", ApiFixture.Payload("Unavailable write fixture"));
         Assert.Equal(HttpStatusCode.ServiceUnavailable, write.StatusCode);
         Assert.DoesNotContain("Npgsql", await write.Content.ReadAsStringAsync());
+    }
+
+    private async Task<CommentDto> CreateThreadComment(Guid? parentId = null, string text = "Thread fixture")
+    {
+        var payload = ApiFixture.Payload(text); payload["parentId"] = parentId;
+        using var response = await fixture.PostAsync(payload);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        return (await response.Content.ReadFromJsonAsync<CommentDto>())!;
+    }
+
+    [Fact]
+    public async Task NestedRepliesPersistParentAndDerivedRootAndAreNotListedAsRoots()
+    {
+        var root = await CreateThreadComment(); var parent = root;
+        Assert.Null(root.ParentId); Assert.Equal(root.Id, root.RootId);
+        for (var depth = 0; depth < 40; depth++)
+        {
+            var child = await CreateThreadComment(parent.Id, "<strong>Reply 😀</strong>");
+            Assert.Equal(parent.Id, child.ParentId); Assert.Equal(root.Id, child.RootId);
+            Assert.Equal(child, await fixture.Client.GetFromJsonAsync<CommentDto>("/api/comments/" + child.Id));
+            var page = await fixture.Client.GetFromJsonAsync<CommentsService.Application.Comments.GetReplies.RepliesPage>("/api/comments/" + parent.Id + "/replies");
+            Assert.Equal(child.Id, Assert.Single(page!.Items).Id); Assert.Null(page.NextAfter); parent = child;
+        }
+        var roots = (await fixture.Client.GetFromJsonAsync<CommentDto[]>("/api/comments?limit=100"))!;
+        Assert.All(roots, item => Assert.Null(item.ParentId)); Assert.Contains(roots, item => item.Id == root.Id);
+    }
+
+    [Fact]
+    public async Task ReplyCursorPagesDoNotMixParentsOrDuplicateRows()
+    {
+        var root = await CreateThreadComment(); var other = await CreateThreadComment();
+        var otherChild = await CreateThreadComment(other.Id);
+        var children = new List<CommentDto>();
+        for (var i = 0; i < 5; i++) children.Add(await CreateThreadComment(root.Id));
+        Guid? after = null; var found = new List<Guid>();
+        do
+        {
+            var page = (await fixture.Client.GetFromJsonAsync<CommentsService.Application.Comments.GetReplies.RepliesPage>(
+                $"/api/comments/{root.Id}/replies?limit=2" + (after is null ? "" : "&after=" + after)))!;
+            Assert.All(page.Items, child => Assert.Equal(root.Id, child.ParentId));
+            found.AddRange(page.Items.Select(x => x.Id)); after = page.NextAfter;
+        } while (after is not null);
+        Assert.Equal(children.AsEnumerable().Reverse().Select(x => x.Id), found);
+        using var foreign = await fixture.Client.GetAsync($"/api/comments/{root.Id}/replies?after={otherChild.Id}");
+        Assert.Equal(HttpStatusCode.BadRequest, foreign.StatusCode);
+    }
+
+    [Fact]
+    public async Task MissingReplyTargetDoesNotWriteAndMissingBranchIsNotFound()
+    {
+        await using var db = new CommentsDbContextFactory().CreateDbContext([]);
+        var authors = await db.Authors.CountAsync(); var comments = await db.Comments.CountAsync();
+        var missing = Guid.NewGuid(); var payload = ApiFixture.Payload(); payload["parentId"] = missing;
+        using var response = await fixture.PostAsync(payload);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.True(problem.RootElement.GetProperty("errors").TryGetProperty("parentId", out _));
+        Assert.Equal(authors, await db.Authors.CountAsync()); Assert.Equal(comments, await db.Comments.CountAsync());
+        using var read = await fixture.Client.GetAsync($"/api/comments/{missing}/replies");
+        Assert.Equal(HttpStatusCode.NotFound, read.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("limit=0")] [InlineData("limit=101")] [InlineData("limit=bad")] [InlineData("after=bad")]
+    public async Task InvalidReplyParametersAreRejected(string query)
+    {
+        var root = await CreateThreadComment();
+        using var response = await fixture.Client.GetAsync($"/api/comments/{root.Id}/replies?{query}");
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task EmptyBranchAndExplicitNullParentAreValid()
+    {
+        var root = await CreateThreadComment();
+        var page = (await fixture.Client.GetFromJsonAsync<CommentsService.Application.Comments.GetReplies.RepliesPage>($"/api/comments/{root.Id}/replies"))!;
+        Assert.Empty(page.Items); Assert.Null(page.NextAfter);
     }
 
     private sealed class UnavailableQuery : IGetComment

@@ -9,7 +9,10 @@ public sealed class CommentConfiguration : IEntityTypeConfiguration<Comment>
     public void Configure(EntityTypeBuilder<Comment> comment)
     {
         comment.ToTable("Comments", table =>
-            table.HasCheckConstraint("CK_Comments_Text", "length(btrim(\"Text\")) > 0"));
+        {
+            table.HasCheckConstraint("CK_Comments_Text", "length(btrim(\"Text\")) > 0");
+            table.HasCheckConstraint("CK_Comments_Thread", "(\"ParentId\" IS NULL AND \"RootId\" = \"Id\") OR (\"ParentId\" IS NOT NULL AND \"ParentId\" <> \"Id\" AND \"RootId\" <> \"Id\")");
+        });
         comment.HasKey(x => x.Id);
         comment.Property(x => x.Id).ValueGeneratedNever();
         comment.Property(x => x.Text).HasMaxLength(Comment.TextMaxLength).IsRequired();
@@ -18,6 +21,10 @@ public sealed class CommentConfiguration : IEntityTypeConfiguration<Comment>
         comment.Property(x => x.UserAgent).HasMaxLength(Comment.UserAgentMaxLength).IsRequired();
         comment.HasOne(x => x.Author).WithMany(x => x.Comments)
             .HasForeignKey(x => x.AuthorId).OnDelete(DeleteBehavior.Restrict);
+        comment.HasAlternateKey(x => new { x.Id, x.RootId });
+        comment.HasOne<Comment>().WithMany().HasForeignKey(x => new { x.ParentId, x.RootId })
+            .HasPrincipalKey(x => new { x.Id, x.RootId }).OnDelete(DeleteBehavior.Restrict);
+        comment.HasIndex(x => new { x.ParentId, x.CreatedAt, x.Id });
         comment.HasIndex(x => new { x.CreatedAt, x.Id }).IsDescending(true, true);
     }
 }

@@ -4,4 +4,4 @@ namespace CommentsService.Api.Contracts;
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record CreateCommentBody(string? UserName = null, string? Email = null,
-    string? HomePage = null, string? Text = null);
+    string? HomePage = null, string? Text = null, Guid? ParentId = null);

@@ -36,6 +36,72 @@ public sealed class DataModelTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ThreadLinksRoundTripAndRootsAreListedSeparately()
+    {
+        var root = new Comment(new Author("Root", "r@example.test"), "root", IPAddress.Loopback, "");
+        var parent = root; db.Add(root);
+        for (var depth = 0; depth < 40; depth++)
+        {
+            var reply = new Comment(new Author("Reply", "r@example.test"), "reply", IPAddress.Loopback, "", parent);
+            db.Add(reply); parent = reply;
+        }
+        await db.SaveChangesAsync(); db.ChangeTracker.Clear();
+        var saved = await db.Comments.SingleAsync(x => x.Id == parent.Id);
+        Assert.Equal(root.Id, saved.RootId); Assert.NotNull(saved.ParentId);
+        var queries = scope.ServiceProvider.GetRequiredService<ICommentQueries>();
+        var roots = await queries.GetLatestAsync(100);
+        Assert.Contains(roots, x => x.Id == root.Id); Assert.DoesNotContain(roots, x => x.Id == parent.Id);
+        Assert.All(roots, x => Assert.Null(x.ParentId));
+    }
+
+    [Fact]
+    public async Task DatabaseRejectsAReplyWithWrongRoot()
+    {
+        var root = new Comment(new Author("Root", "r@example.test"), "root", IPAddress.Loopback, "");
+        var other = new Comment(new Author("Other", "r@example.test"), "root", IPAddress.Loopback, "");
+        db.AddRange(root, other); await db.SaveChangesAsync();
+        var child = new Comment(new Author("Child", "r@example.test"), "child", IPAddress.Loopback, "", root);
+        db.Add(child); db.Entry(child).Property(x => x.RootId).CurrentValue = other.Id;
+        var error = await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync());
+        Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, Assert.IsType<PostgresException>(error.InnerException).SqlState);
+    }
+
+    [Fact]
+    public async Task DatabaseRestrictsDeletingAParentWithReplies()
+    {
+        var root = new Comment(new Author("Root", "r@example.test"), "root", IPAddress.Loopback, "");
+        db.Add(root); db.Add(new Comment(new Author("Child", "r@example.test"), "child", IPAddress.Loopback, "", root));
+        await db.SaveChangesAsync();
+        var error = await Assert.ThrowsAsync<PostgresException>(() =>
+            db.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM comments.\"Comments\" WHERE \"Id\" = {root.Id}"));
+        Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, error.SqlState);
+    }
+
+    [Fact]
+    public async Task RepliesWithEqualTimesUseStableKeysetPages()
+    {
+        var root = new Comment(new Author("Root", "r@example.test"), "root", IPAddress.Loopback, "");
+        db.Add(root); var ids = new HashSet<Guid>();
+        for (var i = 0; i < 6; i++)
+        {
+            var child = new Comment(new Author("Child", "r@example.test"), "child", IPAddress.Loopback, "", root);
+            db.Add(child); db.Entry(child).Property(x => x.CreatedAt).CurrentValue = DateTimeOffset.Parse("2026-01-01T00:00:00Z"); ids.Add(child.Id);
+        }
+        await db.SaveChangesAsync();
+        var queries = scope.ServiceProvider.GetRequiredService<ICommentQueries>();
+        CommentsService.Application.Comments.GetReplies.ReplyCursor? cursor = null;
+        var found = new List<Guid>();
+        for (var page = 0; page < 4; page++)
+        {
+            var rows = await queries.GetRepliesAsync(root.Id, 2, cursor);
+            found.AddRange(rows.Select(x => x.Id));
+            if (rows.Count == 0) break;
+            cursor = new(rows[^1].CreatedAt, rows[^1].Id);
+        }
+        Assert.Equal(6, found.Distinct().Count()); Assert.Equal(6, found.Count); Assert.True(ids.SetEquals(found));
+    }
+
+    [Fact]
     public async Task RoundTripPreservesIdentityUnicodeClientAndUtc()
     {
         var author = new Author("Reader123", "reader@example.test", "https://example.test/");
@@ -106,7 +172,7 @@ public sealed class DataModelTests : IAsyncLifetime
     [Fact]
     public async Task MigrationHistoryAndModelAreCurrent()
     {
-        Assert.Single(await db.Database.GetAppliedMigrationsAsync());
+        Assert.Equal(2, (await db.Database.GetAppliedMigrationsAsync()).Count());
         Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         Assert.False(db.Database.HasPendingModelChanges());
     }

@@ -50,3 +50,8 @@ footer { color: #5c6b59; font-size: 12px; border-top: 1px solid #dfe4d7; padding
 .comment-preview { border:1px solid #cbd5df; border-radius:.6rem; padding:1rem; margin-bottom:1rem; overflow-wrap:anywhere; }
 .comment-text code { background:#edf1f5; padding:.1em .25em; border-radius:.2em; }
 .comment-text a { overflow-wrap:anywhere; }
+
+.thread-actions { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.8rem; }
+.thread-actions button, .thread-controls button { font-size:12px; padding:.3rem .6rem; }
+.thread-controls td { background:#fafbf7; font-size:12px; }
+.reply-target { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.6rem; padding:.75rem; margin-bottom:1rem; background:#f4f6ed; border-radius:.5rem; overflow-wrap:anywhere; }

@@ -63,3 +63,20 @@ test('preview sends text only and propagates cancellation and validation', async
   });
   assert.deepEqual(await client.preview('<strong>x</strong>', controller.signal), { html: '<strong>x</strong>' });
 });
+
+test('reply client encodes parent and cursor, aborts and bypasses cache', async () => {
+  const cancel = new AbortController();
+  const client = new HttpCommentsClient(async (url, options) => {
+    assert.equal(url, '/api/comments/parent/replies?limit=25&after=cursor');
+    assert.equal(options.signal, cancel.signal); assert.equal(options.cache, 'no-store');
+    return Response.json({ items: [], nextAfter: null });
+  });
+  assert.deepEqual(await client.replies('parent', 'cursor', cancel.signal), { items: [], nextAfter: null });
+});
+test('create carries only requested parent and exposes missing-target errors', async () => {
+  const client = new HttpCommentsClient(async (url, options) => {
+    assert.equal(JSON.parse(options.body).parentId, 'parent');
+    return Response.json({ errors: { parentId: ['Not found'] } }, { status: 400 });
+  });
+  await assert.rejects(client.create({ ...valid, parentId: 'parent' }), error => error.fields.parentId[0] === 'Not found');
+});

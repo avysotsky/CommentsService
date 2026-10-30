@@ -16,8 +16,14 @@ public sealed class CreateComment(ICommentRepository repository, IUnitOfWork uni
             HomePage = string.IsNullOrWhiteSpace(input.HomePage) ? null : input.HomePage.Trim() };
         var errors = CreateCommentValidator.Validate(normalized, markup);
         if (errors.Count != 0) return Validated<CommentDto>.Invalid(errors);
+        Comment? parent = null;
+        if (normalized.ParentId is { } parentId)
+        {
+            parent = await repository.FindByIdAsync(parentId, cancellationToken);
+            if (parent is null) return Validated<CommentDto>.Invalid(new() { ["parentId"] = ["Reply target was not found. Choose an existing comment."] });
+        }
         var author = new Author(normalized.UserName!, normalized.Email!, normalized.HomePage);
-        var comment = new Comment(author, normalized.Text!, client.IpAddress, client.UserAgent);
+        var comment = new Comment(author, normalized.Text!, client.IpAddress, client.UserAgent, parent);
         repository.Add(comment);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Validated<CommentDto>.Success(CommentDto.From(comment));

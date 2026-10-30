@@ -31,9 +31,17 @@ public static class CommentsEndpoints
             if (ip.IsIPv4MappedToIPv6) ip = ip.MapToIPv4();
             var userAgent = context.Request.Headers.UserAgent.ToString();
             var client = new ClientMetadata(ip, userAgent[..Math.Min(userAgent.Length, ClientMetadata.UserAgentMaxLength)]);
-            var result = await create.ExecuteAsync(new(body.UserName, body.Email, body.HomePage, body.Text), client, token);
+            var result = await create.ExecuteAsync(new(body.UserName, body.Email, body.HomePage, body.Text, body.ParentId), client, token);
             if (!result.IsValid) return Results.ValidationProblem(result.Errors.ToDictionary());
             return Results.Created($"/api/comments/{result.Value!.Id}", result.Value);
+        });
+        group.MapGet("/{id:guid}/replies", async (Guid id, int? limit, Guid? after,
+            CommentsService.Application.Comments.GetReplies.IGetReplies get, CancellationToken token) =>
+        {
+            var result = await get.ExecuteAsync(id, limit ?? 25, after, token);
+            if (result.IsValid) return Results.Ok(result.Value);
+            return result.Errors.ContainsKey("parentId") ? Results.Problem(statusCode: 404, title: "Comment was not found.") :
+                Results.ValidationProblem(result.Errors.ToDictionary());
         });
         group.MapGet("/{id:guid}", async (Guid id, IGetComment get, CancellationToken token) =>
             await get.ExecuteAsync(id, token) is { } comment ? Results.Ok(comment) : Results.Problem(

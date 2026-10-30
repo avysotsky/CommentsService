@@ -6,6 +6,20 @@ namespace CommentsService.Domain.Tests;
 
 public sealed class EntityTests
 {
+    [Fact]
+    public void RepliesKeepImmutableParentAndRootWithoutDepthLimit()
+    {
+        var root = new Comment(new Author("Root", "r@example.test"), "root", IPAddress.Loopback, "");
+        Assert.Null(root.ParentId); Assert.Equal(root.Id, root.RootId);
+        var parent = root;
+        for (var depth = 0; depth < 1000; depth++)
+        {
+            var child = new Comment(new Author("Reply", "r@example.test"), "reply", IPAddress.Loopback, "", parent);
+            Assert.Equal(parent.Id, child.ParentId); Assert.Equal(root.Id, child.RootId);
+            parent = child;
+        }
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]

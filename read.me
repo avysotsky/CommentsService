@@ -1,16 +1,22 @@
-CommentsService — 1.1.0.6 XhtmlEditor
-Branch: CommentsService/v_1.1.0.6_HomepageHint
+CommentsService — 1.1.0.7 CommentThreads
+Branch: CommentsService/v_1.1.0.7_CommentThreads
 
 ENGLISH
+Replies can target any existing comment. Choose Reply beneath a comment; the form identifies the recipient. Cancel reply returns to root posting and preserves the draft. Successful replies appear under their parent; missing targets produce an error without creating an author or comment.
+
+The root table shows up to 25 newest roots. Show/Hide replies expands or collapses direct replies; More replies loads the next 25. Both roots and siblings use descending UTC time and UUID. Expanding descendants has no application depth limit: rendering is iterative, and visual indentation stops growing after six levels while the numeric level continues. Refresh reloads roots and open branches; branch failures offer Retry and preserve loaded content. Full root pagination/sort controls remain 1.1.0.8.
+
+API: POST /api/comments accepts optional parentId (UUID/null); rootId is derived by the server and cannot be supplied. GET /api/comments/{id}/replies?limit=25&after={replyId} returns {items,nextAfter}; omit after for the first page. Limit is 1–100; after must be a direct child of that parent. Missing parent is 404 for reads and a parentId validation error (400) for writes. Unknown/foreign cursors are 400. Pages limit direct siblings, not thread depth. No delete/edit API is introduced.
+
 Optional homepage: enter the full address including http:// or https://, e.g. https://example.com. A permanent hint and validation error explain this; no automatic protocol or availability checks.
 Allowed tags: `a`, `i`, `strong`, `code`. Links require an absolute HTTP(S) `href` without credentials; `title` is optional. Other attributes, namespaces, nested links, comments, DTD/CDATA, malformed tags and unsafe URLs are rejected. XHTML uses closed, correctly nested lowercase tags and XML entities (`&amp;`, `&lt;`, `&quot;`); plain text such as `1 < 2 && 3 > 1` still works. The limit is 65,536 UTF-16 units, depth 32 and 4096 parser nodes.
 
-Select text and use Bold/Italic/Code/Link. Link inserts an editable HTTPS template. Preview calls `POST /api/comments/preview` with `{ "text": "<strong>Hello</strong>" }` and returns `{ "html": "<strong>Hello</strong>" }` without database access or writes. Saving uses the same Application validator. Editing hides stale previews; request failure preserves the draft. Preview and table render only allowlisted React elements, with safe links and escaped fallback text. Existing stored text and schema are unchanged.
+Select text and use Bold/Italic/Code/Link. Link inserts an editable HTTPS template. Preview calls `POST /api/comments/preview` with `{ "text": "<strong>Hello</strong>" }` and returns `{ "html": "<strong>Hello</strong>" }` without database access or writes. Saving uses the same Application validator. Editing hides stale previews; request failure preserves the draft. Preview and table render only allowlisted React elements, with safe links and escaped fallback text. Existing stored text is retained; the thread migration extends the schema.
 
-Upgrade from 1.1.0.5: same schema; reuse existing checkpoints/volumes.
+Upgrade from 1.1.0.6: stop writes, restore-verify a current checkpoint, apply CommentThreads migration to both databases; preserve volumes.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Architecture and SOLID boundaries: docs/ARCHITECTURE.md.
-Create/read text/XHTML comments, server validation and client metadata. API contract: docs/API.md. SPA form/table, client validation, async submission and EN/RU/UA are available. Next: 1.1.0.7 CommentThreads.
+Create/read text/XHTML comments, server validation and client metadata. API contract: docs/API.md. SPA form/table, client validation, async submission and EN/RU/UA are available. Next: 1.1.0.8 SortingPagination.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py
@@ -34,15 +40,21 @@ Stop writes before checkpoint/migration; keep the same project/environment/volum
 Instructions: README.md. Schema/recovery: docs/database. History: change.log.
 
 РУССКИЙ
+Ответить можно на любой существующий комментарий. Нажмите «Ответить» под записью; форма покажет адресата. «Отменить ответ» возвращает создание корня и сохраняет черновик. Успешный ответ появляется под родителем; отсутствующий адресат вызывает ошибку без создания автора или комментария.
+
+Таблица показывает до 25 новых корней. «Показать/Скрыть ответы» раскрывает прямые ответы; «Ещё ответы» загружает следующие 25. Корни и соседи упорядочены по времени UTC и UUID по убыванию. Глубина обсуждения не ограничена приложением: вывод итеративный, визуальный отступ перестаёт расти после шести уровней, числовой уровень продолжает расти. «Обновить» перечитывает корни и открытые ветки; ошибка ветки предлагает «Повторить» и сохраняет загруженное содержимое. Полные страницы/сортировки корней — этап 1.1.0.8.
+
+API: POST /api/comments принимает необязательный parentId (UUID/null); rootId определяет сервер, передавать его нельзя. GET /api/comments/{id}/replies?limit=25&after={replyId} возвращает {items,nextAfter}; для первой порции after не указывается. Limit — 1–100; after должен быть прямым ответом этому родителю. Нет родителя: 404 при чтении, ошибка parentId (400) при записи. Неизвестный/чужой курсор — 400. Порции ограничивают соседние ответы, а не глубину. API удаления/редактирования не добавлен.
+
 Необязательное поле сайта: полный адрес с http:// или https://, например https://example.com. Постоянная подсказка и ошибка объясняют формат; без автоматического выбора протокола и проверки доступности.
 Разрешены `a`, `i`, `strong`, `code`. Для ссылки обязателен абсолютный HTTP(S) `href` без учётных данных; `title` необязателен. Остальные атрибуты, пространства имён, вложенные ссылки, комментарии, DTD/CDATA, неправильная вложенность и опасные адреса запрещены. XHTML требует закрытых строчных тегов и XML-сущностей (`&amp;`, `&lt;`, `&quot;`); обычный текст `1 < 2 && 3 > 1` также допустим. Лимиты: 65 536 единиц UTF-16, глубина 32 и 4096 узлов парсера.
 
-Выделите текст и нажмите «Жирный», «Курсив», «Код» или «Ссылка». Ссылка вставляет редактируемый HTTPS-шаблон. «Предпросмотр» отправляет `POST /api/comments/preview` с `{ "text": "<strong>Hello</strong>" }` и получает `{ "html": "<strong>Hello</strong>" }` без обращения к БД и записи. Сохранение использует тот же валидатор Application. Правка скрывает устаревший просмотр; ошибка сохраняет черновик. Просмотр и таблица создают только разрешённые React-элементы, безопасные ссылки и экранированный текст при отказе. Существующие записи и схема не меняются.
+Выделите текст и нажмите «Жирный», «Курсив», «Код» или «Ссылка». Ссылка вставляет редактируемый HTTPS-шаблон. «Предпросмотр» отправляет `POST /api/comments/preview` с `{ "text": "<strong>Hello</strong>" }` и получает `{ "html": "<strong>Hello</strong>" }` без обращения к БД и записи. Сохранение использует тот же валидатор Application. Правка скрывает устаревший просмотр; ошибка сохраняет черновик. Просмотр и таблица создают только разрешённые React-элементы, безопасные ссылки и экранированный текст при отказе. Существующие записи сохранены; схема расширяется миграцией ответов.
 
-Обновление с 1.1.0.5: прежняя схема; сохраняйте копии/тома.
+Обновление с 1.1.0.6: остановите запись, проверьте восстановление текущей копии, примените миграцию CommentThreads обеих БД; сохраните тома.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Архитектура и границы SOLID: docs/ARCHITECTURE.md.
-Создание/чтение текстовых комментариев, серверная валидация и метаданные клиента. Контракт: docs/API.md. SPA-форма/таблица, клиентская валидация, AJAX и EN/RU/UA реализованы. Далее 1.1.0.7 CommentThreads.
+Создание/чтение текстовых комментариев, серверная валидация и метаданные клиента. Контракт: docs/API.md. SPA-форма/таблица, клиентская валидация, AJAX и EN/RU/UA реализованы. Далее 1.1.0.8 SortingPagination.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py
@@ -66,15 +78,21 @@ npm run build --prefix src/comments-web
 Инструкция: README.RU.md. Схема/восстановление: docs/database. История: change.log.ru.
 
 УКРАЇНСЬКОЮ
+Відповісти можна на будь-який наявний коментар. Натисніть «Відповісти» під записом; форма покаже адресата. «Скасувати відповідь» повертає створення кореня й зберігає чернетку. Успішна відповідь з’являється під батьківським записом; відсутній адресат спричиняє помилку без створення автора чи коментаря.
+
+Таблиця показує до 25 нових коренів. «Показати/Приховати відповіді» розгортає прямі відповіді; «Ще відповіді» завантажує наступні 25. Корені й сусіди впорядковано за часом UTC та UUID за спаданням. Глибина обговорення не обмежена застосунком: виведення ітеративне, візуальний відступ перестає зростати після шести рівнів, числовий рівень продовжує зростати. «Оновити» перечитує корені й відкриті гілки; помилка гілки пропонує «Повторити» та зберігає завантажений вміст. Повні сторінки/сортування коренів — етап 1.1.0.8.
+
+API: POST /api/comments приймає необов’язковий parentId (UUID/null); rootId визначає сервер, передавати його не можна. GET /api/comments/{id}/replies?limit=25&after={replyId} повертає {items,nextAfter}; для першої порції after не вказується. Limit — 1–100; after має бути прямою відповіддю цьому батьківському запису. Немає батьківського запису: 404 під час читання, помилка parentId (400) під час запису. Невідомий/чужий курсор — 400. Порції обмежують сусідні відповіді, а не глибину. API видалення/редагування не додано.
+
 Необов’язкове поле сайту: повна адреса з http:// або https://, наприклад https://example.com. Постійна підказка й помилка пояснюють формат; без автоматичного вибору протоколу та перевірки доступності.
 Дозволено `a`, `i`, `strong`, `code`. Посилання потребує абсолютного HTTP(S) `href` без облікових даних; `title` необов’язковий. Решту атрибутів, простори імен, вкладені посилання, коментарі, DTD/CDATA, неправильну вкладеність і небезпечні адреси заборонено. XHTML потребує закритих тегів нижнього регістру та XML-сутностей (`&amp;`, `&lt;`, `&quot;`); звичайний текст `1 < 2 && 3 > 1` також дозволено. Обмеження: 65 536 одиниць UTF-16, глибина 32 та 4096 вузлів парсера.
 
-Виділіть текст і натисніть «Жирний», «Курсив», «Код» або «Посилання». Посилання вставляє редагований HTTPS-шаблон. «Перегляд» надсилає `POST /api/comments/preview` з `{ "text": "<strong>Hello</strong>" }` та отримує `{ "html": "<strong>Hello</strong>" }` без звернення до БД чи запису. Збереження використовує той самий валідатор Application. Редагування приховує застарілий перегляд; помилка зберігає чернетку. Перегляд і таблиця створюють лише дозволені React-елементи, безпечні посилання та екранований текст у разі відмови. Наявні записи й схема не змінюються.
+Виділіть текст і натисніть «Жирний», «Курсив», «Код» або «Посилання». Посилання вставляє редагований HTTPS-шаблон. «Перегляд» надсилає `POST /api/comments/preview` з `{ "text": "<strong>Hello</strong>" }` та отримує `{ "html": "<strong>Hello</strong>" }` без звернення до БД чи запису. Збереження використовує той самий валідатор Application. Редагування приховує застарілий перегляд; помилка зберігає чернетку. Перегляд і таблиця створюють лише дозволені React-елементи, безпечні посилання та екранований текст у разі відмови. Наявні записи збережено; схема розширюється міграцією відповідей.
 
-Оновлення з 1.1.0.5: попередня схема; зберігайте копії/томи.
+Оновлення з 1.1.0.6: зупиніть запис, перевірте відновлення поточної копії, застосуйте міграцію CommentThreads обох БД; збережіть томи.
 Backend: Domain; Application; Infrastructure/Persistence (Configurations, Repositories, Migrations); Api.
 Архітектура та межі SOLID: docs/ARCHITECTURE.md.
-Створення/читання текстових коментарів, серверна валідація та метадані клієнта. Контракт: docs/API.md. SPA-форму/таблицю, клієнтську валідацію, AJAX та EN/RU/UA реалізовано. Далі 1.1.0.7 CommentThreads.
+Створення/читання текстових коментарів, серверна валідація та метадані клієнта. Контракт: docs/API.md. SPA-форму/таблицю, клієнтську валідацію, AJAX та EN/RU/UA реалізовано. Далі 1.1.0.8 SortingPagination.
 Docker Engine, Compose v2.24+, Git, Python 3.
 Visual Studio 2026: CommentsService.slnx; .NET 10 SDK.
 python3 scripts/init-env.py

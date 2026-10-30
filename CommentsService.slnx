@@ -19,6 +19,7 @@
     <File Path="src/comments-web/src/comments/CommentForm.tsx" />
     <File Path="src/comments-web/src/comments/CommentsTable.tsx" />
     <File Path="src/comments-web/src/comments/RootPagination.tsx" />
+    <File Path="src/comments-web/src/comments/useCaptcha.ts" />
     <File Path="src/comments-web/src/comments/CommentText.tsx" />
   </Folder>
   <Folder Name="/Frontend/tests/">

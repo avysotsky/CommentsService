@@ -4,7 +4,7 @@ using CommentsService.Domain.Entities;
 
 namespace CommentsService.Application.Comments.CreateComment;
 
-public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork, CommentsService.Application.Comments.Markup.ICommentMarkup markup) : ICreateComment
+public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork, CommentsService.Application.Comments.Markup.ICommentMarkup markup, CommentsService.Application.Captcha.ICaptchaVerifier captcha) : ICreateComment
 {
     public async Task<Validated<CommentDto>> ExecuteAsync(CreateCommentInput input, ClientMetadata client,
         CancellationToken cancellationToken = default)
@@ -16,6 +16,8 @@ public sealed class CreateComment(ICommentRepository repository, IUnitOfWork uni
             HomePage = string.IsNullOrWhiteSpace(input.HomePage) ? null : input.HomePage.Trim() };
         var errors = CreateCommentValidator.Validate(normalized, markup);
         if (errors.Count != 0) return Validated<CommentDto>.Invalid(errors);
+        if (!captcha.Verify(normalized.CaptchaId, normalized.CaptchaCode))
+            return Validated<CommentDto>.Invalid(new() { ["captchaCode"] = ["CAPTCHA is invalid, expired or already used. Refresh it and enter the new code."] });
         Comment? parent = null;
         if (normalized.ParentId is { } parentId)
         {

@@ -95,3 +95,12 @@ test('bookmarked paging input validates ranges and allowlists', () => {
   for (const page of ['-1', '0', '1.5', 'NaN', '85899346']) assert.equal(readRootQuery('?page=' + page).page, 1);
   assert.deepEqual(readRootQuery('?sort=drop&direction=evil'), { page: 1, sort: 'createdAt', direction: 'desc' });
 });
+
+test('captcha transport replaces a prior challenge and never caches responses', async () => {
+  const controller = new AbortController();
+  const client = new HttpCommentsClient(async (url, options) => {
+    assert.equal(url, '/api/captcha?replace=old'); assert.equal(options.cache, 'no-store'); assert.equal(options.signal, controller.signal);
+    return Response.json({ id: 'new', imageDataUrl: 'data:image/png;base64,x', expiresAt: '2026-10-30T00:00:00Z' });
+  });
+  assert.equal((await client.captcha('old', controller.signal)).id, 'new');
+});

@@ -327,6 +327,57 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
         Assert.Empty((await response.Content.ReadFromJsonAsync<CommentsService.Application.Comments.GetRootPage.RootCommentsPage>())!.Items);
     }
 
+    [Fact]
+    public async Task RealCaptchaHttpFlowHasNoAnswerLeakAndProtectsWritesAndReplay()
+    {
+        var renderer = new RecordingCaptchaRenderer();
+        await using var factory = fixture.Factory.WithWebHostBuilder(builder => builder.ConfigureServices(services =>
+        {
+            services.RemoveAll<CommentsService.Application.Captcha.ICaptchaVerifier>();
+            services.AddSingleton<CommentsService.Application.Captcha.ICaptchaVerifier>(sp => sp.GetRequiredService<CommentsService.Infrastructure.Captcha.MemoryCaptchaService>());
+            services.RemoveAll<CommentsService.Infrastructure.Captcha.ICaptchaImageRenderer>();
+            services.AddSingleton<CommentsService.Infrastructure.Captcha.ICaptchaImageRenderer>(renderer);
+        }));
+        using var client = factory.CreateClient();
+        await using var db = new CommentsDbContextFactory().CreateDbContext([]);
+        var count = await db.Comments.CountAsync(); var authors = await db.Authors.CountAsync();
+        var payload = ApiFixture.Payload("Captcha protected HTTP fixture");
+        using var missing = await client.PostAsJsonAsync("/api/comments", payload); Assert.Equal(HttpStatusCode.BadRequest, missing.StatusCode);
+        using var issue = await client.GetAsync("/api/captcha"); Assert.Equal(HttpStatusCode.OK, issue.StatusCode);
+        Assert.True(issue.Headers.CacheControl!.NoStore);
+        using var challenge = JsonDocument.Parse(await issue.Content.ReadAsStringAsync());
+        Assert.Equal(new[] { "expiresAt", "id", "imageDataUrl" }, challenge.RootElement.EnumerateObject().Select(x => x.Name).Order());
+        var id = challenge.RootElement.GetProperty("id").GetGuid(); var answer = renderer.Code;
+        var png = Convert.FromBase64String(challenge.RootElement.GetProperty("imageDataUrl").GetString()!.Split(',')[1]);
+        Assert.Equal(137, png[0]); Assert.DoesNotContain(answer, await issue.Content.ReadAsStringAsync());
+        payload["captchaId"] = id; payload["captchaCode"] = "000000";
+        using var wrong = await client.PostAsJsonAsync("/api/comments", payload); Assert.Equal(HttpStatusCode.BadRequest, wrong.StatusCode);
+        payload["captchaCode"] = answer;
+        using var spent = await client.PostAsJsonAsync("/api/comments", payload); Assert.Equal(HttpStatusCode.BadRequest, spent.StatusCode);
+        Assert.Equal(count, await db.Comments.CountAsync()); Assert.Equal(authors, await db.Authors.CountAsync());
+        using var replacement = JsonDocument.Parse(await client.GetStringAsync("/api/captcha?replace=" + id));
+        payload["captchaId"] = replacement.RootElement.GetProperty("id").GetGuid(); payload["captchaCode"] = renderer.Code.ToLowerInvariant();
+        Guid? ownedId = null; Guid? authorId = null;
+        try
+        {
+            using var success = await client.PostAsJsonAsync("/api/comments", payload); Assert.Equal(HttpStatusCode.Created, success.StatusCode);
+            var created = (await success.Content.ReadFromJsonAsync<CommentDto>())!; ownedId = created.Id;
+            authorId = await db.Comments.Where(c => c.Id == ownedId).Select(c => c.AuthorId).SingleAsync();
+            using var replay = await client.PostAsJsonAsync("/api/comments", payload); Assert.Equal(HttpStatusCode.BadRequest, replay.StatusCode);
+            Assert.Equal(count + 1, await db.Comments.CountAsync());
+        }
+        finally
+        {
+            if (ownedId is not null) await db.Comments.Where(c => c.Id == ownedId).ExecuteDeleteAsync();
+            if (authorId is not null) await db.Authors.Where(a => a.Id == authorId && !db.Comments.Any(c => c.AuthorId == a.Id)).ExecuteDeleteAsync();
+        }
+    }
+    private sealed class RecordingCaptchaRenderer : CommentsService.Infrastructure.Captcha.ICaptchaImageRenderer
+    {
+        public string Code = "";
+        public byte[] Render(string code) { Code = code; return new CommentsService.Infrastructure.Captcha.PngCaptchaRenderer().Render(code); }
+    }
+
     private sealed class UnavailableQuery : IGetComment
     {
         public Task<CommentDto?> ExecuteAsync(Guid id, CancellationToken cancellationToken = default) =>

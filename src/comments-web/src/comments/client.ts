@@ -14,6 +14,11 @@ export class HttpCommentsClient implements CommentsClient {
   private readonly request: typeof fetch;
   constructor(request: typeof fetch = (...args) => fetch(...args)) { this.request = request; }
 
+  async captcha(replace?: string, signal?: AbortSignal) {
+    const query = replace ? '?' + new URLSearchParams({ replace }) : '';
+    return this.read<import('./model').CaptchaChallenge>(await this.request('/api/captcha' + query, { signal, cache: 'no-store' }));
+  }
+
   async page(query: import('./model').RootPageQuery, signal?: AbortSignal) {
     const params = new URLSearchParams({ page: String(query.page), sort: query.sort, direction: query.direction });
     return this.read<import('./model').RootPage>(await this.request(`/api/comments/page?${params}`, { signal, cache: 'no-store' }));
@@ -47,7 +52,7 @@ export class HttpCommentsClient implements CommentsClient {
     const fields: FieldErrors = {};
     if (response.status === 400) {
       const problem = await response.json().catch(() => null);
-      for (const key of ['userName', 'email', 'homePage', 'text', 'parentId'] as const) {
+      for (const key of ['userName', 'email', 'homePage', 'text', 'parentId', 'captchaCode'] as const) {
         const messages: unknown = problem?.errors?.[key];
         if (Array.isArray(messages) && messages.every(message => typeof message === 'string')) fields[key] = messages;
       }

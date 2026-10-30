@@ -31,7 +31,7 @@ public static class CommentsEndpoints
             if (ip.IsIPv4MappedToIPv6) ip = ip.MapToIPv4();
             var userAgent = context.Request.Headers.UserAgent.ToString();
             var client = new ClientMetadata(ip, userAgent[..Math.Min(userAgent.Length, ClientMetadata.UserAgentMaxLength)]);
-            var result = await create.ExecuteAsync(new(body.UserName, body.Email, body.HomePage, body.Text, body.ParentId), client, token);
+            var result = await create.ExecuteAsync(new(body.UserName, body.Email, body.HomePage, body.Text, body.ParentId, body.CaptchaId, body.CaptchaCode), client, token);
             if (!result.IsValid) return Results.ValidationProblem(result.Errors.ToDictionary());
             return Results.Created($"/api/comments/{result.Value!.Id}", result.Value);
         });

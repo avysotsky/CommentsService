@@ -19,7 +19,7 @@ public sealed class ApiFixture : IAsyncLifetime
     {
         if (Environment.GetEnvironmentVariable("PGDATABASE") != "comments_test")
             throw new InvalidOperationException("HTTP integration tests require PGDATABASE=comments_test.");
-        Factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder => builder.UseEnvironment("Testing"));
+        Factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder => { builder.UseEnvironment("Testing"); builder.ConfigureServices(services => { Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.RemoveAll<CommentsService.Application.Captcha.ICaptchaVerifier>(services); Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddSingleton<CommentsService.Application.Captcha.ICaptchaVerifier, AcceptCaptcha>(services); }); });
         Client = Factory.CreateClient();
         Client.DefaultRequestHeaders.UserAgent.ParseAdd("CommentsService.Api.Tests/1.0");
         Client.DefaultRequestHeaders.Add("X-Forwarded-For", "203.0.113.79");

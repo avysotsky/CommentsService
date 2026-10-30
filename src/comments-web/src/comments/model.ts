@@ -1,7 +1,7 @@
-export type CommentInput = { userName: string; email: string; homePage: string; text: string; parentId?: string | null };
+export type CommentInput = { userName: string; email: string; homePage: string; text: string; parentId?: string | null; captchaId?: string; captchaCode?: string };
 export type Comment = Omit<CommentInput, 'homePage' | 'parentId'> & { id: string; homePage: string | null; createdAt: string; parentId: string | null; rootId: string };
 export type Field = 'userName' | 'email' | 'homePage' | 'text';
-export type FieldErrors = Partial<Record<Field | 'parentId', string[]>>;
+export type FieldErrors = Partial<Record<Field | 'parentId' | 'captchaCode', string[]>>;
 export type RepliesPage = { items: Comment[]; nextAfter: string | null };
 export type RootSort = 'userName' | 'email' | 'createdAt';
 export type RootPageQuery = { page: number; sort: RootSort; direction: 'asc' | 'desc' };
@@ -13,7 +13,9 @@ export function readRootQuery(search: string): RootPageQuery {
   return { page: Number.isInteger(page) && page >= 1 && page <= 85899345 ? page : 1,
     sort: sort === 'userName' || sort === 'email' ? sort : 'createdAt', direction: direction === 'asc' ? 'asc' : 'desc' };
 }
+export type CaptchaChallenge = { id: string; imageDataUrl: string; expiresAt: string };
 export interface CommentsClient {
+  captcha(replace?: string, signal?: AbortSignal): Promise<CaptchaChallenge>;
   page(query: RootPageQuery, signal?: AbortSignal): Promise<RootPage>;
   replies(parentId: string, after?: string | null, signal?: AbortSignal): Promise<RepliesPage>;
   latest(signal?: AbortSignal): Promise<Comment[]>;

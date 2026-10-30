@@ -1,6 +1,13 @@
-# Comments API — 1.1.0.8
+# Comments API — 1.1.0.9
 
 ## English
+
+Every comment/reply requires a fresh verification challenge. `GET /api/captcha` returns `{id,imageDataUrl,expiresAt}` with a raster PNG and no-store headers; the answer is never returned as text or metadata. Enter the six Latin letters/digits from the image, case-insensitively. Codes expire after **5 minutes**. `GET /api/captcha?replace={oldId}` invalidates that challenge and issues a new one.
+
+POST /api/comments additionally requires `captchaId` (UUID) and `captchaCode`. A verification attempt consumes its ID, including a wrong answer; missing, expired, replaced or spent challenges return 400 with `errors.captchaCode` and never stage an author/comment. Other input is validated before verification; after successful verification, parent/storage errors still consume the challenge. Refresh after any uncertain or failed submission before retrying. Preview and read endpoints do not require CAPTCHA.
+
+The form loads/refreshes the picture, blocks submission while loading/expired/unavailable, and preserves the draft after errors. It obtains a new challenge after every POST attempt. EN/RU/UA labels and errors are provided. The store is process-local, holds at most 2,048 challenges, reclaims expired entries, and returns 429 at capacity. Restarting/recreating the app invalidates outstanding challenges. Multiple app instances have separate challenges; use one instance for this release. The renderer uses portable .NET PNG primitives without platform graphics dependencies. Only answer hashes and expiry are retained in memory; no CAPTCHA data or migration is added to PostgreSQL.
+
 
 The SPA loads `GET /api/comments/page?page=1&sort=createdAt&direction=desc`. Allowed sort fields: `userName`, `email`, `createdAt`; direction: `asc` or `desc`. Date descending is default LIFO. Each page contains **25 roots**, excluding replies. The response contains `items`, `page`, `pageSize`, `totalCount` (roots only), `totalPages`. Page must be an integer from 1 to 85,899,345; invalid fields/directions return 400. Beyond the last page, the API returns an empty items array with the real totals; the SPA corrects stale bookmarks to the last page, or page 1 for an empty list. An empty list has totalPages=0.
 
@@ -24,6 +31,7 @@ validation, normalization and public DTOs are independent of ASP.NET/EF.
 | Method | Route | Result |
 |---|---|---|
 | GET | `/api/comments/page?page=1&sort=createdAt&direction=desc` | 200 `{items,page,pageSize,totalCount,totalPages}`; 400 |
+| GET | `/api/captcha?replace={oldId}` | 200 `{id,imageDataUrl,expiresAt}`; 429 capacity |
 | POST | `/api/comments` | 201, public comment and relative Location header |
 | POST | `/api/comments/preview` | 200 `{html}`, 400 validation errors; `{text}` only, no persistence |
 | GET | `/api/comments/{id}/replies?limit=25&after={replyId}` | 200 `{items,nextAfter}`; 404 / 400 |
@@ -33,7 +41,7 @@ validation, normalization and public DTOs are independent of ASP.NET/EF.
 The list orders by CreatedAt descending, then UUID descending. It is a bounded recent
 window retained for compatibility; the page endpoint implements full root paging/sorting.
 
-POST accepts JSON only: userName, email, optional homePage, text and optional parentId. Unknown fields,
+POST accepts JSON only: userName, email, optional homePage, text and optional parentId, captchaId and captchaCode. Unknown fields,
 including clientIp, userAgent, createdAt and rootId, are rejected. Names/email/homepage
 are trimmed; an empty homepage becomes null. Text whitespace, Unicode, RTL and emoji
 are preserved. Required name: Latin letters/digits, 1–100 characters. Email: plain address,
@@ -54,11 +62,18 @@ Errors use ProblemDetails JSON: 400 for invalid input/JSON/limit, 404 for missin
 Validation responses include an errors dictionary keyed by JSON field name. Internal
 exception/connection details are not included. Caller cancellation reaches data operations.
 
-The SPA form/table uses these endpoints in 1.1.0.8;
-CAPTCHA and attachments remain later milestones. Thread migration: 20261030101720_CommentThreads;
+The SPA form/table uses these endpoints in 1.1.0.9;
+Attachments remain later milestones. Thread migration: 20261030101720_CommentThreads;
 initial migration 20261029195935_InitialDataModel is retained.
 
 ## Русский
+
+Каждый комментарий/ответ требует новой проверки. `GET /api/captcha` возвращает `{id,imageDataUrl,expiresAt}` с растровой PNG-картинкой и заголовками no-store; ответ текстом или метаданными не выдаётся. Введите шесть латинских букв/цифр с картинки, регистр не важен. Код действует **5 минут**. `GET /api/captcha?replace={oldId}` отменяет прежнюю проверку и выдаёт новую.
+
+POST /api/comments дополнительно требует `captchaId` (UUID) и `captchaCode`. Вызов проверки расходует ID, в том числе при неверном ответе; отсутствие, просрочка, замена или повтор дают 400 с `errors.captchaCode`, без подготовки автора/комментария. Остальные поля проверяются до CAPTCHA; после успешной проверки ошибка родителя/хранилища тоже расходует код. После неудачной или неопределённой отправки обновите картинку перед повтором. Предпросмотр и чтение CAPTCHA не требуют.
+
+Форма загружает/обновляет картинку, блокирует отправку при загрузке/просрочке/недоступности и сохраняет черновик при ошибке. После любой попытки POST получает новую проверку. Подписи/ошибки — EN/RU/UA. Хранилище в памяти процесса ограничено 2 048 проверками, освобождает просроченные записи и возвращает 429 при заполнении. Перезапуск/пересоздание приложения отменяет оставшиеся коды. Разные экземпляры имеют раздельные коды; для этой версии используйте один экземпляр. PNG создаётся переносимыми средствами .NET без платформенной графики. В памяти остаются только хеш ответа и срок; данные CAPTCHA и миграция в PostgreSQL не добавляются.
+
 
 SPA загружает `GET /api/comments/page?page=1&sort=createdAt&direction=desc`. Поля сортировки: `userName`, `email`, `createdAt`; порядок: `asc` или `desc`. По умолчанию дата убывает — LIFO. На странице **25 корней**, без учёта ответов. Ответ API: `items`, `page`, `pageSize`, `totalCount` (только корни), `totalPages`. Page — целое 1–85 899 345; неверные поля/порядок дают 400. После последней страницы API возвращает пустой items с реальными итогами; SPA исправляет устаревший адрес на последнюю страницу либо первую для пустого списка. Для пустого списка totalPages=0.
 
@@ -82,6 +97,7 @@ API создаёт и читает текстовые комментарии. HT
 | Метод | Маршрут | Результат |
 |---|---|---|
 | GET | `/api/comments/page?page=1&sort=createdAt&direction=desc` | 200 `{items,page,pageSize,totalCount,totalPages}`; 400 |
+| GET | `/api/captcha?replace={oldId}` | 200 `{id,imageDataUrl,expiresAt}`; 429 capacity |
 | POST | `/api/comments` | 201, публичный комментарий и относительный заголовок Location |
 | POST | `/api/comments/preview` | 200 `{html}`, 400 при ошибке; только `{text}`, без записи |
 | GET | `/api/comments/{id}/replies?limit=25&after={replyId}` | 200 `{items,nextAfter}`; 404 / 400 |
@@ -91,7 +107,7 @@ API создаёт и читает текстовые комментарии. HT
 Список отсортирован по CreatedAt, затем UUID по убыванию. Это ограниченное окно последних
 записей; переходы по страницам и все направления сортировки относятся к 1.1.0.8.
 
-POST принимает только JSON: userName, email, необязательный homePage, text и необязательный parentId. Неизвестные
+POST принимает только JSON: userName, email, необязательный homePage, text и необязательный parentId, captchaId и captchaCode. Неизвестные
 поля, включая clientIp, userAgent, createdAt и rootId, отклоняются. Пробелы по краям
 имени/email/homepage удаляются; пустой homepage превращается в null. Пробелы текста,
 Unicode, RTL и emoji сохраняются. Имя обязательно: 1–100 латинских букв/цифр. Email:
@@ -113,10 +129,17 @@ UTF-16; нулевые символы, некорректный Unicode и не�
 Ответ валидации содержит errors с именами JSON-полей. Внутренние исключения и параметры
 подключения не выдаются. Отмена запроса передаётся операциям данных.
 
-SPA-форма/таблица использует эти маршруты в 1.1.0.8; CAPTCHA и вложения остаются последующими этапами. Миграция ответов: 20261030101720_CommentThreads;
+SPA-форма/таблица использует эти маршруты в 1.1.0.9; Вложения остаются последующими этапами. Миграция ответов: 20261030101720_CommentThreads;
 первая миграция 20261029195935_InitialDataModel сохранена.
 
 ## Українська
+
+Кожен коментар/відповідь потребує нової перевірки. `GET /api/captcha` повертає `{id,imageDataUrl,expiresAt}` із растровим PNG-зображенням та заголовками no-store; відповідь текстом чи метаданими не надається. Введіть шість латинських літер/цифр із зображення, регістр не важливий. Код діє **5 хвилин**. `GET /api/captcha?replace={oldId}` скасовує попередню перевірку та видає нову.
+
+POST /api/comments додатково потребує `captchaId` (UUID) і `captchaCode`. Виклик перевірки витрачає ID, зокрема за хибної відповіді; відсутність, прострочення, заміна чи повтор дають 400 з `errors.captchaCode`, без підготовки автора/коментаря. Решту полів перевірено до CAPTCHA; після успішної перевірки помилка батьківського запису/сховища також витрачає код. Після невдалої чи невизначеної спроби оновіть зображення перед повтором. Перегляд і читання CAPTCHA не потребують.
+
+Форма завантажує/оновлює зображення, блокує надсилання під час завантаження/прострочення/недоступності та зберігає чернетку за помилки. Після кожної спроби POST отримує нову перевірку. Підписи/помилки — EN/RU/UA. Сховище в пам’яті процесу обмежене 2 048 перевірками, звільняє прострочені записи та повертає 429 за заповнення. Перезапуск/перестворення застосунку скасовує решту кодів. Різні екземпляри мають окремі коди; для цієї версії використовуйте один екземпляр. PNG створюється переносимими засобами .NET без платформної графіки. У пам’яті лишаються лише хеш відповіді й термін; дані CAPTCHA та міграція в PostgreSQL не додаються.
+
 
 SPA завантажує `GET /api/comments/page?page=1&sort=createdAt&direction=desc`. Поля сортування: `userName`, `email`, `createdAt`; порядок: `asc` або `desc`. Типово дата спадає — LIFO. На сторінці **25 коренів**, без урахування відповідей. Відповідь API: `items`, `page`, `pageSize`, `totalCount` (лише корені), `totalPages`. Page — ціле 1–85 899 345; хибні поля/порядок дають 400. Після останньої сторінки API повертає порожній items із реальними підсумками; SPA виправляє застарілу адресу на останню сторінку або першу для порожнього списку. Для порожнього списку totalPages=0.
 
@@ -140,6 +163,7 @@ API створює та читає текстові коментарі. HTTP-о�
 | Метод | Маршрут | Результат |
 |---|---|---|
 | GET | `/api/comments/page?page=1&sort=createdAt&direction=desc` | 200 `{items,page,pageSize,totalCount,totalPages}`; 400 |
+| GET | `/api/captcha?replace={oldId}` | 200 `{id,imageDataUrl,expiresAt}`; 429 capacity |
 | POST | `/api/comments` | 201, публічний коментар і відносний заголовок Location |
 | POST | `/api/comments/preview` | 200 `{html}`, 400 за помилки; лише `{text}`, без запису |
 | GET | `/api/comments/{id}/replies?limit=25&after={replyId}` | 200 `{items,nextAfter}`; 404 / 400 |
@@ -171,14 +195,16 @@ UTF-16; нульові символи, некоректний Unicode та не�
 Відповідь валідації містить errors з іменами JSON-полів. Внутрішні винятки й параметри
 підключення не надаються. Скасування запиту передається операціям даних.
 
-SPA-форма/таблиця використовує ці маршрути в 1.1.0.8; CAPTCHA і вкладення залишаються наступними етапами. Міграція відповідей: 20261030101720_CommentThreads;
+SPA-форма/таблиця використовує ці маршрути в 1.1.0.9; Вкладення залишаються наступними етапами. Міграція відповідей: 20261030101720_CommentThreads;
 першу міграцію 20261029195935_InitialDataModel збережено.
 
 ## Example / Пример / Приклад
 
 ```bash
+curl --fail http://127.0.0.1:8080/api/captcha
+# Read the picture; replace CAPTCHA_ID and CAPTCHA_CODE below / прочитайте картинку / прочитайте зображення.
 curl --fail-with-body -H 'Content-Type: application/json' \
-  -d '{"userName":"Reader123","email":"reader@example.test","homePage":null,"text":"Hello"}' \
+  -d '{"userName":"Reader123","email":"reader@example.test","homePage":null,"text":"Hello","captchaId":"CAPTCHA_ID","captchaCode":"CAPTCHA_CODE"}' \
   http://127.0.0.1:8080/api/comments
 curl --fail 'http://127.0.0.1:8080/api/comments?limit=25'
 ```
@@ -190,6 +216,8 @@ curl --fail 'http://127.0.0.1:8080/api/comments?limit=25'
   "email": "reader@example.test",
   "homePage": null,
   "text": "Hello",
-  "createdAt": "2026-10-29T12:00:00.123456+00:00"
+  "createdAt": "2026-10-29T12:00:00.123456+00:00",
+  "parentId": null,
+  "rootId": "d98642a1-5f3b-4657-94d5-9d7bb8fca503"
 }
 ```

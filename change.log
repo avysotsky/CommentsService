@@ -2,6 +2,17 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.9 Captcha — 2026-10-30
+
+Branch: `CommentsService/v_1.1.0.9_Captcha`
+
+- Added required CAPTCHA for root/reply creation through segregated Application issuer/verifier ports. Verification precedes parent lookup/staged writes; PNG rendering and a bounded concurrent hash store are Infrastructure adapters. No production bypass, external graphics package or database migration.
+- GET /api/captcha returns only id, PNG data URL and UTC expiry with no-store headers. Six secure-random Latin letters/digits are case-insensitive, expire after five minutes, and are consumed atomically by any verification attempt. Refresh invalidates the replaced ID; 2,048-slot capacity/expiry cleanup bounds memory and full capacity returns 429. Process restart invalidates outstanding challenges.
+- Added localized image/code/refresh controls, required-input checks, expired/loading/unavailable submit protection, request cancellation and automatic challenge renewal after POST attempts. Errors preserve the draft; read/preview endpoints remain CAPTCHA-free.
+- Passed 182 backend tests (22 domain/architecture, 79 application, 26 infrastructure/database, 55 HTTP) and 13 frontend tests, frontend/Docker builds. Verified exact expiry/restart, wrong/replaced/spent IDs, case-insensitive success, 64-way atomic consumption, capacity recovery, PNG structure, no response answer metadata and rejected writes without new rows. Existing unrelated use-case suites use explicit test-only verifier doubles; the real HTTP flow exercises the production store/renderer.
+- Edge desktop/360 px passed real raster input, required/wrong/refresh/spent/success/replay, protected root/reply, double-click protection, code renewal, draft retention, image outage/expiry and EN/RU/UA without JS errors. Test-only image reading used real pixels, not a debug/answer endpoint. Owned fixtures/container were removed.
+- Dev/test data/schema/history, persistent volume identity, original checkpoint hashes and million-corpus full-row fingerprints/metadata stayed unchanged. Documentation updated EN/RU/UA; VS/Workbench GUI not checked. Next: 1.1.0.10 ImageAttachments.
+
 ## 1.1.0.8 SortingPagination — 2026-10-30
 
 Branch: `CommentsService/v_1.1.0.8_SortingPagination`

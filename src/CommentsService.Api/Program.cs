@@ -50,6 +50,7 @@ app.UseStaticFiles();
 
 app.MapSystemEndpoints();
 app.MapCommentsEndpoints();
+app.MapCaptchaEndpoints();
 app.MapFallback("/api/{**path}", () => Results.NotFound());
 app.MapFallbackToFile("/{*path:nonfile}", "index.html");
 

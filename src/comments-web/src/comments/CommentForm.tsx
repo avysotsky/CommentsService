@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
+import { useCaptcha } from './useCaptcha';
 import { CommentText } from './CommentText';
 import type { Messages } from '../messages';
 import { CommentsRequestError } from './client';
@@ -10,6 +11,7 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
   client: CommentsClient; labels: Messages; onCreated: (comment: Comment) => void;
   replyTo: Comment | null; onCancelReply: () => void;
 }) {
+  const captcha = useCaptcha(client);
   const [input, setInput] = useState(emptyInput);
   const [errors, setErrors] = useState<Partial<Record<Field, ValidationCode>>>({});
   const [serverErrors, setServerErrors] = useState<FieldErrors>({});
@@ -62,18 +64,22 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
     const invalid = validate(input);
     setErrors(invalid); setServerErrors({}); setNotice(null);
     if (Object.keys(invalid).length) { setNotice('validationError'); focusField(Object.keys(invalid)[0]); return; }
+    if (!captcha.challenge || captcha.expired || !/^[A-Za-z2-9]{6}$/.test(captcha.code.trim())) {
+      captcha.setInvalid(true); document.getElementById('captchaCode')?.focus(); return;
+    }
+    captcha.setInvalid(false);
     locked.current = true; setSending(true);
     try {
-      const comment = await client.create({ ...input, parentId: replyTo?.id ?? null });
+      const comment = await client.create({ ...input, parentId: replyTo?.id ?? null, captchaId: captcha.challenge.id, captchaCode: captcha.code.trim() });
       changedText(); setInput(previous => ({ ...previous, text: '' }));
       setNotice('success'); onCreated(comment);
     } catch (error) {
       const fields = error instanceof CommentsRequestError ? error.fields : {};
-      setServerErrors(fields);
+      setServerErrors(fields); if (fields.captchaCode) captcha.setInvalid(true);
       setNotice(Object.keys(fields).length ? 'validationError' : 'sendError');
       // Disabled fields can be focused after the pending state is released.
       requestAnimationFrame(() => focusField(Object.keys(fields)[0]));
-    } finally { locked.current = false; setSending(false); }
+    } finally { locked.current = false; setSending(false); void captcha.renew(); }
   }
 
   const field = (name: Field, title: string, hint?: string) => {
@@ -119,8 +125,21 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
       {preview && preview.source === input.text && <section className="comment-preview" aria-label={t.preview}>
         <h3>{t.preview}</h3><div className="comment-text" dir="auto"><CommentText text={preview.html} validated /></div>
       </section>}
+      <div className="field captcha-field">
+        <label htmlFor="captchaCode">{t.captchaLabel} <span aria-hidden="true">*</span></label>
+        <div className="captcha-image-row">
+          {captcha.challenge && <img width={200} height={64} src={captcha.challenge.imageDataUrl} alt={t.captchaImage} />}
+          <button type="button" className="secondary" disabled={sending || captcha.busy} onClick={() => { captcha.setInvalid(false); void captcha.renew(); }}>{t.captchaRefresh}</button>
+        </div>
+        <span role="status">{captcha.busy ? t.captchaLoading : ''}</span>
+        <input id="captchaCode" name="captchaCode" value={captcha.code} maxLength={6} required autoComplete="off" spellCheck={false}
+          disabled={sending || captcha.busy || !captcha.challenge} aria-invalid={captcha.invalid || captcha.expired}
+          aria-describedby="captcha-hint captcha-error" onChange={event => { captcha.setCode(event.target.value); captcha.setInvalid(false); setNotice(null); }} />
+        <small id="captcha-hint">{t.captchaHint}</small>
+        <small id="captcha-error" className="error" role="alert">{captcha.failed ? t.captchaUnavailable : captcha.expired ? t.captchaExpired : captcha.invalid ? t.captchaInvalid : ''}</small>
+      </div>
       <div className="form-bottom"><span className="counter">{input.text.length.toLocaleString()} / 65,536</span>
-        <button type="submit" disabled={sending}>{sending ? t.sending : t.submit} <span aria-hidden="true">↗</span></button></div>
+        <button type="submit" disabled={sending || captcha.busy || !captcha.challenge || captcha.expired}>{sending ? t.sending : t.submit} <span aria-hidden="true">↗</span></button></div>
       <div role={notice === 'success' ? 'status' : 'alert'} className={notice === 'success' ? 'success' : 'error'}>{notice && t[notice]}</div>
     </form>
   </section>;

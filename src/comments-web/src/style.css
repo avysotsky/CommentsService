@@ -62,3 +62,7 @@ footer { color: #5c6b59; font-size: 12px; border-top: 1px solid #dfe4d7; padding
 .sort-controls label, .pagination label, .pagination span { font-size:12px; }
 .pagination input { width:7rem; padding:.3rem .4rem; font-size:12px; }
 .pagination button { font-size:12px; padding:.3rem .6rem; }
+
+.captcha-image-row { display:flex; align-items:center; flex-wrap:wrap; gap:.75rem; margin-bottom:.7rem; }
+.captcha-image-row img { max-width:100%; border:1px solid #bac5b5; border-radius:6px; }
+.captcha-field input { max-width:16rem; text-transform:uppercase; letter-spacing:.2em; }

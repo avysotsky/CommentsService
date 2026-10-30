@@ -16,6 +16,11 @@ public static class DependencyInjection
         services.AddDbContext<CommentsDbContext>(options =>
             options.UseNpgsql(DatabaseOptions.ConnectionString(),
                 pg => pg.MigrationsHistoryTable("__EFMigrationsHistory", "comments")));
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<CommentsService.Infrastructure.Captcha.ICaptchaImageRenderer, CommentsService.Infrastructure.Captcha.PngCaptchaRenderer>();
+        services.AddSingleton<CommentsService.Infrastructure.Captcha.MemoryCaptchaService>();
+        services.AddSingleton<CommentsService.Application.Captcha.ICaptchaIssuer>(sp => sp.GetRequiredService<CommentsService.Infrastructure.Captcha.MemoryCaptchaService>());
+        services.AddSingleton<CommentsService.Application.Captcha.ICaptchaVerifier>(sp => sp.GetRequiredService<CommentsService.Infrastructure.Captcha.MemoryCaptchaService>());
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IUnitOfWork, EfUnitOfWork>();
         services.AddScoped<ICommentQueries, CommentQueries>();

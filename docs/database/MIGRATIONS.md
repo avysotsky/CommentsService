@@ -2,6 +2,8 @@
 
 ## English
 
+Release 1.1.0.9 stores only expiring CAPTCHA hashes in process memory. No migration/checkpoint rotation is needed; both databases, persistent benchmark, existing migrations and recovery points remain intact.
+
 Release 1.1.0.8 adds no application migration. Retain both existing migration IDs and checkpoints. The optional persistent benchmark database is separate; use db-command.py --benchmark for migration/check, and db-checkpoint.py --include-benchmark before changing its schema/data. See BENCHMARK.md.
 
 Release 1.1.0.7 adds `20261030101720_CommentThreads` after `20261029195935_InitialDataModel`.
@@ -73,6 +75,8 @@ Full thread/attachment preservation checks belong to later schema versions.
 
 ## Русский
 
+В 1.1.0.9 хеши CAPTCHA со сроком хранятся только в памяти процесса. Миграция/замена копий не нужна; обе БД, постоянный benchmark, миграции и восстановительные точки сохраняются.
+
 В 1.1.0.8 новой миграции приложения нет. Сохраните оба ID миграций и копии. Необязательная постоянная benchmark-БД отделена; для миграции/проверки используйте db-command.py --benchmark, перед изменением её схемы/данных — db-checkpoint.py --include-benchmark. См. BENCHMARK.md.
 
 Выпуск 1.1.0.7 добавляет `20261030101720_CommentThreads` после `20261029195935_InitialDataModel`.
@@ -140,6 +144,8 @@ dotnet ef migrations script --idempotent --project src/CommentsService.Infrastru
 Полная проверка сохранности веток ответов/вложений относится к следующим версиям схемы.
 
 ## Українська
+
+У 1.1.0.9 хеші CAPTCHA з терміном зберігаються лише в пам’яті процесу. Міграція/заміна копій не потрібна; обидві БД, постійний benchmark, міграції й відновлювальні точки зберігаються.
 
 У 1.1.0.8 нової міграції застосунку немає. Збережіть обидва ID міграцій і копії. Необов’язкову постійну benchmark-БД відокремлено; для міграції/перевірки використовуйте db-command.py --benchmark, перед зміною її схеми/даних — db-checkpoint.py --include-benchmark. Див. BENCHMARK.md.
 

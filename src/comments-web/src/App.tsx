@@ -56,26 +56,28 @@ export function App({ client, fileClient }: { client: CommentsClient; fileClient
     else setQuery({ ...defaultRootQuery });
   }
 
-  return <main>
+  return <>
+    <a className="skip-link" href="#recent-title">{t.skipComments}</a>
+    <main>
     <header><a className="brand" href="/" aria-label="CommentsService"><span className="mark" aria-hidden="true">c</span>
       <span>Comments<span className="light">Service</span></span></a>
       <label className="language" htmlFor="language">{t.language}<select id="language" aria-label={t.language} value={language} onChange={event => setLanguage(event.target.value as Language)}>
         <option value="en">English</option><option value="ru">Русский</option><option value="uk">Українська</option>
       </select></label></header>
-    <div className="hero"><p className="eyebrow">1.1.0.12 / FILE VIEWER</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
+    <div className="hero"><p className="eyebrow">1.1.0.13 / RESPONSIVE UI</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
     <CommentForm client={client} labels={t} onCreated={created} replyTo={replyTo} onCancelReply={() => setReplyTo(null)} />
     <section className="panel comments" aria-labelledby="recent-title" aria-busy={loading}>
-      <div className="section-heading"><h2 id="recent-title">{t.recent}</h2><button className="secondary" onClick={() => { setThreadRefresh(value => value + 1); void load(query); }} disabled={loading}>{t.refresh}</button></div>
+      <div className="section-heading"><h2 id="recent-title" tabIndex={-1}>{t.recent}</h2><button className="secondary" onClick={() => { setThreadRefresh(value => value + 1); void load(query); }} disabled={loading}>{t.refresh}</button></div>
       <p className="muted">{t.window}</p>
       <RootPagination query={query} data={data} busy={loading} labels={t} onChange={setQuery} />
       <p role="status">{loading ? t.loading : !failed && data?.items.length === 0 ? t.empty : ''}</p>
       {failed && <p role="alert" className="error">{t.loadError} {data && t.previousResults}</p>}
       {data && data.items.length > 0 && <CommentsTable key={`${loadedQuery?.page}:${loadedQuery?.sort}:${loadedQuery?.direction}`}
         comments={data.items} fileClient={fileClient} labels={t} language={language} client={client} lastCreated={lastCreated} refreshVersion={threadRefresh} onReply={comment => {
-          setReplyTo(comment); document.querySelector('#compose-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setReplyTo(comment); document.querySelector('#compose-title')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
           requestAnimationFrame(() => document.getElementById('text')?.focus());
         }} />}
     </section>
-    <footer>CommentsService · 1.1.0.12</footer>
-  </main>;
+    <footer>CommentsService · 1.1.0.13</footer>
+  </main></>;
 }

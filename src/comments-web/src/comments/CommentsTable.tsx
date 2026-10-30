@@ -64,32 +64,34 @@ export function CommentsTable({ comments, labels: t, language, client, onReply, 
     const initial = files.findIndex(file => file.id === id);
     if (initial >= 0) setViewer({ files, initial });
   }
-  return <><div className="table-scroll"><table>
-    <thead><tr><th scope="col">{t.author}</th><th scope="col">{t.text}</th><th scope="col">{t.posted}</th></tr></thead>
-    <tbody>{rows.map(({ comment, depth, controls }) => {
+  return <><div className="table-scroll"><table role="table">
+    <caption className="sr-only">{t.tableCaption}</caption>
+    <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">{t.author}</th><th role="columnheader" scope="col">{t.text}</th><th role="columnheader" scope="col">{t.posted}</th></tr></thead>
+    <tbody role="rowgroup">{rows.map(({ comment, depth, controls }) => {
       const branch = branches[comment.id];
-      if (controls) return <tr key={`${comment.id}-controls`} className="thread-controls"><td colSpan={3}>
+      if (controls) return <tr key={`${comment.id}-controls`} className="thread-controls" role="row"><td role="cell" colSpan={3}>
         {branch.busy && <span role="status">{t.loadingReplies}</span>}
         {branch.failed && <span role="alert" className="error">{t.repliesError} <button className="secondary" onClick={() => void load(comment.id, branch.retryAfter)}>{t.retry}</button></span>}
         {!branch.busy && !branch.failed && branch.loaded && branch.items.length === 0 && <span>{t.noReplies}</span>}
         {!branch.busy && !branch.failed && branch.nextAfter && <button className="secondary" onClick={() => void load(comment.id, branch.nextAfter)}>{t.moreReplies}</button>}
       </td></tr>;
       const home = safeHomePage(comment.homePage);
-      return <tr key={comment.id} data-comment-id={comment.id} data-depth={depth}>
-        <td style={{ paddingInlineStart: `${12 + Math.min(depth, 6) * 10}px` }}>
+      return <tr role="row" key={comment.id} data-comment-id={comment.id} data-depth={depth}>
+        <td role="cell" className="author-cell" style={{ paddingInlineStart: `${12 + Math.min(depth, 6) * 10}px` }}>
+          <span className="mobile-label" aria-hidden="true">{t.author}</span>
           {depth > 0 && <small>{t.replyLevel} {depth}</small>}
-          <strong dir="auto">{comment.userName}</strong><span className="author-email" dir="auto">{comment.email}</span>
-          {home && <a href={home} target="_blank" rel="noopener noreferrer">{t.website} ↗</a>}</td>
-        <td><div className="comment-text" dir="auto"><CommentText text={comment.text} /></div>
+          <strong dir="auto">{comment.userName}</strong><span className="author-email" dir="ltr">{comment.email}</span>
+          {home && <a href={home} target="_blank" rel="noopener noreferrer" aria-label={`${t.website} (${t.newTab})`}>{t.website} <span aria-hidden="true">↗</span></a>}</td>
+        <td role="cell" className="content-cell"><span className="mobile-label" aria-hidden="true">{t.text}</span><div className="comment-text" dir="auto"><CommentText text={comment.text} /></div>
           {comment.image && <figure className="image-attachment"><button className="attachment-open" aria-label={`${t.viewerOpen}: ${comment.image.fileName}`} onClick={() => openFile(comment.image!.id)}>
             <img src={`/api/images/${encodeURIComponent(comment.image.id)}`} width={comment.image.width} height={comment.image.height} alt={comment.image.fileName} loading="lazy" />
-          </button><figcaption>{comment.image.fileName} · {comment.image.width} × {comment.image.height}</figcaption></figure>}
+          </button><figcaption><bdi>{comment.image.fileName}</bdi> · <bdi dir="ltr">{comment.image.width} × {comment.image.height}</bdi></figcaption></figure>}
           {comment.textFile && <p className="text-attachment"><button className="attachment-open" onClick={() => openFile(comment.textFile!.id)}>
-            {comment.textFile.fileName}</button> · {comment.textFile.sizeBytes.toLocaleString()} {t.fileBytes}</p>}
+            <bdi>{comment.textFile.fileName}</bdi></button> · {comment.textFile.sizeBytes.toLocaleString()} {t.fileBytes}</p>}
           <div className="thread-actions"><button className="secondary" onClick={() => onReply(comment)}>{t.reply}</button>
             <button className="secondary" aria-expanded={branch?.open ?? false} onClick={() => toggle(comment.id)}>{branch?.open ? t.hideReplies : t.showReplies}</button></div>
         </td>
-        <td><time dateTime={comment.createdAt}>{new Date(comment.createdAt).toLocaleString(language)}</time></td>
+        <td role="cell" className="date-cell"><span className="mobile-label" aria-hidden="true">{t.posted}</span><time dateTime={comment.createdAt}>{new Date(comment.createdAt).toLocaleString(language)}</time></td>
       </tr>;
     })}</tbody>
   </table></div>{viewer && <FileViewer files={viewer.files} initial={viewer.initial} client={fileClient} labels={t} onClose={() => setViewer(null)} />}</>;

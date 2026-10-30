@@ -1,3 +1,4 @@
+import { fieldError } from './validation';
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useCaptcha } from './useCaptcha';
@@ -97,7 +98,7 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
   }
 
   const field = (name: Field, title: string, hint?: string) => {
-    const error = errors[name] ? t[errors[name]!] : serverErrors[name]?.join(' ');
+    const error = fieldError(name, errors[name], serverErrors, t);
     const props = {
       id: name, name, value: input[name], disabled: sending,
       'aria-invalid': !!error, 'aria-describedby': `${name}-hint ${name}-error`,
@@ -113,6 +114,7 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
       {name === 'text' ? <textarea {...props} rows={6} required maxLength={65536} dir="auto" /> :
         <input {...props} type={name === 'email' ? 'email' : name === 'homePage' ? 'url' : 'text'}
           required={name !== 'homePage'} maxLength={name === 'userName' ? 100 : name === 'email' ? 254 : 2048}
+          dir={name === 'userName' ? 'auto' : 'ltr'} autoCapitalize="none" spellCheck={false}
           autoComplete={name === 'userName' ? 'username' : name === 'email' ? 'email' : 'url'} />}
       <small id={`${name}-hint`}>{hint}</small>
       <small className="error" id={`${name}-error`}>{error}</small>
@@ -121,6 +123,7 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
 
   return <section className="panel" aria-labelledby="compose-title">
     <h2 id="compose-title">{t.compose}</h2>
+    <p className="muted required-hint">{t.requiredHint}</p>
     <form noValidate onSubmit={submit} ref={form} aria-busy={sending}>
       {replyTo && <div className="reply-target" role="status">
         <span>{t.replyingTo} <strong dir="auto">{replyTo.userName}</strong></span>
@@ -170,13 +173,13 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
           <button type="button" className="secondary" disabled={sending || captcha.busy} onClick={() => { captcha.setInvalid(false); void captcha.renew(); }}>{t.captchaRefresh}</button>
         </div>
         <span role="status">{captcha.busy ? t.captchaLoading : ''}</span>
-        <input id="captchaCode" name="captchaCode" value={captcha.code} maxLength={6} required autoComplete="off" spellCheck={false}
+        <input id="captchaCode" name="captchaCode" value={captcha.code} maxLength={6} required autoComplete="off" spellCheck={false} dir="ltr" autoCapitalize="characters"
           disabled={sending || captcha.busy || !captcha.challenge} aria-invalid={captcha.invalid || captcha.expired}
           aria-describedby="captcha-hint captcha-error" onChange={event => { captcha.setCode(event.target.value); captcha.setInvalid(false); setNotice(null); }} />
         <small id="captcha-hint">{t.captchaHint}</small>
         <small id="captcha-error" className="error" role="alert">{captcha.failed ? t.captchaUnavailable : captcha.expired ? t.captchaExpired : captcha.invalid ? t.captchaInvalid : ''}</small>
       </div>
-      <div className="form-bottom"><span className="counter">{input.text.length.toLocaleString()} / 65,536</span>
+      <div className="form-bottom"><span className="counter"><span className="sr-only">{t.characterCount}: </span>{input.text.length.toLocaleString()} / 65,536</span>
         <button type="submit" disabled={sending || captcha.busy || !captcha.challenge || captcha.expired}>{sending ? t.sending : t.submit} <span aria-hidden="true">↗</span></button></div>
       <div role={notice === 'success' ? 'status' : 'alert'} className={notice === 'success' ? 'success' : 'error'}>{notice && t[notice]}</div>
     </form>

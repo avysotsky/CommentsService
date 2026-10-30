@@ -2,6 +2,16 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.13 ResponsiveUi — 2026-10-30
+
+`CommentsService/v_1.1.0.13_ResponsiveUi`
+
+ResponsiveUi (1.1.0.13): desktop comments remain a table; at widths up to 700px, rows stack with visible author/comment/date labels while retaining table roles and column headers. Controls provide 44px targets, visible keyboard focus, a skip-to-comments link, required-field hints and associated validation messages. Arabic/Hebrew and mixed text use automatic direction; filenames and e-mail are isolated from adjacent content. English is the default; EN/RU/UA remain available. Server field failures use localized UI messages instead of provider text; drafts are retained. Reduced-motion behavior remains supported.
+
+No schema, data or dependency changes. Latest migration: `20261030130243_TextAttachments`. Upgrade 1.1.0.12 → 1.1.0.13 by rebuilding/restarting the app with the same environment, Compose overrides and persistent volumes. Keep existing databases, corpus and verified checkpoints. Domain/Application/Infrastructure boundaries, Onion/OOP/SOLID and the injected HTTP adapters remain unchanged.
+
+Verification: 26 frontend tests, 27 domain/architecture tests, solution build with zero warnings/errors, frontend/Docker builds, and Edge at 320/360/390/640/768/1280px passed. Browser checks cover reflow, table semantics, target sizes, keyboard/focus, RTL editor/preview/viewer, real CAPTCHA-backed reply, localization/error/draft handling, depth15 and failure/recovery. All 18 paging scenarios passed on the retained million-comment corpus; original rows/schema/history of all three DBs, volumes, environment and checkpoint hashes were preserved. Other backend suites were unchanged and not rerun; the previous 235-test full run belongs to 1.1.0.12. Manual screen-reader and VS/Workbench GUI checks were not performed. Next: 1.1.0.14 SecurityReview.
+
 ## 1.1.0.12 FileViewer — 2026-10-30
 
 `CommentsService/v_1.1.0.12_FileViewer`

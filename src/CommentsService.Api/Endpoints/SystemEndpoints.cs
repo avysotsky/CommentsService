@@ -8,7 +8,7 @@ public static class SystemEndpoints
     public static IEndpointRouteBuilder MapSystemEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("/api/status", () => new ApplicationStatus(
-            "CommentsService", typeof(SystemEndpoints).Assembly.GetName().Version!.ToString(), "FileViewer"));
+            "CommentsService", typeof(SystemEndpoints).Assembly.GetName().Version!.ToString(), "ResponsiveUi"));
         endpoints.MapGet("/health", () => Results.Ok(new { status = "ok" }));
         endpoints.MapHealthChecks("/health/database", new HealthCheckOptions
         {

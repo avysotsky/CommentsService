@@ -16,6 +16,7 @@
   <Folder Name="/Frontend/src/comments/">
     <File Path="src/comments-web/src/comments/model.ts" />
     <File Path="src/comments-web/src/comments/client.ts" />
+    <File Path="src/comments-web/src/comments/validation.ts" />
     <File Path="src/comments-web/src/comments/CommentForm.tsx" />
     <File Path="src/comments-web/src/comments/CommentsTable.tsx" />
     <File Path="src/comments-web/src/comments/RootPagination.tsx" />
@@ -29,6 +30,7 @@
   </Folder>
   <Folder Name="/Frontend/tests/">
     <File Path="src/comments-web/tests/files.test.mjs" />
+    <File Path="src/comments-web/tests/presentation.test.mjs" />
     <File Path="src/comments-web/tests/comments.test.mjs" />
   </Folder>
   <Folder Name="/src/">

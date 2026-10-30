@@ -18,7 +18,7 @@ internal static class CreateCommentRequest
         try { form = await context.Request.ReadFormAsync(token); }
         catch (InvalidDataException) { throw new BadHttpRequestException("Invalid multipart body."); }
         var allowed = new HashSet<string>(["userName", "email", "homePage", "text", "parentId", "captchaId", "captchaCode"], StringComparer.Ordinal);
-        if (form.Any(pair => !allowed.Contains(pair.Key) || pair.Value.Count != 1) || form.Files.Count > 1 || form.Files.Any(file => file.Name != "image"))
+        if (form.Any(pair => !allowed.Contains(pair.Key) || pair.Value.Count != 1) || form.Files.Count > 1 || form.Files.Any(file => file.Name is not ("image" or "textFile")))
             throw new BadHttpRequestException("Invalid form fields.");
         Guid? Id(string field)
         {
@@ -28,6 +28,7 @@ internal static class CreateCommentRequest
         }
         var file = form.Files.SingleOrDefault();
         return new(form["userName"], form["email"], form["homePage"], form["text"], Id("parentId"), Id("captchaId"), form["captchaCode"],
-            file is null ? null : new ImageUpload(file.FileName, file.Length, file.OpenReadStream()));
+            file?.Name == "image" ? new ImageUpload(file.FileName, file.Length, file.OpenReadStream()) : null,
+            file?.Name == "textFile" ? new CommentsService.Application.TextFiles.TextFileUpload(file.FileName, file.Length, file.OpenReadStream()) : null);
     }
 }

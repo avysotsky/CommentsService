@@ -1,6 +1,16 @@
-# Comments API — 1.1.0.10
+# Comments API — 1.1.0.11
 
 ## English
+
+TXT attachments (1.1.0.11): roots and replies accept one optional attachment: an image OR a `.txt` file. TXT must contain 1..102400 bytes (100 KiB), strict UTF-8; BOM, Unicode, CR/LF and tabs are preserved byte-for-byte. Invalid encoding and control characters other than CR/LF/tab are rejected; HTML/script text is accepted as literal text. Filename/MIME do not establish content validity. Multipart uses `textFile` with the usual comment/CAPTCHA fields; never send both file parts. JSON text-only creation remains available. Invalid TXT returns 400/errors.textFile. CAPTCHA is consumed before content processing; retry with a fresh code. The localized picker keeps draft/file on errors, clears on success and permits removing/replacing a selection.
+
+DTOs add nullable `textFile: {id,fileName,sizeBytes}`; list/page/reply projections omit file bytes. `GET /api/text-files/{id}` downloads exact bytes as `text/plain; charset=utf-8`, generated UUID `.txt` filename, attachment disposition, nosniff, no-store and sandbox CSP; missing files return 404. HTML is never rendered. Full viewer/effects remain 1.1.0.12 FileViewer.
+
+Upgrade 1.1.0.10 → 1.1.0.11: stop all writers, restore-verify a current checkpoint (include the benchmark when present), build, explicitly migrate every used database, then restart using the existing volumes. Migration `20261030130243_TextAttachments` adds TextAttachments: Id, unique CommentId FK CASCADE, sanitized FileName varchar128, SizeBytes, Data bytea; checks enforce 1..102400 bytes and matching size. Existing authors/comments/images and migration IDs are preserved. Down refuses while TXT rows exist. Bytes and comment are committed atomically in the same PostgreSQL database/backup; no filesystem volume. Preserve verified pre-upgrade copies, accounting for changes after their checkpoint.
+
+Onion: Domain enforces immutable ownership/defensive bytes and one attachment per comment; Application defines processing/read ports and coordinates the transaction; Infrastructure validates UTF-8 and implements EF storage/queries; API binds streams and sets download headers. No new external dependency.
+
+Validation: 235 backend tests (27 Domain,84 Application,56 Infrastructure/database,68 HTTP),16 frontend tests, frontend/Docker builds, restore upgrade/downgrade round trip and populated-TXT downgrade guard passed. Edge desktop/360px passed real CAPTCHA, TXT root/reply, boundary size, exact Unicode/BOM/CRLF/HTML download, restart persistence, safe headers, rejection/draft retention/removal, exclusive selection and EN/RU/UA without JavaScript errors. All 18 retained-million-corpus paging scenarios passed without reseeding; original row fingerprints, metadata, volumes and restore-verified checkpoints were retained. GUI import in VS/Workbench is not checked.
 
 A root or reply can include **one optional JPG/JPEG, GIF or PNG**. Choose the image beside the comment; Remove image clears it. The source limit is 5 MiB, 16 million decoded pixels and 10,000 pixels per side. Images larger than 320×240 are reduced proportionally without cropping; small images are not enlarged. JPEG EXIF orientation is applied; GIF uses its first frame. Every accepted file is re-encoded as a static PNG, removing original metadata and trailing content. Transparency is preserved. These bounds are application choices; the assignment requires supported formats and the 320×240 result.
 
@@ -8,7 +18,7 @@ The server checks the extension against the detected codec, decodes the image an
 
 JSON POST /api/comments remains available for text-only writes. With an image, use multipart/form-data containing the same text/CAPTCHA fields and one file named `image`; let the browser/curl generate the boundary. Unknown/duplicate fields or multiple files are rejected. JSON retains its 1 MiB limit; multipart requests allow 6 MiB overall, with a 5 MiB file limit. Invalid images return 400 with errors.image; oversized request bodies can return 413. The CAPTCHA is consumed before image processing, so retry with a new code. Errors preserve the draft and selected file; successful submission clears them.
 
-Comment DTOs include nullable `image: {id,fileName,width,height}`; list/page/reply projections never include the binary payload. `GET /api/images/{id}` serves only canonical PNG with image/png, inline generated filename and X-Content-Type-Options: nosniff, or 404. Thumbnails link to the image; the full viewer/effects remain 1.1.0.12. Text attachments remain 1.1.0.11. Processing uses [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) and matching Linux native assets; notices are in [docs/third-party](third-party/README.md) and the runtime image.
+Comment DTOs include nullable `image: {id,fileName,width,height}`; list/page/reply projections never include the binary payload. `GET /api/images/{id}` serves only canonical PNG with image/png, inline generated filename and X-Content-Type-Options: nosniff, or 404. Thumbnails link to the image; the full viewer/effects remain 1.1.0.12. TXT attachments are implemented in 1.1.0.11. Processing uses [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) and matching Linux native assets; notices are in [docs/third-party](third-party/README.md) and the runtime image.
 
 Upgrade 1.1.0.9 → 1.1.0.10: stop all writers, including any benchmark preview, restore-verify a current checkpoint (`--include-benchmark` when that DB exists), build the app, migrate development/tests and benchmark (`--benchmark`) explicitly, then restart with the same volumes. Migration `20261030122207_ImageAttachments` adds only the image table/index/checks/FK; original author/comment fields and IDs remain unchanged. Down refuses while image rows exist. Keep verified pre-upgrade copies for recovery; a restore loses changes made after its checkpoint. Backups automatically include image bytes because they reside in the same database.
 
@@ -74,11 +84,21 @@ Errors use ProblemDetails JSON: 400 for invalid input/JSON/limit, 404 for missin
 Validation responses include an errors dictionary keyed by JSON field name. Internal
 exception/connection details are not included. Caller cancellation reaches data operations.
 
-The SPA form/table uses these endpoints in 1.1.0.10;
-Text attachments remain a later milestone. Thread migration: 20261030101720_CommentThreads;
+The SPA form/table uses these endpoints in 1.1.0.11;
+TXT attachments are implemented in 1.1.0.11. Thread migration: 20261030101720_CommentThreads;
 initial migration 20261029195935_InitialDataModel is retained.
 
 ## Русский
+
+TXT-вложения (1.1.0.11): корень и ответ принимают одно необязательное вложение: картинку ИЛИ `.txt`. TXT — 1..102400 байт (100 КиБ), строгий UTF-8; BOM, Unicode, CR/LF и табуляция сохраняются побайтно. Неверная кодировка и управляющие символы, кроме CR/LF/tab, отклоняются; HTML/script допускается как обычный текст. Имя/MIME не доказывают корректность содержимого. Multipart использует `textFile` с обычными полями комментария/CAPTCHA; два файла запрещены. JSON без файла сохранён. Неверный TXT: 400/errors.textFile. CAPTCHA расходуется перед проверкой содержимого; повтор требует нового кода. Локализованная форма сохраняет черновик/файл при ошибках, очищает после успеха, позволяет убрать/заменить файл.
+
+DTO добавляет nullable `textFile: {id,fileName,sizeBytes}`; списки/страницы/ответы не содержат байты. `GET /api/text-files/{id}` скачивает точные байты с `text/plain; charset=utf-8`, UUID-именем `.txt`, attachment, nosniff, no-store и sandbox CSP; отсутствующий файл — 404. HTML не отображается. Полный просмотр/эффекты — 1.1.0.12 FileViewer.
+
+Обновление 1.1.0.10 → 1.1.0.11: остановить все записи, проверить восстановление текущей копии (включая benchmark, если существует), собрать, явно мигрировать все используемые БД и запустить прежние тома. Миграция `20261030130243_TextAttachments` добавляет TextAttachments: Id, уникальный CommentId FK CASCADE, очищенное FileName varchar128, SizeBytes, Data bytea; проверки 1..102400 байт и совпадения размера. Авторы/комментарии/картинки и прежние ID миграций сохранены. Down запрещён при наличии TXT. Файл и комментарий записываются одной транзакцией в PostgreSQL и общую копию; файлового тома нет. Сохраните проверенные копии до обновления, учитывая изменения после контрольной точки.
+
+Onion: Domain защищает принадлежность/байты и одно вложение; Application задаёт контракты обработки/чтения и транзакцию; Infrastructure проверяет UTF-8 и реализует EF; API связывает потоки и задаёт заголовки скачивания. Новых внешних зависимостей нет.
+
+Проверки: 235 backend (27 Domain,84 Application,56 Infrastructure/БД,68 HTTP),16 frontend, сборки frontend/Docker, обновление/откат восстановленной копии и запрет отката с TXT прошли. Edge десктоп/360px прошёл реальную CAPTCHA, TXT корня/ответа, граничный размер, точные Unicode/BOM/CRLF/HTML-байты при скачивании и после перезапуска, заголовки, отказы/черновик/удаление, выбор одного файла и EN/RU/UA без ошибок JavaScript. Все 18 сценариев сохранённого миллиона прошли без пересоздания; отпечатки исходных строк, метаданные, тома и проверенные восстановлением копии сохранены. GUI VS/Workbench не проверены.
 
 К корню или ответу можно добавить **одно необязательное JPG/JPEG, GIF или PNG**. Выберите файл возле комментария; «Убрать изображение» очищает выбор. Предел исходника — 5 МиБ, 16 миллионов декодированных пикселей и 10 000 пикселей по стороне. Большие картинки уменьшаются пропорционально до 320×240 без обрезки; маленькие не увеличиваются. Учитывается поворот JPEG по EXIF; GIF использует первый кадр. Принятый файл заново кодируется в статический PNG, удаляя исходные метаданные и хвостовые данные. Прозрачность сохраняется. Эти пределы выбраны приложением; задание требует поддерживаемые форматы и результат 320×240.
 
@@ -86,7 +106,7 @@ initial migration 20261029195935_InitialDataModel is retained.
 
 JSON POST /api/comments сохраняется для текста без файла. С картинкой используйте multipart/form-data: те же текстовые/CAPTCHA-поля и один файл `image`; boundary создаёт браузер/curl. Неизвестные/повторные поля и несколько файлов отклоняются. JSON ограничен 1 МиБ; multipart — 6 МиБ на запрос и 5 МиБ на файл. Неверная картинка даёт 400 с errors.image; слишком большой запрос может дать 413. CAPTCHA расходуется до обработки картинки, поэтому повтор требует нового кода. Ошибка сохраняет черновик и файл; успех очищает их.
 
-DTO комментария содержит nullable `image: {id,fileName,width,height}`; списки/страницы/ответы не содержат бинарные данные. `GET /api/images/{id}` выдаёт только нормализованный PNG с image/png, inline-именем на основе ID и X-Content-Type-Options: nosniff, либо 404. Миниатюра ведёт к картинке; полный просмотр/эффекты — 1.1.0.12. Текстовые вложения — 1.1.0.11. Обработка — [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) и соответствующие Linux native assets; уведомления в [docs/third-party](third-party/README.md) и образе приложения.
+DTO комментария содержит nullable `image: {id,fileName,width,height}`; списки/страницы/ответы не содержат бинарные данные. `GET /api/images/{id}` выдаёт только нормализованный PNG с image/png, inline-именем на основе ID и X-Content-Type-Options: nosniff, либо 404. Миниатюра ведёт к картинке; полный просмотр/эффекты — 1.1.0.12. TXT-вложения реализованы в 1.1.0.11. Обработка — [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) и соответствующие Linux native assets; уведомления в [docs/third-party](third-party/README.md) и образе приложения.
 
 Обновление 1.1.0.9 → 1.1.0.10: остановите все записи, включая benchmark-просмотр, проверьте восстановление текущей копии (`--include-benchmark`, если БД существует), соберите приложение, явно мигрируйте рабочую/тестовую БД и benchmark (`--benchmark`), затем запустите прежние тома. Миграция `20261030122207_ImageAttachments` добавляет только таблицу/индекс/проверки/FK картинки; прежние поля/ID авторов/комментариев сохранены. Down запрещён при наличии картинок. Сохраните проверенные копии до обновления; восстановление теряет изменения после контрольной точки. Байты изображений входят в backup той же БД.
 
@@ -153,10 +173,20 @@ UTF-16; нулевые символы, некорректный Unicode и не�
 Ответ валидации содержит errors с именами JSON-полей. Внутренние исключения и параметры
 подключения не выдаются. Отмена запроса передаётся операциям данных.
 
-SPA-форма/таблица использует эти маршруты в 1.1.0.10; Текстовые вложения остаются следующим этапом. Миграция ответов: 20261030101720_CommentThreads;
+SPA-форма/таблица использует эти маршруты в 1.1.0.11; TXT-вложения реализованы. Миграция ответов: 20261030101720_CommentThreads;
 первая миграция 20261029195935_InitialDataModel сохранена.
 
 ## Українська
+
+TXT-вкладення (1.1.0.11): корінь і відповідь приймають одне необов’язкове вкладення: зображення АБО `.txt`. TXT — 1..102400 байтів (100 КіБ), строгий UTF-8; BOM, Unicode, CR/LF і табуляція зберігаються побайтово. Хибне кодування та керівні символи, крім CR/LF/tab, відхиляються; HTML/script дозволено як звичайний текст. Назва/MIME не доводять коректність вмісту. Multipart використовує `textFile` зі звичайними полями коментаря/CAPTCHA; два файли заборонено. JSON без файла збережено. Хибний TXT: 400/errors.textFile. CAPTCHA витрачається до перевірки вмісту; повтор потребує нового коду. Локалізована форма зберігає чернетку/файл після помилок, очищає після успіху, дозволяє прибрати/замінити файл.
+
+DTO додає nullable `textFile: {id,fileName,sizeBytes}`; списки/сторінки/відповіді не містять байтів. `GET /api/text-files/{id}` завантажує точні байти з `text/plain; charset=utf-8`, UUID-назвою `.txt`, attachment, nosniff, no-store та sandbox CSP; відсутній файл — 404. HTML не відображається. Повний перегляд/ефекти — 1.1.0.12 FileViewer.
+
+Оновлення 1.1.0.10 → 1.1.0.11: зупинити всі записи, перевірити відновлення поточної копії (включно з benchmark, якщо існує), зібрати, явно мігрувати всі використані БД і запустити попередні томи. Міграція `20261030130243_TextAttachments` додає TextAttachments: Id, унікальний CommentId FK CASCADE, очищене FileName varchar128, SizeBytes, Data bytea; перевірки 1..102400 байтів і збігу розміру. Авторів/коментарі/зображення й попередні ID міграцій збережено. Down заборонено за наявності TXT. Файл і коментар записуються однією транзакцією в PostgreSQL і спільну копію; файлового тому немає. Збережіть перевірені копії до оновлення, враховуючи зміни після контрольної точки.
+
+Onion: Domain захищає належність/байти й одне вкладення; Application задає контракти обробки/читання та транзакцію; Infrastructure перевіряє UTF-8 і реалізує EF; API зв’язує потоки та задає заголовки завантаження. Нових зовнішніх залежностей немає.
+
+Перевірки: 235 backend (27 Domain,84 Application,56 Infrastructure/БД,68 HTTP),16 frontend, збирання frontend/Docker, оновлення/відкат відновленої копії та заборона відкату з TXT пройшли. Edge десктоп/360px пройшов реальну CAPTCHA, TXT кореня/відповіді, граничний розмір, точні Unicode/BOM/CRLF/HTML-байти під час завантаження й після перезапуску, заголовки, відмови/чернетку/видалення, вибір одного файла та EN/RU/UA без помилок JavaScript. Усі 18 сценаріїв збереженого мільйона пройшли без повторного створення; відбитки початкових рядків, метадані, томи та перевірені відновленням копії збережено. GUI VS/Workbench не перевірено.
 
 До кореня чи відповіді можна додати **одне необов’язкове JPG/JPEG, GIF або PNG**. Виберіть файл біля коментаря; «Прибрати зображення» очищає вибір. Межа джерела — 5 МіБ, 16 мільйонів декодованих пікселів та 10 000 пікселів на сторону. Великі зображення зменшуються пропорційно до 320×240 без обрізання; малі не збільшуються. Ураховано поворот JPEG за EXIF; GIF використовує перший кадр. Прийнятий файл заново кодується у статичний PNG, видаляючи початкові метадані та хвостові дані. Прозорість зберігається. Ці межі обрано застосунком; завдання потребує підтримувані формати й результат 320×240.
 
@@ -164,7 +194,7 @@ SPA-форма/таблица использует эти маршруты в 1.
 
 JSON POST /api/comments зберігається для тексту без файлу. Із зображенням використовуйте multipart/form-data: ті самі текстові/CAPTCHA-поля й один файл `image`; boundary створює браузер/curl. Невідомі/повторні поля та кілька файлів відхиляються. JSON обмежено 1 МіБ; multipart — 6 МіБ на запит і 5 МіБ на файл. Хибне зображення дає 400 з errors.image; завеликий запит може дати 413. CAPTCHA витрачається до обробки зображення, тому повтор потребує нового коду. Помилка зберігає чернетку й файл; успіх очищає їх.
 
-DTO коментаря містить nullable `image: {id,fileName,width,height}`; списки/сторінки/відповіді не містять бінарних даних. `GET /api/images/{id}` видає лише нормалізований PNG з image/png, inline-іменем на основі ID та X-Content-Type-Options: nosniff, або 404. Мініатюра веде до зображення; повний перегляд/ефекти — 1.1.0.12. Текстові вкладення — 1.1.0.11. Обробка — [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) і відповідні Linux native assets; повідомлення в [docs/third-party](third-party/README.md) та образі застосунку.
+DTO коментаря містить nullable `image: {id,fileName,width,height}`; списки/сторінки/відповіді не містять бінарних даних. `GET /api/images/{id}` видає лише нормалізований PNG з image/png, inline-іменем на основі ID та X-Content-Type-Options: nosniff, або 404. Мініатюра веде до зображення; повний перегляд/ефекти — 1.1.0.12. TXT-вкладення реалізовано в 1.1.0.11. Обробка — [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) і відповідні Linux native assets; повідомлення в [docs/third-party](third-party/README.md) та образі застосунку.
 
 Оновлення 1.1.0.9 → 1.1.0.10: зупиніть усі записи, включно з benchmark-переглядом, перевірте відновлення поточної копії (`--include-benchmark`, якщо БД існує), зберіть застосунок, явно мігруйте робочу/тестову БД та benchmark (`--benchmark`), тоді запустіть попередні томи. Міграція `20261030122207_ImageAttachments` додає лише таблицю/індекс/перевірки/FK зображення; попередні поля/ID авторів/коментарів збережено. Down заборонено за наявності зображень. Збережіть перевірені копії до оновлення; відновлення втрачає зміни після контрольної точки. Байти зображень входять до backup тієї самої БД.
 
@@ -231,7 +261,7 @@ UTF-16; нульові символи, некоректний Unicode та не�
 Відповідь валідації містить errors з іменами JSON-полів. Внутрішні винятки й параметри
 підключення не надаються. Скасування запиту передається операціям даних.
 
-SPA-форма/таблиця використовує ці маршрути в 1.1.0.10; Текстові вкладення залишаються наступним етапом. Міграція відповідей: 20261030101720_CommentThreads;
+SPA-форма/таблиця використовує ці маршрути в 1.1.0.10; TXT-вкладення реалізовано. Міграція відповідей: 20261030101720_CommentThreads;
 першу міграцію 20261029195935_InitialDataModel збережено.
 
 ## Example / Пример / Приклад

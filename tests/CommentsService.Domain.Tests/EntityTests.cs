@@ -29,6 +29,20 @@ public sealed class EntityTests
         Assert.Equal(1,image.Data[0]); Assert.Same(image,comment.Image); Assert.Equal(comment.Id,image.CommentId);
         Assert.Throws<InvalidOperationException>(()=>new ImageAttachment(comment,"again.png",[1],1,1));
     }
+    [Fact]
+    public void TextFilesDefensivelyOwnBytesAndExcludeOtherAttachments()
+    {
+        Comment New()=>new(new Author("Reader","r@example.test"),"text",IPAddress.Loopback,"");
+        var comment=New();byte[] bytes=[65,66];var file=new TextAttachment(comment,"note.txt",bytes);bytes[0]=0;
+        var copy=file.Data;copy[0]=0;Assert.Equal(65,file.Data[0]);Assert.Equal(2,file.SizeBytes);Assert.Same(file,comment.TextFile);
+        Assert.Throws<InvalidOperationException>(()=>new TextAttachment(comment,"again.txt",[65]));
+        Assert.Throws<InvalidOperationException>(()=>new ImageAttachment(comment,"picture.png",[1],1,1));
+        var imageComment=New();_=new ImageAttachment(imageComment,"picture.png",[1],1,1);
+        Assert.Throws<InvalidOperationException>(()=>new TextAttachment(imageComment,"note.txt",[65]));
+        Assert.Throws<ArgumentException>(()=>new TextAttachment(New(),"empty.txt",[]));
+        Assert.Throws<ArgumentException>(()=>new TextAttachment(New(),"large.txt",new byte[102401]));
+    }
+
     [Theory]
     [InlineData(0,1)] [InlineData(321,1)] [InlineData(1,241)]
     public void ImageBoundsAreDomainInvariants(int width,int height)

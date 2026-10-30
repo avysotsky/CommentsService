@@ -115,3 +115,15 @@ test('image upload uses multipart with public fields and browser-generated bound
   });
   assert.equal((await client.create({ ...valid, image, captchaId: 'challenge', captchaCode: 'ABC234' })).id, 'image-saved');
 });
+
+test('TXT transport uses one multipart attachment and preserves CAPTCHA fields', async () => {
+  const textFile=new File(['Привіт'], 'note.txt', { type:'text/plain' });
+  const client=new HttpCommentsClient(async (url,options)=>{
+    assert(options.body instanceof FormData);assert.equal(options.headers,undefined);assert.equal(options.body.get('textFile').name,'note.txt');assert.equal(options.body.get('image'),null);assert.equal(options.body.get('captchaCode'),'ABC234');return Response.json({id:'txt'});
+  });
+  assert.equal((await client.create({...valid,textFile,captchaCode:'ABC234'})).id,'txt');
+});
+test('client rejects image plus TXT before sending a request', async () => {
+  const client=new HttpCommentsClient(async()=>{throw new Error('must not send')});
+  await assert.rejects(client.create({...valid,image:new File(['x'],'a.png'),textFile:new File(['x'],'a.txt')}),error=>error instanceof CommentsRequestError&&error.status===400&&!!error.fields.textFile);
+});

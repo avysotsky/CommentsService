@@ -29,6 +29,7 @@ public static class CommentsEndpoints
             var input = await CreateCommentRequest.ReadAsync(context, token);
             if (input is null) return Results.Problem(statusCode: 400, title: "Invalid request body.");
             await using var imageStream = input.Image?.Content;
+            await using var textStream = input.TextFile?.Content;
             var ip = context.Connection.RemoteIpAddress ?? IPAddress.Any;
             if (ip.IsIPv4MappedToIPv6) ip = ip.MapToIPv4();
             var userAgent = context.Request.Headers.UserAgent.ToString();

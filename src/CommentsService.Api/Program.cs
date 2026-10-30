@@ -24,6 +24,7 @@ builder.Services.AddInfrastructure();
 builder.Services.AddSingleton<CommentsService.Application.Comments.Markup.ICommentMarkup, CommentsService.Application.Comments.Markup.XhtmlCommentMarkup>();
 builder.Services.AddScoped<ICreateComment, CreateComment>();
 builder.Services.AddScoped<IGetComment, GetComment>();
+builder.Services.AddScoped<CommentsService.Application.TextFiles.IGetTextFile, CommentsService.Application.TextFiles.GetTextFile>();
 builder.Services.AddScoped<CommentsService.Application.Images.IGetImage, CommentsService.Application.Images.GetImage>();
 builder.Services.AddScoped<CommentsService.Application.Comments.GetRootPage.IGetRootPage, CommentsService.Application.Comments.GetRootPage.GetRootPage>();
 builder.Services.AddScoped<CommentsService.Application.Comments.GetReplies.IGetReplies, CommentsService.Application.Comments.GetReplies.GetReplies>();
@@ -59,6 +60,7 @@ app.MapSystemEndpoints();
 app.MapCommentsEndpoints();
 app.MapCaptchaEndpoints();
 app.MapImageEndpoints();
+app.MapTextFileEndpoints();
 app.MapFallback("/api/{**path}", () => Results.NotFound());
 app.MapFallbackToFile("/{*path:nonfile}", "index.html");
 

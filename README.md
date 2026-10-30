@@ -1,17 +1,28 @@
 # CommentsService
 
-Version: **1.1.0.10** · Branch: `CommentsService/v_1.1.0.10_ImageAttachments`
+Version: **1.1.0.11** · Branch: `CommentsService/v_1.1.0.11_TextAttachments`
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 
 [Change log](change.log) · [Quick reference](read.me) · [Plan](docs/PLAN.md)
+
+TXT attachments (1.1.0.11): roots and replies accept one optional attachment: an image OR a `.txt` file. TXT must contain 1..102400 bytes (100 KiB), strict UTF-8; BOM, Unicode, CR/LF and tabs are preserved byte-for-byte. Invalid encoding and control characters other than CR/LF/tab are rejected; HTML/script text is accepted as literal text. Filename/MIME do not establish content validity. Multipart uses `textFile` with the usual comment/CAPTCHA fields; never send both file parts. JSON text-only creation remains available. Invalid TXT returns 400/errors.textFile. CAPTCHA is consumed before content processing; retry with a fresh code. The localized picker keeps draft/file on errors, clears on success and permits removing/replacing a selection.
+
+DTOs add nullable `textFile: {id,fileName,sizeBytes}`; list/page/reply projections omit file bytes. `GET /api/text-files/{id}` downloads exact bytes as `text/plain; charset=utf-8`, generated UUID `.txt` filename, attachment disposition, nosniff, no-store and sandbox CSP; missing files return 404. HTML is never rendered. Full viewer/effects remain 1.1.0.12 FileViewer.
+
+Upgrade 1.1.0.10 → 1.1.0.11: stop all writers, restore-verify a current checkpoint (include the benchmark when present), build, explicitly migrate every used database, then restart using the existing volumes. Migration `20261030130243_TextAttachments` adds TextAttachments: Id, unique CommentId FK CASCADE, sanitized FileName varchar128, SizeBytes, Data bytea; checks enforce 1..102400 bytes and matching size. Existing authors/comments/images and migration IDs are preserved. Down refuses while TXT rows exist. Bytes and comment are committed atomically in the same PostgreSQL database/backup; no filesystem volume. Preserve verified pre-upgrade copies, accounting for changes after their checkpoint.
+
+Onion: Domain enforces immutable ownership/defensive bytes and one attachment per comment; Application defines processing/read ports and coordinates the transaction; Infrastructure validates UTF-8 and implements EF storage/queries; API binds streams and sets download headers. No new external dependency.
+
+Validation: 235 backend tests (27 Domain,84 Application,56 Infrastructure/database,68 HTTP),16 frontend tests, frontend/Docker builds, restore upgrade/downgrade round trip and populated-TXT downgrade guard passed. Edge desktop/360px passed real CAPTCHA, TXT root/reply, boundary size, exact Unicode/BOM/CRLF/HTML download, restart persistence, safe headers, rejection/draft retention/removal, exclusive selection and EN/RU/UA without JavaScript errors. All 18 retained-million-corpus paging scenarios passed without reseeding; original row fingerprints, metadata, volumes and restore-verified checkpoints were retained. GUI import in VS/Workbench is not checked.
+
 
 React and .NET 10 run in one Docker container with persistent PostgreSQL 17.
 This release creates and reads text/XHTML comments through the API, validates input,
 and captures server-side client metadata. Onion boundaries isolate Domain/Application
 from EF and HTTP. The SPA provides a form, latest-comments table, client validation,
 async submission, draft retention on failure and EN/RU/UA interface selection.
-Text attachments and the full file viewer belong to later milestones.
+TXT attachments are implemented; the full viewer remains the next milestone.
 
 Upgrade 1.1.0.9 → 1.1.0.10 requires the image migration and a restore-verified current checkpoint. See Image attachments below.
 
@@ -92,7 +103,7 @@ The form submits plain text or allowed XHTML; required fields are marked. Emails
 shows 25 roots per page with local timestamps. Refresh retries failed reads.
 Server field errors are displayed as returned; the interface supports EN/RU/UA.
 A failed submission keeps the draft in the form; refresh before retrying an uncertain
-request to avoid duplicates. CAPTCHA and image attachments are implemented; text attachments remain planned.
+request to avoid duplicates. CAPTCHA and image attachments are implemented; TextAttachments stores optional TXT files.
 
 ## Credentials, stop and IDE
 
@@ -163,6 +174,6 @@ The server checks the extension against the detected codec, decodes the image an
 
 JSON POST /api/comments remains available for text-only writes. With an image, use multipart/form-data containing the same text/CAPTCHA fields and one file named `image`; let the browser/curl generate the boundary. Unknown/duplicate fields or multiple files are rejected. JSON retains its 1 MiB limit; multipart requests allow 6 MiB overall, with a 5 MiB file limit. Invalid images return 400 with errors.image; oversized request bodies can return 413. The CAPTCHA is consumed before image processing, so retry with a new code. Errors preserve the draft and selected file; successful submission clears them.
 
-Comment DTOs include nullable `image: {id,fileName,width,height}`; list/page/reply projections never include the binary payload. `GET /api/images/{id}` serves only canonical PNG with image/png, inline generated filename and X-Content-Type-Options: nosniff, or 404. Thumbnails link to the image; the full viewer/effects remain 1.1.0.12. Text attachments remain 1.1.0.11. Processing uses [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) and matching Linux native assets; notices are in [docs/third-party](docs/third-party/README.md) and the runtime image.
+Comment DTOs include nullable `image: {id,fileName,width,height}`; list/page/reply projections never include the binary payload. `GET /api/images/{id}` serves only canonical PNG with image/png, inline generated filename and X-Content-Type-Options: nosniff, or 404. Thumbnails link to the image; the full viewer/effects remain 1.1.0.12. TXT attachments are implemented in 1.1.0.11. Processing uses [SkiaSharp 4.154.0](https://www.nuget.org/packages/SkiaSharp/4.154.0) and matching Linux native assets; notices are in [docs/third-party](docs/third-party/README.md) and the runtime image.
 
 Upgrade 1.1.0.9 → 1.1.0.10: stop all writers, including any benchmark preview, restore-verify a current checkpoint (`--include-benchmark` when that DB exists), build the app, migrate development/tests and benchmark (`--benchmark`) explicitly, then restart with the same volumes. Migration `20261030122207_ImageAttachments` adds only the image table/index/checks/FK; original author/comment fields and IDs remain unchanged. Down refuses while image rows exist. Keep verified pre-upgrade copies for recovery; a restore loses changes made after its checkpoint. Backups automatically include image bytes because they reside in the same database.

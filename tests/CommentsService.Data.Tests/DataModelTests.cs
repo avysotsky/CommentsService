@@ -74,6 +74,19 @@ public sealed class DataModelTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TextFilePersistsExactBytesAndMetadataAndCascadesWithOwner()
+    {
+        var comment=new Comment(new Author("TextReader","t@example.test"),"file",IPAddress.Loopback,"");
+        var bytes=System.Text.Encoding.UTF8.GetBytes("\uFEFFПривіт 😀\r\n<script>literal</script>");
+        var file=new TextAttachment(comment,"note.txt",bytes);db.Add(comment);await db.SaveChangesAsync();db.ChangeTracker.Clear();
+        var projected=await scope.ServiceProvider.GetRequiredService<ICommentQueries>().FindByIdAsync(comment.Id);
+        Assert.Equal(file.Id,projected!.TextFile!.Id);Assert.Equal(bytes.Length,projected.TextFile.SizeBytes);Assert.Null(projected.Image);
+        var files=scope.ServiceProvider.GetRequiredService<CommentsService.Application.TextFiles.ITextFileQueries>();
+        Assert.Equal(bytes,(await files.FindAsync(file.Id))!.Data);
+        await db.Comments.Where(x=>x.Id==comment.Id).ExecuteDeleteAsync();Assert.Null(await files.FindAsync(file.Id));
+    }
+
+    [Fact]
     public async Task ImagesPersistAtomicallyProjectMetadataAndCascadeOnlyWithTheirComment()
     {
         var comment=new Comment(new Author("ImageReader","image@example.test"),"image",IPAddress.Loopback,"");
@@ -225,7 +238,7 @@ public sealed class DataModelTests : IAsyncLifetime
     [Fact]
     public async Task MigrationHistoryAndModelAreCurrent()
     {
-        Assert.Equal(3, (await db.Database.GetAppliedMigrationsAsync()).Count());
+        Assert.Equal(4, (await db.Database.GetAppliedMigrationsAsync()).Count());
         Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         Assert.False(db.Database.HasPendingModelChanges());
     }

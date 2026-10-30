@@ -137,6 +137,37 @@ namespace CommentsService.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CommentsService.Domain.Entities.TextAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CommentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<int>("SizeBytes")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId")
+                        .IsUnique();
+
+                    b.ToTable("TextAttachments", "comments", t =>
+                        {
+                            t.HasCheckConstraint("CK_TextAttachments_Size", "octet_length(\"Data\") BETWEEN 1 AND 102400 AND \"SizeBytes\" = octet_length(\"Data\")");
+                        });
+                });
+
             modelBuilder.Entity("CommentsService.Domain.Entities.Comment", b =>
                 {
                     b.HasOne("CommentsService.Domain.Entities.Author", "Author")
@@ -165,6 +196,17 @@ namespace CommentsService.Infrastructure.Persistence.Migrations
                     b.Navigation("Comment");
                 });
 
+            modelBuilder.Entity("CommentsService.Domain.Entities.TextAttachment", b =>
+                {
+                    b.HasOne("CommentsService.Domain.Entities.Comment", "Comment")
+                        .WithOne("TextFile")
+                        .HasForeignKey("CommentsService.Domain.Entities.TextAttachment", "CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+                });
+
             modelBuilder.Entity("CommentsService.Domain.Entities.Author", b =>
                 {
                     b.Navigation("Comments");
@@ -173,6 +215,8 @@ namespace CommentsService.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("CommentsService.Domain.Entities.Comment", b =>
                 {
                     b.Navigation("Image");
+
+                    b.Navigation("TextFile");
                 });
 #pragma warning restore 612, 618
         }

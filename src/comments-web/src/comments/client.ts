@@ -35,12 +35,14 @@ export class HttpCommentsClient implements CommentsClient {
   }
 
   async create(input: CommentInput): Promise<Comment> {
-    const { image, ...values } = input;
+    const { image, textFile, ...values } = input;
+    if (image && textFile) throw new CommentsRequestError(400, { textFile: ['Choose either an image or TXT.'] });
     const normalized = { ...values, userName: values.userName.trim(), email: values.email.trim(), homePage: values.homePage.trim() || null };
-    if (image) {
+    if (image || textFile) {
       const body = new FormData();
       for (const [key, value] of Object.entries(normalized)) if (value !== null && value !== undefined) body.append(key, String(value));
-      body.append('image', image, image.name);
+      if (image) body.append('image', image, image.name);
+      if (textFile) body.append('textFile', textFile, textFile.name);
       return this.read(await this.request('/api/comments', { method: 'POST', body }));
     }
     return this.read(await this.request('/api/comments', {
@@ -59,7 +61,7 @@ export class HttpCommentsClient implements CommentsClient {
     const fields: FieldErrors = {};
     if (response.status === 400) {
       const problem = await response.json().catch(() => null);
-      for (const key of ['userName', 'email', 'homePage', 'text', 'parentId', 'captchaCode', 'image'] as const) {
+      for (const key of ['userName', 'email', 'homePage', 'text', 'parentId', 'captchaCode', 'image', 'textFile'] as const) {
         const messages: unknown = problem?.errors?.[key];
         if (Array.isArray(messages) && messages.every(message => typeof message === 'string')) fields[key] = messages;
       }

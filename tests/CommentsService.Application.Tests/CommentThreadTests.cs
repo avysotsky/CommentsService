@@ -16,14 +16,14 @@ public sealed class CommentThreadTests
     public async Task MissingParentDoesNotStageAuthorOrSave()
     {
         var store = new Store();
-        var result = await new CreateComment(store, store, new XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor()).ExecuteAsync(Input(Guid.NewGuid()), Client);
+        var result = await new CreateComment(store, store, new XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor(), new TestTextFileProcessor()).ExecuteAsync(Input(Guid.NewGuid()), Client);
         Assert.False(result.IsValid); Assert.Contains("parentId", result.Errors.Keys);
         Assert.Empty(store.Rows); Assert.Equal(0, store.Saves);
     }
     [Fact]
     public async Task AnyExistingCommentCanReceiveAReplyAndRootIsDerived()
     {
-        var store = new Store(); var create = new CreateComment(store, store, new XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor());
+        var store = new Store(); var create = new CreateComment(store, store, new XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor(), new TestTextFileProcessor());
         var root = (await create.ExecuteAsync(Input(), Client)).Value!;
         var parent = root;
         for (var i = 0; i < 100; i++)
@@ -45,7 +45,7 @@ public sealed class CommentThreadTests
     {
         var store = new Store(); var get = new GetReplies(store);
         Assert.Contains("parentId", (await get.ExecuteAsync(Guid.NewGuid())).Errors.Keys);
-        var create = new CreateComment(store, store, new XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor());
+        var create = new CreateComment(store, store, new XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor(), new TestTextFileProcessor());
         var root = (await create.ExecuteAsync(Input(), Client)).Value!;
         Assert.Contains("after", (await get.ExecuteAsync(root.Id, after: root.Id)).Errors.Keys);
         Assert.Contains("after", (await get.ExecuteAsync(root.Id, after: Guid.NewGuid())).Errors.Keys);
@@ -53,7 +53,7 @@ public sealed class CommentThreadTests
     [Fact]
     public async Task ReplyPageUsesAnExtraRowAndPassesCursorAndCancellation()
     {
-        var store = new Store(); var create = new CreateComment(store, store, new XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor());
+        var store = new Store(); var create = new CreateComment(store, store, new XhtmlCommentMarkup(), new AcceptCaptcha(), new TestImageProcessor(), new TestTextFileProcessor());
         var root = (await create.ExecuteAsync(Input(), Client)).Value!;
         for (var i = 0; i < 3; i++) await create.ExecuteAsync(Input(root.Id), Client);
         var get = new GetReplies(store);

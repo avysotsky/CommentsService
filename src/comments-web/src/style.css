@@ -71,3 +71,5 @@ footer { color: #5c6b59; font-size: 12px; border-top: 1px solid #dfe4d7; padding
 .image-attachment img { max-width:100%; height:auto; border:1px solid #dfe4d7; border-radius:.4rem; }
 .image-attachment figcaption { color:#5c6b59; font-size:11px; overflow-wrap:anywhere; }
 .image-field input { letter-spacing:normal; }
+
+.text-attachment { font-size:12px; overflow-wrap:anywhere; margin:.75rem 0; }

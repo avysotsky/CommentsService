@@ -85,3 +85,11 @@ python3 scripts/db-command.py check --benchmark
 | userName | desc | 323.61 | 1681.60 | 1821.36 |
 | email | asc | 313.28 | 1338.42 | 1459.64 |
 | email | desc | 289.70 | 1388.39 | 1787.20 |
+
+## TextAttachments 1.1.0.11
+
+EN: Reused paging-v1 after migration 20261030130243_TextAttachments: 1,000,000 comments, 800,000 roots, 200,000 replies. All 18 sort/direction/first-middle-last page cases passed (one sample each), stable repeated IDs and root-only results. Original full row fingerprints and Dataset metadata retained; no reseeding. This is a local regression measurement, not a universal latency guarantee.
+
+RU: После миграции 20261030130243_TextAttachments повторно использован paging-v1: 1 000 000 комментариев, 800 000 корней, 200 000 ответов. Все 18 сочетаний сортировки/направления/первой-средней-последней страницы прошли (по одному измерению), повторные ID стабильны, выдаются только корни. Полные отпечатки исходных строк и Dataset сохранены; повторного заполнения нет. Это локальная проверка регрессий, не гарантия задержки.
+
+UA: Після міграції 20261030130243_TextAttachments повторно використано paging-v1: 1 000 000 коментарів, 800 000 коренів, 200 000 відповідей. Усі 18 поєднань сортування/напрямку/першої-середньої-останньої сторінки пройшли (по одному вимірюванню), повторні ID стабільні, видаються лише корені. Повні відбитки початкових рядків і Dataset збережено; повторного заповнення немає. Це локальна перевірка регресій, не гарантія затримки.

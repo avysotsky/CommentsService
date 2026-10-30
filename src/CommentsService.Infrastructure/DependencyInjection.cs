@@ -16,6 +16,8 @@ public static class DependencyInjection
         services.AddDbContext<CommentsDbContext>(options =>
             options.UseNpgsql(DatabaseOptions.ConnectionString(),
                 pg => pg.MigrationsHistoryTable("__EFMigrationsHistory", "comments")));
+        services.AddSingleton<CommentsService.Application.TextFiles.ITextFileProcessor, CommentsService.Infrastructure.TextFiles.Utf8TextFileProcessor>();
+        services.AddScoped<CommentsService.Application.TextFiles.ITextFileQueries, CommentsService.Infrastructure.TextFiles.TextFileQueries>();
         services.AddSingleton<CommentsService.Application.Images.IImageProcessor, CommentsService.Infrastructure.Images.SkiaImageProcessor>();
         services.AddScoped<CommentsService.Application.Images.IImageQueries, CommentsService.Infrastructure.Images.ImageQueries>();
         services.AddSingleton(TimeProvider.System);

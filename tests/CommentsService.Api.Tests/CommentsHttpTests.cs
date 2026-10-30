@@ -76,7 +76,7 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
         Assert.Equal(HttpStatusCode.OK, get.StatusCode);
         Assert.Equal(created, await get.Content.ReadFromJsonAsync<CommentDto>());
         using var document = JsonDocument.Parse(await get.Content.ReadAsStringAsync());
-        Assert.Equal(new[] { "createdAt", "email", "homePage", "id", "image", "parentId", "rootId", "text", "userName" },
+        Assert.Equal(new[] { "createdAt", "email", "homePage", "id", "image", "parentId", "rootId", "text", "textFile", "userName" },
             document.RootElement.EnumerateObject().Select(property => property.Name).Order().ToArray());
         await using var db = new CommentsDbContextFactory().CreateDbContext([]);
         var stored = await db.Comments.AsNoTracking().SingleAsync(comment => comment.Id == created.Id);
@@ -419,6 +419,39 @@ public sealed class CommentsHttpTests(ApiFixture fixture) : IClassFixture<ApiFix
             using var response=await fixture.SendAsync(body); Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
         }
         using var missing=await fixture.Client.GetAsync("/api/images/"+Guid.NewGuid()); Assert.Equal(HttpStatusCode.NotFound,missing.StatusCode);
+    }
+
+    [Fact]
+    public async Task MultipartTxtRoundTripIsAnExactSafeDownloadAndMetadataOnly()
+    {
+        var bytes=Encoding.UTF8.GetBytes("\uFEFFПривіт 😀\r\n<script>window.__txtInjected=true</script>");
+        using var body=new MultipartFormDataContent();foreach(var field in ApiFixture.Payload().Where(x=>x.Value is not null))body.Add(new StringContent(field.Value!.ToString()!),field.Key);
+        var part=new ByteArrayContent(bytes);part.Headers.ContentType=new("text/html");body.Add(part,"textFile","../../note.TXT");
+        using var response=await fixture.SendAsync(body);Assert.Equal(HttpStatusCode.Created,response.StatusCode);
+        var created=(await response.Content.ReadFromJsonAsync<CommentDto>())!;Assert.Null(created.Image);Assert.NotNull(created.TextFile);Assert.Equal("note.txt",created.TextFile.FileName);Assert.Equal(bytes.Length,created.TextFile.SizeBytes);
+        Assert.Equal(created,await fixture.Client.GetFromJsonAsync<CommentDto>("/api/comments/"+created.Id));
+        using var file=await fixture.Client.GetAsync("/api/text-files/"+created.TextFile.Id);Assert.Equal(HttpStatusCode.OK,file.StatusCode);
+        Assert.Equal(bytes,await file.Content.ReadAsByteArrayAsync());Assert.Equal("text/plain",file.Content.Headers.ContentType!.MediaType);Assert.Equal("utf-8",file.Content.Headers.ContentType.CharSet);
+        Assert.Equal("attachment",file.Content.Headers.ContentDisposition!.DispositionType);Assert.Contains(created.TextFile.Id.ToString("N"),file.Content.Headers.ContentDisposition.FileName!);
+        Assert.Equal("nosniff",file.Headers.GetValues("X-Content-Type-Options").Single());Assert.Contains("sandbox",file.Headers.GetValues("Content-Security-Policy").Single());Assert.True(file.Headers.CacheControl!.NoStore);
+        Assert.DoesNotContain(Convert.ToBase64String(bytes),await response.Content.ReadAsStringAsync());
+    }
+    [Theory]
+    [InlineData("invalid.txt",0)] [InlineData("invalid.txt",1)] [InlineData("invalid.txt",2)] [InlineData("wrong.exe",3)]
+    public async Task InvalidTxtNeverCreatesRows(string name,int kind)
+    {
+        await using var db=new CommentsDbContextFactory().CreateDbContext([]);var count=await db.Comments.CountAsync();var authors=await db.Authors.CountAsync();
+        byte[] bytes=kind switch {0=>[0xff,0xfe,65,0],1=>[0,65],2=>new byte[102401],_=>[65]};
+        using var body=new MultipartFormDataContent();foreach(var field in ApiFixture.Payload().Where(x=>x.Value is not null))body.Add(new StringContent(field.Value!.ToString()!),field.Key);
+        body.Add(new ByteArrayContent(bytes),"textFile",name);using var response=await fixture.SendAsync(body);Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
+        Assert.Equal(count,await db.Comments.CountAsync());Assert.Equal(authors,await db.Authors.CountAsync());
+    }
+    [Fact]
+    public async Task MultipartImageAndTxtTogetherAreRejectedAndMissingFileIsNotFound()
+    {
+        using var body=new MultipartFormDataContent();body.Add(new ByteArrayContent([65]),"textFile","a.txt");body.Add(new ByteArrayContent([1]),"image","a.png");
+        using var response=await fixture.SendAsync(body);Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
+        using var missing=await fixture.Client.GetAsync("/api/text-files/"+Guid.NewGuid());Assert.Equal(HttpStatusCode.NotFound,missing.StatusCode);
     }
 
     private sealed class UnavailableQuery : IGetComment

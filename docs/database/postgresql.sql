@@ -184,3 +184,37 @@ BEGIN
     END IF;
 END $EF$;
 COMMIT;
+
+START TRANSACTION;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030130243_TextAttachments') THEN
+    CREATE TABLE comments."TextAttachments" (
+        "Id" uuid NOT NULL,
+        "CommentId" uuid NOT NULL,
+        "FileName" character varying(128) NOT NULL,
+        "SizeBytes" integer NOT NULL,
+        "Data" bytea NOT NULL,
+        CONSTRAINT "PK_TextAttachments" PRIMARY KEY ("Id"),
+        CONSTRAINT "CK_TextAttachments_Size" CHECK (octet_length("Data") BETWEEN 1 AND 102400 AND "SizeBytes" = octet_length("Data")),
+        CONSTRAINT "FK_TextAttachments_Comments_CommentId" FOREIGN KEY ("CommentId") REFERENCES comments."Comments" ("Id") ON DELETE CASCADE
+    );
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030130243_TextAttachments') THEN
+    CREATE UNIQUE INDEX "IX_TextAttachments_CommentId" ON comments."TextAttachments" ("CommentId");
+    END IF;
+END $EF$;
+
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM comments."__EFMigrationsHistory" WHERE "MigrationId" = '20261030130243_TextAttachments') THEN
+    INSERT INTO comments."__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+    VALUES ('20261030130243_TextAttachments', '10.0.14');
+    END IF;
+END $EF$;
+COMMIT;

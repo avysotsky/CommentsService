@@ -12,7 +12,8 @@ internal sealed class CommentQueries(CommentsDbContext db) : ICommentQueries
     private static IQueryable<CommentDto> Project(IQueryable<Comment> source) => source.Select(comment =>
         new CommentDto(comment.Id, comment.Author.UserName, comment.Author.Email, comment.Author.HomePage,
             comment.Text, comment.CreatedAt, comment.ParentId, comment.RootId,
-            comment.Image == null ? null : new ImageInfo(comment.Image.Id, comment.Image.FileName, comment.Image.Width, comment.Image.Height)));
+            comment.Image == null ? null : new ImageInfo(comment.Image.Id, comment.Image.FileName, comment.Image.Width, comment.Image.Height),
+            comment.TextFile == null ? null : new TextFileInfo(comment.TextFile.Id, comment.TextFile.FileName, comment.TextFile.SizeBytes)));
 
     public async Task<IReadOnlyList<CommentDto>> GetRepliesAsync(Guid parentId, int limit,
         CommentsService.Application.Comments.GetReplies.ReplyCursor? after, CancellationToken cancellationToken = default)

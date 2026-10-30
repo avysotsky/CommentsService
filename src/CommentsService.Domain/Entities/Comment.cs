@@ -31,9 +31,15 @@ public sealed class Comment
 
     internal void AttachImage(ImageAttachment image)
     {
-        if (Image is not null) throw new InvalidOperationException("A comment already has an image.");
+        if (Image is not null || TextFile is not null) throw new InvalidOperationException("A comment already has an attachment.");
         Image = image;
     }
+    internal void AttachTextFile(TextAttachment file)
+    {
+        if (Image is not null || TextFile is not null) throw new InvalidOperationException("A comment already has an attachment.");
+        TextFile = file;
+    }
+    public TextAttachment? TextFile { get; private set; }
     public ImageAttachment? Image { get; private set; }
     public Guid Id { get; private set; } = Guid.NewGuid();
     public Guid? ParentId { get; private set; }

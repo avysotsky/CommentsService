@@ -1,10 +1,10 @@
 # CommentsService
 
-Версія: **1.2.1.1** · `CommentsService/v_1.2.1.1_CommentEvents`
+Версія: **1.2.2.2** · `CommentsService/v_1.2.2.2_ReadCache`
 
-Події Application після збереження з ізоляцією підписників і структурованим журналом без вмісту коментаря. Конфіг, схема та REST сумісні. Черга, кеш і WebSocket — наступні ітерації.
+Обмежений кеш сторінок коренів/останніх коментарів; події збереження синхронно скидають його, TTL і покоління захищають від застарілого заповнення. Runtime.Cache додано сумісно зі старими конфігами; міграцій немає. Черга/WebSocket попереду.
 
-Verification / Проверки / Перевірки: 307 backend tests (27/85/57/138); previous frontend checks remain historical. No migration.
+318 backend tests (27/85/67/139). EN: cache and commit-invalidation checks; RU: проверки кеша и сброса после записи; UA: перевірки кешу та скидання після запису.
 
 [Junior+](docs/JUNIOR_PLUS.md)
 

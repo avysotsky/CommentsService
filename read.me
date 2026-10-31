@@ -1,17 +1,19 @@
-CommentsService — 1.2.1.1 CommentEvents
-Branch: CommentsService/v_1.2.1.1_CommentEvents
+CommentsService — 1.2.2.2 ReadCache
+Branch: CommentsService/v_1.2.2.2_ReadCache
 
-EN: Post-commit application events with isolated subscribers and metadata-only structured logging. Config, schema and REST remain compatible. Queue, cache and WebSocket follow in later iterations.
+EN: Bounded process-local cache for root pages/latest comments, invalidated synchronously by committed events; TTL and generation checks prevent persistent stale fills. Additive Runtime.Cache defaults preserve old config files; no migration. Queue/WebSocket remain pending.
 
-RU: События Application после сохранения с изоляцией подписчиков и структурированным журналом без содержимого комментария. Конфиг, схема и REST совместимы. Очередь, кеш и WebSocket — следующие итерации.
+RU: Ограниченный кеш страниц корней/последних комментариев; события сохранения синхронно сбрасывают его, TTL и поколения защищают от устаревшего заполнения. Runtime.Cache добавлен совместимо со старыми конфигами; миграций нет. Очередь/WebSocket впереди.
 
-UA: Події Application після збереження з ізоляцією підписників і структурованим журналом без вмісту коментаря. Конфіг, схема та REST сумісні. Черга, кеш і WebSocket — наступні ітерації.
+UA: Обмежений кеш сторінок коренів/останніх коментарів; події збереження синхронно скидають його, TTL і покоління захищають від застарілого заповнення. Runtime.Cache додано сумісно зі старими конфігами; міграцій немає. Черга/WebSocket попереду.
 
-Verification / Проверки / Перевірки: 307 backend tests (27/85/57/138); previous frontend checks remain historical. No migration.
+318 backend tests (27/85/67/139). EN: cache and commit-invalidation checks; RU: проверки кеша и сброса после записи; UA: перевірки кешу та скидання після запису.
 
 [EN](README.md) · [RU](README.RU.md) · [UA](README.UA.md) · [Junior+](docs/JUNIOR_PLUS.md)
 
 <!-- JUNIOR-PLUS-CURRENT-END -->
+
+Historical release notes / Исторические записи / Історичні записи:
 
 Historical release notes / Исторические записи / Історичні записи:
 

@@ -1,10 +1,10 @@
 # CommentsService
 
-Version: **1.2.1.1** · `CommentsService/v_1.2.1.1_CommentEvents`
+Version: **1.2.2.2** · `CommentsService/v_1.2.2.2_ReadCache`
 
-Post-commit application events with isolated subscribers and metadata-only structured logging. Config, schema and REST remain compatible. Queue, cache and WebSocket follow in later iterations.
+Bounded process-local cache for root pages/latest comments, invalidated synchronously by committed events; TTL and generation checks prevent persistent stale fills. Additive Runtime.Cache defaults preserve old config files; no migration. Queue/WebSocket remain pending.
 
-Verification / Проверки / Перевірки: 307 backend tests (27/85/57/138); previous frontend checks remain historical. No migration.
+318 backend tests (27/85/67/139). EN: cache and commit-invalidation checks; RU: проверки кеша и сброса после записи; UA: перевірки кешу та скидання після запису.
 
 [Junior+](docs/JUNIOR_PLUS.md)
 

@@ -11,12 +11,17 @@ public sealed class RuntimeConfigurationTests
     {
         var configuration = new ConfigurationManager();
         var settings = RuntimeConfiguration.Load(configuration, ["--Runtime:InstanceId=instance-two", "--Runtime:Database:MaximumPoolSize=12",
-            "--Runtime:Database:Host=cli-host", "--Runtime:Database:Port=5439"]);
+            "--Runtime:Database:Host=cli-host", "--Runtime:Database:Port=5439", "--Runtime:Cache:Enabled=false"]);
         Assert.Equal("instance-two", settings.InstanceId);
         Assert.Equal(12, settings.Database.MaximumPoolSize);
         Assert.Equal(8080, settings.HealthPort);
         Assert.Equal("cli-host", settings.Database.Host);
         Assert.Equal(5439, settings.Database.Port);
+        Assert.False(settings.Cache.Enabled);
+        var old = System.Text.Json.JsonSerializer.Deserialize<RuntimeSettings>("{\"InstanceId\":\"old-config\"}")!;
+        old.Validate();
+        Assert.True(old.Cache.Enabled);
+        Assert.Equal(15, old.Cache.LifetimeSeconds);
     }
 
     [Theory]

@@ -2,6 +2,12 @@
   "Runtime": {
     "InstanceId": "commentsservice",
     "HealthPort": 8080,
+    "Cache": {
+      "Enabled": true,
+      "LifetimeSeconds": 15,
+      "Capacity": 128,
+      "MaximumBytes": 16777216
+    },
     "Logging": {
       "MinimumLevel": "Information",
       "Overrides": {},

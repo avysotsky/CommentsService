@@ -32,7 +32,7 @@ builder.Services.AddSingleton(runtime);
 builder.Services.AddSingleton(runtime.Limits);
 builder.Services.AddSingleton(runtime.Captcha);
 RuntimeLogging.Configure(builder, runtime);
-builder.Services.AddInfrastructure(runtime.Database);
+builder.Services.AddInfrastructure(runtime.Database, runtime.Cache);
 builder.Services.AddSingleton<CommentsService.Application.Comments.Markup.ICommentMarkup, CommentsService.Application.Comments.Markup.XhtmlCommentMarkup>();
 builder.Services.AddScoped<ICreateComment, CreateComment>();
 builder.Services.AddScoped<IGetComment, GetComment>();

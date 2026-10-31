@@ -1,4 +1,25 @@
-# Junior+ — Events
+# Junior+ — Events and read cache
+
+## Read cache / Кеш чтения / Кеш читання — 1.2.2.2
+
+EN: `CachedCommentQueries` decorates the Application read port in Infrastructure. Only root pages and latest-root lists are cached; keys include page, size, sort and direction (or latest limit). Replies, individual comments, attachments, CAPTCHA and validation are never cached. Results have read-only item collections. The singleton retains values, never scoped DbContexts. Explicit caller transactions bypass caching. Every committed comment event clears the entire cache synchronously; a generation check rejects any in-flight fill started before invalidation. Expired values are replaced on demand; FIFO eviction bounds both entry count and estimated retained bytes (UTF-16 text plus metadata allowance). This is a memory budget estimate, not a measurement of the complete process heap. Concurrent misses can query independently. Failed/cancelled reads never fill the cache. External SQL changes and other app instances become visible within TTL; this release targets one app instance. Health checks always query the database independently.
+
+RU: `CachedCommentQueries` декорирует порт чтения Application в Infrastructure. Кешируются только страницы корней и списки последних корней; ключи включают страницу, размер, сортировку и направление либо лимит последних записей. Ответы, отдельные комментарии, вложения, CAPTCHA и валидация не кешируются. Коллекции результатов доступны только для чтения. Singleton хранит значения, не scoped DbContext. Явная транзакция вызывающего обходит кеш. Каждое событие сохранённого комментария синхронно сбрасывает весь кеш; проверка поколения запрещает заполнение запросом, начатым до сброса. Истёкшие значения заменяются при чтении; FIFO ограничивает количество и оценку байтов (UTF-16 и запас на метаданные). Это оценка памяти кеша, не замер всей памяти процесса. Одновременные промахи могут независимо обращаться к БД. Ошибки/отмена не заполняют кеш. Внешние SQL-изменения и другие инстансы видны не позднее TTL; выпуск рассчитан на один инстанс. Health проверяет БД независимо.
+
+UA: `CachedCommentQueries` декорує порт читання Application в Infrastructure. Кешуються лише сторінки коренів і списки останніх коренів; ключі включають сторінку, розмір, сортування й напрямок або ліміт останніх записів. Відповіді, окремі коментарі, вкладення, CAPTCHA й валідація не кешуються. Колекції результатів доступні лише для читання. Singleton зберігає значення, не scoped DbContext. Явна транзакція виклику обходить кеш. Кожна подія збереженого коментаря синхронно скидає весь кеш; перевірка покоління забороняє заповнення запитом, розпочатим до скидання. Прострочені значення замінюються під час читання; FIFO обмежує кількість та оцінку байтів (UTF-16 і запас на метадані). Це оцінка пам'яті кешу, не вимір усієї пам'яті процесу. Одночасні промахи можуть незалежно звертатись до БД. Помилки/скасування не заповнюють кеш. Зовнішні SQL-зміни й інші інстанси видимі не пізніше TTL; випуск розрахований на один інстанс. Health перевіряє БД незалежно.
+
+| `Runtime.Cache` | Default / По умолчанию / Типово | Range / Диапазон / Діапазон |
+| --- | --- | --- |
+| Enabled | true | true/false |
+| LifetimeSeconds | 15 | 1–300 |
+| Capacity | 128 | 1–4096 |
+| MaximumBytes | 16777216 | 1024–268435456 |
+
+EN: Additive settings; an old config without `Cache` uses these defaults. All prior settings, PG/environment/CLI precedence and public config remain compatible. `Runtime__Cache__Enabled=false` disables caching. Invalid ranges fail startup. No database or schema change. Tests cover hit/expiry/invalidation, concurrent stale-fill rejection, key separation, FIFO/byte bounds, oversized values, cancellation/failure and invalid policies. The Events section below describes the first iteration; Queue and WebSocket are still pending.
+
+RU: Настройки добавлены совместимо: старый конфиг без `Cache` использует эти значения. Все прежние настройки, приоритет PG/окружения/CLI и публичный конфиг совместимы. `Runtime__Cache__Enabled=false` отключает кеш. Неверные диапазоны останавливают запуск. БД и схема прежние. Тесты проверяют попадание/TTL/сброс, запрет конкурентного устаревшего заполнения, ключи, FIFO/байты, слишком большие результаты, отмену/ошибки и неверные политики. Раздел Events ниже описывает первую итерацию; Queue и WebSocket ещё впереди.
+
+UA: Налаштування додано сумісно: старий конфіг без `Cache` використовує ці значення. Усі попередні налаштування, пріоритет PG/оточення/CLI та публічний конфіг сумісні. `Runtime__Cache__Enabled=false` вимикає кеш. Хибні діапазони зупиняють запуск. БД та схема попередні. Тести перевіряють влучання/TTL/скидання, заборону конкурентного застарілого заповнення, ключі, FIFO/байти, завеликі результати, скасування/помилки й хибні політики. Розділ Events нижче описує першу ітерацію; Queue та WebSocket ще попереду.
 
 ## English
 

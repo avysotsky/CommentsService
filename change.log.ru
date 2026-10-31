@@ -2,6 +2,14 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.2.2.2 ReadCache — 2026-10-31
+
+`CommentsService/v_1.2.2.2_ReadCache`
+
+Ограниченный кеш страниц корней/последних комментариев; события сохранения синхронно сбрасывают его, TTL и поколения защищают от устаревшего заполнения. Runtime.Cache добавлен совместимо со старыми конфигами; миграций нет. Очередь/WebSocket впереди.
+
+318 backend tests (27/85/67/139). EN: cache and commit-invalidation checks; RU: проверки кеша и сброса после записи; UA: перевірки кешу та скидання після запису.
+
 ## 1.2.1.1 CommentEvents — 2026-10-31
 
 `CommentsService/v_1.2.1.1_CommentEvents`

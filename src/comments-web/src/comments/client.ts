@@ -21,6 +21,24 @@ export class HttpCommentsClient implements CommentsClient {
   }
 
   async page(query: import('./model').RootPageQuery, signal?: AbortSignal) {
+    if (limits.graphQLEnabled) {
+      const response = await this.request('/api/graphql', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/graphql-response+json' },
+        signal, cache: 'no-store', body: JSON.stringify({
+          query: `query RootPage($page: Int!, $sort: String!, $direction: String!) {
+            rootPage(page: $page, sort: $sort, direction: $direction) {
+              page pageSize totalCount totalPages
+              items { id userName email homePage text createdAt parentId rootId
+                image { id fileName width height } textFile { id fileName sizeBytes } }
+            }
+          }`, variables: query, operationName: 'RootPage',
+        }),
+      });
+      const result = await this.read<{ data?: { rootPage?: import('./model').RootPage }; errors?: unknown[] }>(response);
+      // Never present partial GraphQL data as a successfully refreshed page.
+      if (result.errors?.length || !result.data?.rootPage) throw new CommentsRequestError(503);
+      return result.data.rootPage;
+    }
     const params = new URLSearchParams({ page: String(query.page), sort: query.sort, direction: query.direction });
     return this.read<import('./model').RootPage>(await this.request(`/api/comments/page?${params}`, { signal, cache: 'no-store' }));
   }

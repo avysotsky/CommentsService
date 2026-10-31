@@ -16,8 +16,12 @@ public sealed class RuntimeSettings
     public CommentsService.Infrastructure.Notifications.NotificationSettings Notifications { get; set; } = new();
     public CommentsService.Api.Realtime.RealtimeSettings Realtime { get; set; } = new();
 
+    public GraphQLSettings GraphQL { get; set; } = new();
+
     public void Validate()
     {
+        if (GraphQL is null) throw new InvalidOperationException("Missing GraphQL settings.");
+        GraphQL.Validate();
         if (Cache is null) throw new InvalidOperationException("Missing read cache settings.");
         Cache.Validate();
         if (Notifications is null) throw new InvalidOperationException("Missing notification settings.");

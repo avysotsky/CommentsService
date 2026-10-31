@@ -1,4 +1,5 @@
-import './configure.mjs';
+import { defaults } from './configure.mjs';
+import { configure } from '../src/runtimeConfig.ts';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { validate, safeHomePage, readRootQuery } from '../src/comments/model.ts';
@@ -83,13 +84,15 @@ test('create carries only requested parent and exposes missing-target errors', a
 });
 
 test('page transport sends bounded query fields and cancellation without cache', async () => {
+  configure({ ...defaults, graphQLEnabled: false });
   const controller = new AbortController();
   const client = new HttpCommentsClient(async (url, options) => {
     assert.equal(url, '/api/comments/page?page=2&sort=email&direction=asc');
     assert.equal(options.signal, controller.signal); assert.equal(options.cache, 'no-store');
     return Response.json({ items: [], page: 2, pageSize: 25, totalCount: 0, totalPages: 0 });
   });
-  assert.equal((await client.page({ page: 2, sort: 'email', direction: 'asc' }, controller.signal)).page, 2);
+  try { assert.equal((await client.page({ page: 2, sort: 'email', direction: 'asc' }, controller.signal)).page, 2); }
+  finally { configure(defaults); }
 });
 test('bookmarked paging input validates ranges and allowlists', () => {
   assert.deepEqual(readRootQuery('?page=2&sort=userName&direction=asc'), { page: 2, sort: 'userName', direction: 'asc' });
@@ -127,4 +130,32 @@ test('TXT transport uses one multipart attachment and preserves CAPTCHA fields',
 test('client rejects image plus TXT before sending a request', async () => {
   const client=new HttpCommentsClient(async()=>{throw new Error('must not send')});
   await assert.rejects(client.create({...valid,image:new File(['x'],'a.png'),textFile:new File(['x'],'a.txt')}),error=>error instanceof CommentsRequestError&&error.status===400&&!!error.fields.textFile);
+});
+
+
+test('GraphQL page selects public fields and forwards variables, abort and no-store', async () => {
+  const cancel = new AbortController();
+  const page = { items: [], page: 2, pageSize: 25, totalCount: 0, totalPages: 0 };
+  const query = { page: 2, sort: 'email', direction: 'asc' };
+  const client = new HttpCommentsClient(async (url, options) => {
+    assert.equal(url, '/api/graphql'); assert.equal(options.method, 'POST');
+    assert.equal(options.signal, cancel.signal); assert.equal(options.cache, 'no-store');
+    const request = JSON.parse(options.body);
+    assert.deepEqual(request.variables, query); assert.equal(request.operationName, 'RootPage');
+    assert.match(request.query, /image \{ id fileName width height \}/);
+    assert.doesNotMatch(request.query, /ipAddress|userAgent|contentBytes/);
+    return Response.json({ data: { rootPage: page } });
+  });
+  assert.deepEqual(await client.page(query, cancel.signal), page);
+});
+
+test('GraphQL partial, absent and HTTP errors never replace a successfully loaded page', async () => {
+  const query = { page: 1, sort: 'createdAt', direction: 'desc' };
+  for (const result of [{ errors: [{ message: 'private detail' }] }, { data: { rootPage: {} }, errors: [{}] }, { data: null }, {}]) {
+    await assert.rejects(new HttpCommentsClient(async () => Response.json(result)).page(query),
+      error => error instanceof CommentsRequestError && error.status === 503 && !error.message.includes('private'));
+  }
+  await assert.rejects(new HttpCommentsClient(async () => new Response('', { status: 429 })).page(query), error => error.status === 429);
+  const controller = new AbortController(); controller.abort();
+  await assert.rejects(new HttpCommentsClient(async (_, options) => { options.signal.throwIfAborted(); }).page(query, controller.signal), error => error.name === 'AbortError');
 });

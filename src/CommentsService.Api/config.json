@@ -68,6 +68,16 @@
       "FormValueMaxLength": 262144,
       "FormValueCountLimit": 16,
       "HealthTimeoutSeconds": 2
+    },
+    "GraphQL": {
+      "Enabled": true,
+      "MaximumRequestBytes": 32768,
+      "MaximumDepth": 8,
+      "MaximumFields": 256,
+      "MaximumFieldCost": 1000,
+      "MaximumTypeCost": 2000,
+      "ExecutionTimeoutSeconds": 10,
+      "MaximumConcurrentRequests": 16
     }
   }
 }

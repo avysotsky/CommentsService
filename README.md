@@ -1,14 +1,14 @@
 # CommentsService
 
-Version: **1.2.2.4** · `CommentsService/v_1.2.2.4_LiveComments`
+Version: **1.3.3.1** · `CommentsService/v_1.3.3.1_GraphQL`
 
-Junior+ integrates post-commit Events, a bounded read Cache, a coalescing notification Queue and same-origin WebSocket updates. New comments/replies show a localized refresh notice; reconnect re-reads data while preserving drafts, page and sort. Additive Cache/Notifications/Realtime settings support old config files. PostgreSQL remains authoritative; notifications/cache are process-local, not durable or multi-replica. No schema migration, new broker, NoSQL or cloud dependency.
+GraphQL adds a bounded read-only /api/graphql endpoint and uses it for SPA root-page reads. Existing REST writes/replies/files, Events/Cache/Queue/WebSocket and PostgreSQL data remain. Runtime.GraphQL adds validated limits; only graphQLEnabled is public. No schema migration, broker, NoSQL or cloud. This completes the Graph item only, not the entire Middle level.
 
-Passed:337 backend tests (27/85/67/158),31 frontend tests, frontend/Docker builds, real Edge multi-window root/reply/CAPTCHA/refresh/reconnect/draft/sort/EN-RU-UA/360px,18 retained-million cases and public HTTPS/WSS/reconnect/45s heartbeat. Original data/schema/checkpoints/volumes preserved. Host reboot was not repeated.
+Passed: 370 distinct backend tests (27 Domain / 85 Application / 67 Data / 191 API, including the final focused rerun), 33 frontend tests, frontend/Docker builds, real Edge with three windows/CAPTCHA/root/reply/WS refresh/reconnect/draft/query retention/EN-RU-UA/360px, and 18 retained-million GraphQL cases with two samples and REST order parity. Native HTTP byte/encoding/depth/route guards and public HTTPS/GraphQL/WSS checks passed. Original data, schema, checkpoints, environment, volumes and existing preview were preserved. No reboot or repeat of the prior heartbeat acceptance. [GraphQL](docs/GRAPHQL.md).
 
-[Junior+](docs/JUNIOR_PLUS.md)
+[GraphQL](docs/GRAPHQL.md) · [Junior+](docs/JUNIOR_PLUS.md)
 
-<!-- JUNIOR-PLUS-CURRENT-END -->
+<!-- GRAPHQL-CURRENT-END -->
 
 Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 

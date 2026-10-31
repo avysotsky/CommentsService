@@ -9,7 +9,7 @@ public static class SystemEndpoints
     public static IEndpointRouteBuilder MapSystemEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("/api/status", () => new ApplicationStatus(
-            "CommentsService", typeof(SystemEndpoints).Assembly.GetName().Version!.ToString(), "LiveComments"));
+            "CommentsService", typeof(SystemEndpoints).Assembly.GetName().Version!.ToString(), "GraphQL"));
         endpoints.MapGet("/api/config", (CommentsService.Api.Configuration.RuntimeSettings runtime) =>
         {
             var limits = runtime.Limits;
@@ -17,7 +17,7 @@ public static class SystemEndpoints
                 limits.UserNameMaxLength, limits.EmailMaxLength, limits.HomePageMaxLength, limits.TextMaxLength,
                 limits.ImageUploadMaxBytes, limits.ImageMaxWidth, limits.ImageMaxHeight, limits.TextFileMaxBytes,
                 runtime.Captcha.CodeLength, runtime.Captcha.Alphabet, runtime.Captcha.LifetimeSeconds,
-                runtime.Realtime.Enabled, runtime.Realtime.ReconnectDelayMilliseconds, runtime.Realtime.MaximumReconnectDelayMilliseconds);
+                runtime.GraphQL.Enabled, runtime.Realtime.Enabled, runtime.Realtime.ReconnectDelayMilliseconds, runtime.Realtime.MaximumReconnectDelayMilliseconds);
         });
         endpoints.MapGet("/health", () => Results.Ok(new HealthResponse("ok")));
         endpoints.MapHealthChecks("/health/database", new HealthCheckOptions

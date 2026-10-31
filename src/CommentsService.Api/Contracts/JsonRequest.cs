@@ -6,10 +6,10 @@ namespace CommentsService.Api.Contracts;
 
 internal static class JsonRequest
 {
-    public static async Task<T?> ReadAsync<T>(HttpContext context, CancellationToken token)
+    public static async Task<T?> ReadAsync<T>(HttpContext context, CancellationToken token, int? maximumBytes = null)
     {
         var settings = context.RequestServices.GetRequiredService<CommentsService.Api.Configuration.RuntimeSettings>().Requests;
-        var maxBytes = settings.JsonMaxBytes;
+        var maxBytes = Math.Min(settings.JsonMaxBytes, maximumBytes ?? settings.JsonMaxBytes);
         var options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
         {
             AllowDuplicateProperties = false, PropertyNameCaseInsensitive = false, MaxDepth = settings.JsonMaxDepth

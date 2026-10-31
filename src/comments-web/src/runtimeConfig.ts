@@ -3,7 +3,7 @@ export type PublicConfiguration = {
   userNameMaxLength: number; emailMaxLength: number; homePageMaxLength: number; textMaxLength: number;
   imageUploadMaxBytes: number; imageMaxWidth: number; imageMaxHeight: number; textFileMaxBytes: number;
   captchaCodeLength: number; captchaAlphabet: string; captchaLifetimeSeconds: number;
-  realtimeEnabled: boolean; reconnectDelayMilliseconds: number; maximumReconnectDelayMilliseconds: number;
+  graphQLEnabled: boolean; realtimeEnabled: boolean; reconnectDelayMilliseconds: number; maximumReconnectDelayMilliseconds: number;
 };
 
 let current: PublicConfiguration | undefined;
@@ -13,7 +13,7 @@ export function configure(value: PublicConfiguration) {
     'imageUploadMaxBytes', 'imageMaxWidth', 'imageMaxHeight', 'textFileMaxBytes', 'captchaCodeLength', 'captchaLifetimeSeconds',
     'reconnectDelayMilliseconds', 'maximumReconnectDelayMilliseconds'];
   if (!value || keys.some(key => !Number.isSafeInteger(value[key]) || Number(value[key]) < 1) ||
-      typeof value.realtimeEnabled !== 'boolean' || value.maximumReconnectDelayMilliseconds < value.reconnectDelayMilliseconds ||
+      typeof value.graphQLEnabled !== 'boolean' || typeof value.realtimeEnabled !== 'boolean' || value.maximumReconnectDelayMilliseconds < value.reconnectDelayMilliseconds ||
       typeof value.captchaAlphabet !== 'string' || !/^[A-Z0-9]+$/.test(value.captchaAlphabet))
     throw new Error('Invalid public configuration');
   current = Object.freeze({ ...value });

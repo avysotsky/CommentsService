@@ -1,3 +1,4 @@
+using CommentsService.Api.GraphQL;
 using CommentsService.Api.Security;
 using CommentsService.Api.Configuration;
 using CommentsService.Api.Logging;
@@ -54,6 +55,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
     options.ValueLengthLimit = runtime.Requests.FormValueMaxLength;
     options.ValueCountLimit = runtime.Requests.FormValueCountLimit;
 });
+builder.Services.AddCommentGraphQL(runtime);
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.WebHost.ConfigureKestrel(options => { options.AddServerHeader = false; options.Limits.MaxRequestBodySize = runtime.Requests.BodyMaxBytes; });
@@ -100,9 +102,11 @@ app.UseWebSockets(new WebSocketOptions
 });
 app.UseExceptionHandler();
 app.UseStatusCodePages();
+app.UseCommentGraphQLTransport();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+if (runtime.GraphQL.Enabled) app.MapGraphQLHttp("/api/graphql");
 app.MapSystemEndpoints();
 app.MapCommentsEndpoints();
 app.MapCaptchaEndpoints();

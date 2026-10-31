@@ -1,5 +1,11 @@
 # Backend architecture / Архитектура backend / Архітектура backend
 
+EN: GraphQL adds a bounded read-only /api/graphql endpoint and uses it for SPA root-page reads. Existing REST writes/replies/files, Events/Cache/Queue/WebSocket and PostgreSQL data remain. Runtime.GraphQL adds validated limits; only graphQLEnabled is public. No schema migration, broker, NoSQL or cloud. This completes the Graph item only, not the entire Middle level. [GraphQL](GRAPHQL.md).
+
+RU: GraphQL добавляет ограниченный endpoint чтения /api/graphql и чтение корневой страницы SPA через него. Прежние REST-запись/ответы/файлы, Events/Cache/Queue/WebSocket и данные PostgreSQL сохранены. Runtime.GraphQL задаёт проверяемые лимиты; публичен только graphQLEnabled. Миграций схемы, брокера, NoSQL и Cloud нет. Выполнен только пункт Graph, а не весь Middle. [GraphQL](GRAPHQL.md).
+
+UA: GraphQL додає обмежений endpoint читання /api/graphql і читання кореневої сторінки SPA через нього. Попередні REST-запис/відповіді/файли, Events/Cache/Queue/WebSocket та дані PostgreSQL збережено. Runtime.GraphQL задає перевірювані межі; публічний лише graphQLEnabled. Міграцій схеми, брокера, NoSQL та Cloud немає. Виконано лише пункт Graph, а не весь Middle. [GraphQL](GRAPHQL.md).
+
 ## English
 
 TXT attachments (1.1.0.11): roots and replies accept one optional attachment: an image OR a `.txt` file. TXT must contain 1..102400 bytes (100 KiB), strict UTF-8; BOM, Unicode, CR/LF and tabs are preserved byte-for-byte. Invalid encoding and control characters other than CR/LF/tab are rejected; HTML/script text is accepted as literal text. Filename/MIME do not establish content validity. Multipart uses `textFile` with the usual comment/CAPTCHA fields; never send both file parts. JSON text-only creation remains available. Invalid TXT returns 400/errors.textFile. CAPTCHA is consumed before content processing; retry with a fresh code. The localized picker keeps draft/file on errors, clears on success and permits removing/replacing a selection.

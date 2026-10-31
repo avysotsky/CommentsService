@@ -71,7 +71,7 @@ public sealed class RuntimeLimitsTests : IClassFixture<ApiFixture>
         var names = config.RootElement.EnumerateObject().Select(property => property.Name).Order().ToArray();
         Assert.Equal(new[] { "captchaAlphabet", "captchaCodeLength", "captchaLifetimeSeconds", "defaultListLimit", "emailMaxLength", "homePageMaxLength",
             "imageMaxHeight", "imageMaxWidth", "imageUploadMaxBytes", "maximumListLimit", "rootPageSize", "textFileMaxBytes",
-            "textMaxLength", "userNameMaxLength", "realtimeEnabled", "reconnectDelayMilliseconds", "maximumReconnectDelayMilliseconds" }.Order(), names);
+            "textMaxLength", "userNameMaxLength", "graphQLEnabled", "realtimeEnabled", "reconnectDelayMilliseconds", "maximumReconnectDelayMilliseconds" }.Order(), names);
         Assert.Equal(8, config.RootElement.GetProperty("captchaCodeLength").GetInt32());
         using var page = JsonDocument.Parse(await client.GetStringAsync("/api/comments/page"));
         Assert.Equal(7, page.RootElement.GetProperty("pageSize").GetInt32());

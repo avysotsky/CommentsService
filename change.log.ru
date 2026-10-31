@@ -2,6 +2,14 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.3.3.1 GraphQL - 2026-10-31
+
+`CommentsService/v_1.3.3.1_GraphQL`
+
+GraphQL добавляет ограниченный endpoint чтения /api/graphql и чтение корневой страницы SPA через него. Прежние REST-запись/ответы/файлы, Events/Cache/Queue/WebSocket и данные PostgreSQL сохранены. Runtime.GraphQL задаёт проверяемые лимиты; публичен только graphQLEnabled. Миграций схемы, брокера, NoSQL и Cloud нет. Выполнен только пункт Graph, а не весь Middle.
+
+Прошли 370 различных backend-тестов (27 Domain / 85 Application / 67 Data / 191 API, включая финальный целевой повтор), 33 frontend-теста, сборки frontend/Docker, Edge с тремя окнами/CAPTCHA/корнем/ответом/WS-обновлением/переподключением/сохранением черновика и запроса/EN-RU-UA/360px и 18 сценариев GraphQL сохранённого миллиона по два замера с паритетом порядка REST. Прошли реальные HTTP-ограничения байтов/кодировки/глубины/вариантов маршрута и публичные HTTPS/GraphQL/WSS. Исходные данные, схема, копии, окружение, тома и прежний preview сохранены. Reboot и прежняя приёмка heartbeat не повторялись. [GraphQL](docs/GRAPHQL.md).
+
 ## 1.2.2.4 LiveComments — 2026-10-31
 
 `CommentsService/v_1.2.2.4_LiveComments`

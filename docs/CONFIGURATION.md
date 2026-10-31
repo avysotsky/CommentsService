@@ -1,5 +1,11 @@
 # Backend configuration / Конфигурация / Конфігурація
 
+EN: GraphQL adds a bounded read-only /api/graphql endpoint and uses it for SPA root-page reads. Existing REST writes/replies/files, Events/Cache/Queue/WebSocket and PostgreSQL data remain. Runtime.GraphQL adds validated limits; only graphQLEnabled is public. No schema migration, broker, NoSQL or cloud. This completes the Graph item only, not the entire Middle level. [GraphQL](GRAPHQL.md).
+
+RU: GraphQL добавляет ограниченный endpoint чтения /api/graphql и чтение корневой страницы SPA через него. Прежние REST-запись/ответы/файлы, Events/Cache/Queue/WebSocket и данные PostgreSQL сохранены. Runtime.GraphQL задаёт проверяемые лимиты; публичен только graphQLEnabled. Миграций схемы, брокера, NoSQL и Cloud нет. Выполнен только пункт Graph, а не весь Middle. [GraphQL](GRAPHQL.md).
+
+UA: GraphQL додає обмежений endpoint читання /api/graphql і читання кореневої сторінки SPA через нього. Попередні REST-запис/відповіді/файли, Events/Cache/Queue/WebSocket та дані PostgreSQL збережено. Runtime.GraphQL задає перевірювані межі; публічний лише graphQLEnabled. Міграцій схеми, брокера, NoSQL та Cloud немає. Виконано лише пункт Graph, а не весь Middle. [GraphQL](GRAPHQL.md).
+
 EN: Junior+ adds validated Runtime.Cache, Runtime.Notifications and Runtime.Realtime. Old files without these sections use compatible defaults. Only realtime enabled/reconnect delays join the public allowlist; cache/queue/connection policies remain private. [Keys, defaults, ranges and behavior](JUNIOR_PLUS.md).
 
 RU: Junior+ добавляет проверяемые Runtime.Cache, Runtime.Notifications и Runtime.Realtime. Старые файлы без секций используют совместимые значения по умолчанию. Публичный список дополнен только включением realtime и задержками переподключения; политики кеша/очереди/соединений приватны. [Ключи, значения, диапазоны и поведение](JUNIOR_PLUS.md).

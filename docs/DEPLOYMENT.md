@@ -1,5 +1,11 @@
 # Deployment 1.1.1.16 / Развёртывание / Розгортання
 
+EN: GraphQL adds a bounded read-only /api/graphql endpoint and uses it for SPA root-page reads. Existing REST writes/replies/files, Events/Cache/Queue/WebSocket and PostgreSQL data remain. Runtime.GraphQL adds validated limits; only graphQLEnabled is public. No schema migration, broker, NoSQL or cloud. This completes the Graph item only, not the entire Middle level. [GraphQL](GRAPHQL.md).
+
+RU: GraphQL добавляет ограниченный endpoint чтения /api/graphql и чтение корневой страницы SPA через него. Прежние REST-запись/ответы/файлы, Events/Cache/Queue/WebSocket и данные PostgreSQL сохранены. Runtime.GraphQL задаёт проверяемые лимиты; публичен только graphQLEnabled. Миграций схемы, брокера, NoSQL и Cloud нет. Выполнен только пункт Graph, а не весь Middle. [GraphQL](GRAPHQL.md).
+
+UA: GraphQL додає обмежений endpoint читання /api/graphql і читання кореневої сторінки SPA через нього. Попередні REST-запис/відповіді/файли, Events/Cache/Queue/WebSocket та дані PostgreSQL збережено. Runtime.GraphQL задає перевірювані межі; публічний лише graphQLEnabled. Міграцій схеми, брокера, NoSQL та Cloud немає. Виконано лише пункт Graph, а не весь Middle. [GraphQL](GRAPHQL.md).
+
 EN Junior+ update: WebSocket /api/comments/live requires HTTP/1.1 Upgrade forwarding, original Host/Origin, trusted overwritten X-Forwarded-Proto/For, buffering disabled and heartbeat-compatible timeouts. Current public WSS handshake, reconnect and45s heartbeat were verified without public database writes. This extends the application virtual host only. [Protocol/configuration](JUNIOR_PLUS.md).
 
 RU Обновление Junior+: /api/comments/live требует передачи Upgrade через HTTP/1.1, исходных Host/Origin, доверенных заменённых X-Forwarded-Proto/For, отключённой буферизации и таймаутов для heartbeat. Публичные WSS/переподключение/heartbeat45с проверены без записи в публичную БД. Расширен только виртуальный хост приложения. [Протокол/конфиг](JUNIOR_PLUS.md).

@@ -10,6 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Update="config.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
     <ProjectReference Include="../CommentsService.Application/CommentsService.Application.csproj" />
     <ProjectReference Include="../CommentsService.Infrastructure/CommentsService.Infrastructure.csproj" />
     <!-- Design-time EF startup tooling only; runtime persistence belongs to Infrastructure. -->

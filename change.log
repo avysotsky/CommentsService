@@ -2,6 +2,12 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.1.15 Logging — 2026-10-31
+
+`CommentsService/v_1.1.1.15_Logging`
+
+Added a DI-owned Serilog console/file JSON pipeline, validated config levels/category overrides, instance identity, request traces, safe operation events and separate persistent Docker log storage. Daily/size rotation and retained-file limits; directory startup probe, stderr sink diagnostics and shutdown disposal. Framework/provider raw events and exception messages are excluded from the application data policy. Domain/Application remain framework-free. No schema change.
+
 ## 1.1.1.15 Configuration — 2026-10-31
 
 `CommentsService/v_1.1.1.15_Configuration`

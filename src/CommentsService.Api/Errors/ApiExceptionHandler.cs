@@ -15,7 +15,7 @@ public sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : I
             JsonException => StatusCodes.Status400BadRequest,
             _ => StatusCodes.Status500InternalServerError
         };
-        if (status >= 500) logger.LogError(exception, "Request failed with status {Status}; trace {TraceId}.", status, context.TraceIdentifier);
+        if (status >= 500) logger.LogError("Request failed with status {Status}; trace {TraceId}; type {ErrorType}.", status, context.TraceIdentifier, exception.GetType().Name);
         else logger.LogInformation("Request rejected with status {Status}; trace {TraceId}.", status, context.TraceIdentifier);
         await Results.Problem(statusCode: status, title: status switch
         {

@@ -2,6 +2,13 @@
   "Runtime": {
     "InstanceId": "commentsservice",
     "HealthPort": 8080,
+    "Logging": {
+      "MinimumLevel": "Information",
+      "Overrides": {},
+      "Directory": "logs",
+      "FileSizeLimitBytes": 10485760,
+      "RetainedFileCountLimit": 14
+    },
     "Database": {
       "Port": 5432,
       "TimeoutSeconds": 15,

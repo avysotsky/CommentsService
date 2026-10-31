@@ -55,3 +55,4 @@ Desktop.ini
 # Generated Python caches
 **/__pycache__/
 *.pyc
+**/logs/

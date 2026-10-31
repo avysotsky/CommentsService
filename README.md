@@ -1,6 +1,8 @@
 # CommentsService
 
-Version: **1.1.1.15** · Branch: `CommentsService/v_1.1.1.15_Configuration`
+Version: **1.1.1.15** · Branch: `CommentsService/v_1.1.1.15_Logging`
+
+Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 
 Backend `config.json` supports validated per-instance identity, database connection settings and health port; environment/CLI overrides and PG variables remain supported. [Configuration and Docker mounts](docs/CONFIGURATION.md). Configuration verification: 270 existing backend tests and 7 new configuration tests passed. Logging and acceptance recheck follow.
 

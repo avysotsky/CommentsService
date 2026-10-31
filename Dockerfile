@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libgssapi-krb5-
 WORKDIR /app
 COPY --from=backend /out/ ./
 COPY docs/third-party/ /app/third-party/
+RUN mkdir -p /app/logs && chown $APP_UID /app/logs
 USER $APP_UID
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080

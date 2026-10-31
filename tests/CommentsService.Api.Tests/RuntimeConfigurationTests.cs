@@ -23,6 +23,9 @@ public sealed class RuntimeConfigurationTests
     [InlineData("Runtime:Database:TimeoutSeconds", "301")]
     [InlineData("Runtime:InstanceId", "../unsafe")]
     [InlineData("Runtime:HealthPort", "65536")]
+    [InlineData("Runtime:Logging:MinimumLevel", "bogus")]
+    [InlineData("Runtime:Logging:FileSizeLimitBytes", "0")]
+    [InlineData("Runtime:Logging:RetainedFileCountLimit", "0")]
     public void InvalidConfigurationFailsWithoutEchoingValues(string key, string value)
     {
         var configuration = new ConfigurationManager();

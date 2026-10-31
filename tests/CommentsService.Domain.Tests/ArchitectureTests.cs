@@ -31,7 +31,7 @@ public sealed class ArchitectureTests
         Assert.Equal(new[] { "CommentsService.Application", "CommentsService.Infrastructure" }, References("CommentsService.Api"));
         var packages = Project("CommentsService.Api").Descendants("PackageReference")
             .Select(x => x.Attribute("Include")!.Value).ToArray();
-        Assert.All(packages, package => Assert.Equal("Microsoft.EntityFrameworkCore.Design", package));
+        Assert.All(packages, package => Assert.Contains(package, new[] { "Microsoft.EntityFrameworkCore.Design", "Serilog.AspNetCore", "Serilog.Sinks.File" }));
     }
 
     [Fact]

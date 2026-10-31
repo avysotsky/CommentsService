@@ -17,6 +17,8 @@ services:
 
   app:
     build: .
+    volumes:
+      - application_logs:/app/logs
     environment:
       PGHOST: database
       PGDATABASE: comments
@@ -49,5 +51,6 @@ services:
     restart: unless-stopped
 
 volumes:
+  application_logs:
   development_data:
   test_data:

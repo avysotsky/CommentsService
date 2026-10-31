@@ -10,10 +10,13 @@ public sealed class RuntimeConfigurationTests
     public void DefaultsAndCommandLineAreValidated()
     {
         var configuration = new ConfigurationManager();
-        var settings = RuntimeConfiguration.Load(configuration, ["--Runtime:InstanceId=instance-two", "--Runtime:Database:MaximumPoolSize=12"]);
+        var settings = RuntimeConfiguration.Load(configuration, ["--Runtime:InstanceId=instance-two", "--Runtime:Database:MaximumPoolSize=12",
+            "--Runtime:Database:Host=cli-host", "--Runtime:Database:Port=5439"]);
         Assert.Equal("instance-two", settings.InstanceId);
         Assert.Equal(12, settings.Database.MaximumPoolSize);
         Assert.Equal(8080, settings.HealthPort);
+        Assert.Equal("cli-host", settings.Database.Host);
+        Assert.Equal(5439, settings.Database.Port);
     }
 
     [Theory]

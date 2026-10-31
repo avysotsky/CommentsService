@@ -6,7 +6,7 @@ Release format: `w.x.y.z`.
 
 - w: global application version; change only when explicitly requested.
 - x: feature version; change only when explicitly requested.
-- y: configuration version; remains 0 until configuration extraction is requested.
+- y: configuration version; increased from 0 to 1 when config.json was implemented in 1.1.1.15 Configuration. Planning alone does not change it.
 - z: revision; increment for the next planned iteration.
 
 Additional work required within an iteration keeps the same w.x.y.z and gets
@@ -30,7 +30,7 @@ Record actual verification results; never claim an unexecuted check passed.
 
 - w — глобальная версия приложения; изменяется только по прямому указанию.
 - x — версия фичи; изменяется только по прямому указанию.
-- y — версия конфига; остаётся 0 до согласованного выноса данных в конфиг.
+- y — версия конфига; повышена с 0 до 1 при реализации config.json в 1.1.1.15 Configuration. Планирование само по себе её не меняет.
 - z — ревизия; увеличивается для следующей плановой итерации.
 
 Дополнительная доработка внутри итерации сохраняет w.x.y.z и получает другое
@@ -53,7 +53,7 @@ Record actual verification results; never claim an unexecuted check passed.
 
 - w — глобальна версія застосунку; змінюється лише за прямою вказівкою.
 - x — версія функціональності; змінюється лише за прямою вказівкою.
-- y — версія конфігурації; залишається 0 до погодженого винесення даних у конфігурацію.
+- y — версія конфігурації; підвищена з 0 до 1 під час реалізації config.json у 1.1.1.15 Configuration. Планування саме по собі її не змінює.
 - z — ревізія; збільшується для наступної планової ітерації.
 
 Додаткове доопрацювання всередині ітерації зберігає w.x.y.z та отримує інший опис

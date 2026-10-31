@@ -5,7 +5,7 @@
 Completed correction: `CommentsService/v_1.1.0.6_HomepageHint` clarifies homepage hints/errors in EN/RU/UA; version/schema unchanged.
 
 The approved sequence starts at `CommentsService/v_1.1.0.1_Init`.
-Current milestone: 1.1.0.15 automated Acceptance passed; Workbench GUI import pending. Onion architecture is preserved. Next planned: 1.1.0.16 Deployment.
+Current milestone: 1.1.1.15 AcceptanceRecheck passed after DtoContracts → Configuration → Logging. Onion architecture is preserved. Workbench GUI import remains pending. Next: 1.1.1.16 Deployment, requiring a target server. [Current verification](ACCEPTANCE_RECHECK.md).
 Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
 Each completed iteration is pushed to its own branch with current read.me,
 README and change.log. README.md is English, README.RU.md Russian, README.UA.md
@@ -66,7 +66,7 @@ The new change.log starts with Init; it must record actual work, not simulated h
 | `CommentsService/v_1.1.0.13_ResponsiveUi` | Final CSS, mobile layout, accessibility, right-to-left text and English messages. No database reset. |
 | `CommentsService/v_1.1.0.14_SecurityReview` | XSS/SQL-injection and upload checks, headers/limits and consistent validation. Run negative cases in the isolated test DB, preserving the large baseline. |
 | `CommentsService/v_1.1.0.15_Acceptance` | Full checklist/browser checks; upgrades across database-changing versions on preserved data; recovery rehearsal; measurements on the retained large set; separate blank-DB installation check; final Workbench/schema verification. |
-| `CommentsService/v_1.1.0.16_Deployment` | Deploy the accepted version, migrate the target database with a prior recovery point, verify HTTPS/external access/persistence and update user/deployment docs. An available server is required. |
+| `CommentsService/v_1.1.1.16_Deployment` | Deploy the accepted version, migrate the target database with a prior recovery point, verify HTTPS/external access/persistence and update user/deployment docs. An available server is required. |
 
 Relevant checks accompany every step. Additional fixes use a separate branch with the same version and a different
 description. Planned subsequent version numbers do not shift.
@@ -92,7 +92,7 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 Завершена доработка `CommentsService/v_1.1.0.6_HomepageHint`: понятные подсказки/ошибки сайта на EN/RU/UA; версия/схема прежние.
 
 Согласованная последовательность начинается с `CommentsService/v_1.1.0.1_Init`.
-Текущий этап 1.1.0.15 автоматическая приёмка прошла; GUI-импорт Workbench не подтверждён. Onion сохранён. Далее по плану — 1.1.0.16 Deployment.
+Текущий этап 1.1.1.15 AcceptanceRecheck прошёл после DtoContracts → Configuration → Logging. Onion сохранён. GUI Workbench не подтверждён. Далее 1.1.1.16 Deployment, нужен целевой сервер. [Текущая проверка](ACCEPTANCE_RECHECK.md).
 w=1, x=1, y=0 сохраняются, увеличивается только ревизия z. Вынос в конфиг отложен.
 Каждая завершённая итерация отправляется в свою ветку с актуальными read.me,
 README и change.log. README.md — английский, README.RU.md — русский, README.UA.md —
@@ -155,7 +155,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 | **1.1.0.13 ResponsiveUi** | CSS, мобильная вёрстка, доступность, RTL и английские сообщения. БД не сбрасывается. |
 | **1.1.0.14 SecurityReview** | XSS/SQL-инъекции, файлы, заголовки, ограничения и валидация. Негативные тесты изолированы от большого набора. |
 | **1.1.0.15 Acceptance** | Полная приёмка; обновление между версиями схемы на сохранённых данных; пробное восстановление; замеры большого набора; отдельно установка на пустую БД; проверка схем и Workbench. |
-| **1.1.0.16 Deployment** | Развёртывание, миграция целевой БД после контрольной копии, HTTPS, внешняя проверка и документы. Нужен доступный сервер. |
+| **1.1.1.16 Deployment** | Развёртывание, миграция целевой БД после контрольной копии, HTTPS, внешняя проверка и документы. Нужен доступный сервер. |
 
 Необходимые проверки сопровождают каждый шаг. Отдельная доработка выполняется в ветке той же версии с другим описанием;
 номера следующих плановых итераций не сдвигаются. Функциональный объём
@@ -181,7 +181,7 @@ README и change.log. README.md — английский, README.RU.md — ру�
 Завершено доопрацювання `CommentsService/v_1.1.0.6_HomepageHint`: зрозумілі підказки/помилки сайту на EN/RU/UA; версія/схема попередні.
 
 Погоджена послідовність починається з `CommentsService/v_1.1.0.1_Init`.
-Поточний етап 1.1.0.15 автоматичне приймання пройшло; GUI-імпорт Workbench не підтверджено. Onion збережено. Далі за планом — 1.1.0.16 Deployment.
+Поточний етап 1.1.1.15 AcceptanceRecheck пройшов після DtoContracts → Configuration → Logging. Onion збережено. GUI Workbench не підтверджено. Далі 1.1.1.16 Deployment, потрібен цільовий сервер. [Поточна перевірка](ACCEPTANCE_RECHECK.md).
 w=1, x=1, y=0 зберігаються, збільшується лише ревізія z. Винесення даних у конфігурацію відкладено.
 Кожна завершена ітерація публікується у своїй гілці з актуальними read.me,
 README і change.log. README.md — англійською, README.RU.md — російською, README.UA.md —
@@ -243,7 +243,7 @@ README і change.log. README.md — англійською, README.RU.md — р�
 | **1.1.0.13 ResponsiveUi** | CSS, мобільна верстка, доступність, RTL і англомовні повідомлення. БД не скидається. |
 | **1.1.0.14 SecurityReview** | XSS/SQL-ін’єкції, файли, заголовки, обмеження та валідація. Негативні тести ізольовані від великого набору. |
 | **1.1.0.15 Acceptance** | Повна перевірка; міграції між версіями на збережених даних; пробне відновлення; вимірювання великого набору; окремо порожня БД; схеми та Workbench. |
-| **1.1.0.16 Deployment** | Розгортання, міграція цільової БД після контрольної копії, HTTPS, зовнішня перевірка та документи. Потрібен доступний сервер. |
+| **1.1.1.16 Deployment** | Розгортання, міграція цільової БД після контрольної копії, HTTPS, зовнішня перевірка та документи. Потрібен доступний сервер. |
 
 Необхідні перевірки супроводжують кожен крок. Окреме доопрацювання виконується в гілці тієї самої версії з іншим описом;
 номери наступних планових ітерацій не зсуваються. Функціональний обсяг залишається

@@ -1,12 +1,14 @@
 # CommentsService
 
-Version: **1.1.1.15** · Branch: `CommentsService/v_1.1.1.15_Logging`
+Version: **1.1.1.15** · Branch: `CommentsService/v_1.1.1.15_AcceptanceRecheck`
+
+AcceptanceRecheck passed: 283 backend tests (27/84/56/116), 26 frontend tests, frontend/Docker builds, Edge desktop/360px, 18 retained-million cases, per-instance config/log checks and original-data fingerprints. [Current verification report](docs/ACCEPTANCE_RECHECK.md). Workbench GUI remains pending; Deployment 1.1.1.16 needs a target server.
 
 Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 
-Backend `config.json` supports validated per-instance identity, database connection settings and health port; environment/CLI overrides and PG variables remain supported. [Configuration and Docker mounts](docs/CONFIGURATION.md). Configuration verification: 270 existing backend tests and 7 new configuration tests passed. Logging and acceptance recheck follow.
+Backend `config.json` supports validated per-instance identity, database connection settings and health port; environment/CLI overrides and PG variables remain supported. Explicit CLI settings take precedence over PG variables. [Configuration and Docker mounts](docs/CONFIGURATION.md).
 
-DTO contracts are grouped in the owning Application/API layers, one type per file. Explicit comment mapping is separate; JSON, routes and database schema are unchanged. DtoContracts verification: 270 backend tests (27/84/56/103). Configuration and logging remain the next corrections; the acceptance report describes the preceding Acceptance release.
+DTO contracts are grouped in the owning Application/API layers, one type per file. Explicit comment mapping is separate; JSON, routes and database schema are unchanged. The original acceptance report describes the preceding 1.1.0.15 release.
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 

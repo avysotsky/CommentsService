@@ -10,6 +10,12 @@ public static class RuntimeConfiguration
             configuration.AddJsonFile(selected is null ? Path.Combine(AppContext.BaseDirectory, "config.json") : Path.GetFullPath(selected),
                 optional: selected is null, reloadOnChange: false);
             configuration.AddEnvironmentVariables();
+            var postgres = new Dictionary<string, string?>();
+            foreach (var pair in new Dictionary<string, string> { ["PGHOST"] = "Host", ["PGPORT"] = "Port",
+                ["PGDATABASE"] = "Database", ["PGUSER"] = "Username" })
+                if (Environment.GetEnvironmentVariable(pair.Key) is { } value)
+                    postgres["Runtime:Database:" + pair.Value] = value;
+            configuration.AddInMemoryCollection(postgres);
             configuration.AddCommandLine(args);
             var settings = configuration.GetSection("Runtime").Get<RuntimeSettings>() ?? new();
             settings.Validate();

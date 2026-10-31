@@ -1,40 +1,28 @@
-CommentsService — 1.1.1.15 Logging
-Branch: CommentsService/v_1.1.1.15_Logging
-
-EN: Structured console/file logs, configurable levels/rotation, InstanceId/TraceId and persistent log volume. [Logging](docs/LOGGING.md). Next: AcceptanceRecheck.
-
-RU: Структурированные логи консоли/файла, уровни/ротация из конфига, InstanceId/TraceId и постоянный том логов. [Логи](docs/LOGGING.md). Далее AcceptanceRecheck.
-
-UA: Структуровані логи консолі/файла, рівні/ротація з конфігу, InstanceId/TraceId і постійний том логів. [Логи](docs/LOGGING.md). Далі AcceptanceRecheck.
-
-EN: Validated per-instance backend config.json; defaults/JSON/environment/CLI priority, PG compatibility and fixed security ceilings. 270 existing backend tests + 7 configuration tests passed. [Settings](docs/CONFIGURATION.md). Next: Logging, AcceptanceRecheck.
-
-RU: Проверяемый backend config.json каждого инстанса; приоритет defaults/JSON/окружение/CLI, PG-совместимость и жёсткие пределы безопасности. Прошли 270 прежних backend + 7 проверок конфигурации. [Параметры](docs/CONFIGURATION.md). Далее Logging, AcceptanceRecheck.
-
-UA: Перевірюваний backend config.json кожного інстанса; пріоритет defaults/JSON/оточення/CLI, PG-сумісність і жорсткі межі безпеки. Пройшли 270 попередніх backend + 7 перевірок конфігурації. [Параметри](docs/CONFIGURATION.md). Далі Logging, AcceptanceRecheck.
-
-EN: DTO folders belong to Application/API; explicit mapping is separate. JSON/schema unchanged; 270 backend tests passed. Configuration → Logging → AcceptanceRecheck follow. Acceptance evidence below belongs to the preceding release.
-
-RU: Папки DTO принадлежат Application/API; маппинг вынесен отдельно. JSON/схема сохранены; прошли 270 backend-тестов. Далее Configuration → Logging → AcceptanceRecheck. Ниже — приёмка предыдущего выпуска.
-
-UA: Папки DTO належать Application/API; маппінг винесено окремо. JSON/схему збережено; пройшли 270 backend-тестів. Далі Configuration → Logging → AcceptanceRecheck. Нижче — приймання попереднього випуску.
+CommentsService — 1.1.1.15 AcceptanceRecheck
+Branch: CommentsService/v_1.1.1.15_AcceptanceRecheck
 
 [EN change log](change.log) · [RU](change.log.ru) · [UA](change.log.ua)
 
 ## English
 
-Comments/replies, XHTML toolbar/preview, CAPTCHA, sorting/pagination, image OR UTF-8 TXT attachments, modal viewer/downloads, EN/RU/UA and mobile/RTL UI. .NET 10/React/PostgreSQL 17/Docker; Onion/OOP/SOLID. [Installation and updates](README.md). Generate a private environment once, keep the same Compose project/volumes and apply migrations explicitly; never reset shared data for tests.
+.NET 10 / React / PostgreSQL 17 / Docker, Onion/OOP/SOLID. Comments/replies, XHTML, CAPTCHA, sorting/pagination, one image or UTF-8 TXT, viewer/downloads and EN/RU/UA responsive UI. Layer-owned DTOs preserve JSON; backend config.json supports independent instances; structured console/file logs use configurable levels, rolling retention and InstanceId/TraceId.
 
-Automated local acceptance passed for 1.1.0.15: 268 backend tests (27/84/56/101), 26 frontend tests, frontend/Docker builds and no pending EF model changes. The shipped idempotent SQL equals generated EF SQL apart from trailing whitespace. All four schema upgrades preserved fixtures; three populated-feature downgrade guards and safe feature-empty downgrades passed. Three existing checkpoints, including the retained million-row corpus, restored and upgraded without changing their source files. A separate empty installation followed the README, verified limited application roles, passed FileViewer/ResponsiveUi/Security browser suites, restored current data with 7 exact attachments and retained them across container recreation. Pagination UI passed 27 roots/25-per-page/all 6 sorts/URL/draft/new-root/reply behavior. All 18 retained-million measurements passed without reseeding. Metadata parity passed for 5 tables/25 columns/12 indexes/4 FKs/6 checks. Original databases, corpus, volumes, environment, checkpoint hashes and existing preview identity/state were preserved. New portable tools: scripts/verify-schema.py and scripts/verify-checkpoint.py. No migration/dependency changes; Onion/OOP/SOLID retained. GUI import in MySQL Workbench remains unverified because the app/UI automation was unavailable; SQL parity is not a substitute for that check. Next planned stage: 1.1.0.16 Deployment. [Acceptance details](docs/ACCEPTANCE.md).
+[Installation/update](README.md) · [Configuration](docs/CONFIGURATION.md) · [Logging](docs/LOGGING.md) · [Current checks](docs/ACCEPTANCE_RECHECK.md). Keep project/environment/database volumes, apply migrations explicitly and preserve checkpoints/corpus; never reset shared data for tests.
+
+Passed: 283 backend tests, 26 frontend, frontend/Docker builds, independent configuration/logging checks, Edge desktop/360px and 18 retained-million cases. Original rows/schema/history/environment/database volumes/checkpoints/preview preserved; dedicated persistent log volume added. Workbench GUI remains pending. Deployment 1.1.1.16 requires a target server.
 
 ## Русский
 
-Комментарии/ответы, XHTML-редактор/просмотр, CAPTCHA, сортировка/пагинация, изображение ИЛИ UTF-8 TXT, модальный просмотр/скачивание, EN/RU/UA и мобильный/RTL UI. .NET 10/React/PostgreSQL 17/Docker; Onion/OOP/SOLID. [Установка и обновления](README.RU.md). Создайте приватное окружение один раз, сохраняйте Compose-проект/тома и применяйте миграции явно; не сбрасывайте общие данные для тестов.
+.NET 10 / React / PostgreSQL 17 / Docker, Onion/OOP/SOLID. Комментарии/ответы, XHTML, CAPTCHA, сортировка/пагинация, изображение или UTF-8 TXT, просмотр/скачивание, адаптивный EN/RU/UA UI. DTO принадлежат слоям и сохраняют JSON; backend config.json поддерживает независимые инстансы; структурированные console/file логи имеют уровни, ротацию/хранение и InstanceId/TraceId.
 
-Автоматическая локальная приёмка 1.1.0.15 прошла: 268 backend-тестов (27/84/56/101), 26 frontend, сборки frontend/Docker и отсутствие изменений модели EF. Идемпотентный SQL совпал с генерацией EF, кроме завершающих пробелов. Четыре обновления схемы сохранили фикстуры; прошли три запрета отката заполненных фич и безопасные откаты пустых фич. Три существующие копии, включая миллион строк, восстановлены/обновлены без изменения исходных файлов. Отдельная пустая установка выполнена по README, проверены ограниченные роли; прошли браузерные FileViewer/ResponsiveUi/Security, восстановление текущих данных с 7 точными вложениями и пересоздание контейнера без потерь. UI пагинации прошёл 27 корней/25 на странице/6 сортировок/URL/черновик/новый корень/ответ. Все 18 замеров сохранённого миллиона прошли без генерации. Совпали метаданные 5 таблиц/25 колонок/12 индексов/4 FK/6 checks. Исходные БД, набор, тома, окружение, хеши копий и ID/состояние прежнего просмотра сохранены. Новые переносимые инструменты: scripts/verify-schema.py и scripts/verify-checkpoint.py. Миграций/зависимостей нет; Onion/OOP/SOLID сохранены. GUI-импорт MySQL Workbench не подтверждён из-за недоступности приложения/управления окнами; сравнение SQL его не заменяет. Следующий плановый этап: 1.1.0.16 Deployment. [Подробности приёмки](docs/ACCEPTANCE.md).
+[Установка/обновление](README.RU.md) · [Конфигурация](docs/CONFIGURATION.md) · [Логи](docs/LOGGING.md) · [Текущие проверки](docs/ACCEPTANCE_RECHECK.md). Сохраняйте проект/окружение/тома БД, применяйте миграции явно, сохраняйте копии/набор; не сбрасывайте общие данные для тестов.
+
+Прошли 283 backend, 26 frontend, сборки frontend/Docker, независимые конфиги/логи, Edge desktop/360px и 18 сценариев миллиона. Исходные строки/схема/история/окружение/тома БД/копии/просмотр сохранены; добавлен отдельный постоянный том логов. GUI Workbench pending. Deployment 1.1.1.16 требует целевой сервер.
 
 ## Українська
 
-Коментарі/відповіді, XHTML-редактор/перегляд, CAPTCHA, сортування/пагінація, зображення АБО UTF-8 TXT, модальний перегляд/завантаження, EN/RU/UA та мобільний/RTL UI. .NET 10/React/PostgreSQL 17/Docker; Onion/OOP/SOLID. [Встановлення й оновлення](README.UA.md). Створіть приватне оточення один раз, зберігайте Compose-проєкт/томи та застосовуйте міграції явно; не скидайте спільні дані для тестів.
+.NET 10 / React / PostgreSQL 17 / Docker, Onion/OOP/SOLID. Коментарі/відповіді, XHTML, CAPTCHA, сортування/пагінація, зображення або UTF-8 TXT, перегляд/завантаження, адаптивний EN/RU/UA UI. DTO належать шарам і зберігають JSON; backend config.json підтримує незалежні інстанси; структуровані console/file логи мають рівні, ротацію/зберігання та InstanceId/TraceId.
 
-Автоматичне локальне приймання 1.1.0.15 пройшло: 268 backend-тестів (27/84/56/101), 26 frontend, збирання frontend/Docker та відсутність змін моделі EF. Ідемпотентний SQL збігся з генерацією EF, крім завершальних пробілів. Чотири оновлення схеми зберегли фікстури; пройшли три заборони відкочування заповнених фіч і безпечні відкочування порожніх фіч. Три наявні копії, включно з мільйоном рядків, відновлено/оновлено без зміни початкових файлів. Окреме порожнє встановлення виконано за README, перевірено обмежені ролі; пройшли браузерні FileViewer/ResponsiveUi/Security, відновлення поточних даних із 7 точними вкладеннями й повторне створення контейнера без втрат. UI пагінації пройшов 27 коренів/25 на сторінці/6 сортувань/URL/чернетку/новий корінь/відповідь. Усі 18 вимірювань збереженого мільйона пройшли без генерації. Збіглися метадані 5 таблиць/25 колонок/12 індексів/4 FK/6 checks. Початкові БД, набір, томи, оточення, хеші копій та ID/стан попереднього перегляду збережено. Нові переносимі інструменти: scripts/verify-schema.py і scripts/verify-checkpoint.py. Міграцій/залежностей немає; Onion/OOP/SOLID збережено. GUI-імпорт MySQL Workbench не підтверджено через недоступність застосунку/керування вікнами; порівняння SQL його не замінює. Наступний плановий етап: 1.1.0.16 Deployment. [Подробиці приймання](docs/ACCEPTANCE.md).
+[Установка/оновлення](README.UA.md) · [Конфігурація](docs/CONFIGURATION.md) · [Логи](docs/LOGGING.md) · [Поточні перевірки](docs/ACCEPTANCE_RECHECK.md). Зберігайте проєкт/оточення/томи БД, застосовуйте міграції явно, зберігайте копії/набір; не скидайте спільні дані для тестів.
+
+Пройшли 283 backend, 26 frontend, збирання frontend/Docker, незалежні конфіги/логи, Edge desktop/360px та 18 сценаріїв мільйона. Початкові рядки/схему/історію/оточення/томи БД/копії/перегляд збережено; додано окремий постійний том логів. GUI Workbench pending. Deployment 1.1.1.16 потребує цільовий сервер.

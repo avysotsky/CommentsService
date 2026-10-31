@@ -2,6 +2,14 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.1.15 AcceptanceRecheck — 2026-10-31
+
+Corrected database-setting precedence so explicit CLI host/port override PG environment variables; regression coverage added.
+
+`CommentsService/v_1.1.1.15_AcceptanceRecheck`
+
+Acceptance recheck passed: 283 backend tests (27/84/56/116), 26 frontend, frontend/Docker builds, exact DTO contracts, configuration validation and independent Docker instances, console/file parity, logging level/category/concurrency/rolling/retention/flush/storage checks, Edge desktop/360px security/attachments and 18 retained-million cases. Original database/corpus/schema/history/volume/environment/checkpoint/preview fingerprints match. No schema migration or reseeding; previous restore/install/downgrade evidence retained rather than rerun. Workbench GUI remains pending; Deployment requires a target server. See docs/ACCEPTANCE_RECHECK.md.
+
 ## 1.1.1.15 Logging — 2026-10-31
 
 `CommentsService/v_1.1.1.15_Logging`

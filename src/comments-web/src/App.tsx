@@ -7,6 +7,9 @@ import { CommentsTable } from './comments/CommentsTable';
 import { RootPagination } from './comments/RootPagination';
 import { defaultRootQuery, readRootQuery } from './comments/model';
 import type { Comment, CommentsClient, RootPage, RootPageQuery } from './comments/model';
+import { connectComments } from './comments/live';
+import type { LiveState } from './comments/live';
+import { limits } from './runtimeConfig';
 
 export function App({ client, fileClient }: { client: CommentsClient; fileClient: FileClient }) {
   const [language, setLanguage] = useState<Language>('en');
@@ -18,11 +21,16 @@ export function App({ client, fileClient }: { client: CommentsClient; fileClient
   const [threadRefresh, setThreadRefresh] = useState(0);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
+  const [hasUpdates, setHasUpdates] = useState(false);
+  const [liveState, setLiveState] = useState<LiveState>('connecting');
+  const changes = useRef(0);
+  const querySnapshot = useRef(query); querySnapshot.current = query;
   const current = useRef<AbortController | null>(null);
   const t = configuredMessages(language);
 
   useEffect(() => { document.documentElement.lang = language; }, [language]);
   const load = useCallback(async (requested: RootPageQuery) => {
+    const observedChanges = changes.current;
     current.current?.abort();
     const controller = new AbortController(); current.current = controller;
     setLoading(true); setFailed(false);
@@ -34,10 +42,18 @@ export function App({ client, fileClient }: { client: CommentsClient; fileClient
           setQuery(previous => ({ ...previous, page: Math.max(1, result.totalPages) })); return;
         }
         setData(result); setLoadedQuery(requested);
+        if (changes.current === observedChanges) setHasUpdates(false);
       }
     } catch { if (!controller.signal.aborted) setFailed(true); }
     finally { if (!controller.signal.aborted) setLoading(false); }
   }, [client]);
+
+  useEffect(() => connectComments({
+    state: setLiveState,
+    changed: () => { changes.current++; setHasUpdates(true); },
+    ready: () => { setThreadRefresh(value => value + 1); void load(querySnapshot.current); },
+  }, { enabled: limits.realtimeEnabled, delay: limits.reconnectDelayMilliseconds,
+    maximumDelay: limits.maximumReconnectDelayMilliseconds }), [load]);
 
   useEffect(() => {
     const url = new URL(location.href);
@@ -64,11 +80,14 @@ export function App({ client, fileClient }: { client: CommentsClient; fileClient
       <label className="language" htmlFor="language">{t.language}<select id="language" aria-label={t.language} value={language} onChange={event => setLanguage(event.target.value as Language)}>
         <option value="en">English</option><option value="ru">Русский</option><option value="uk">Українська</option>
       </select></label></header>
-    <div className="hero"><p className="eyebrow">1.2.2.3</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
+    <div className="hero"><p className="eyebrow">1.2.2.4</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
     <CommentForm client={client} labels={t} onCreated={created} replyTo={replyTo} onCancelReply={() => setReplyTo(null)} />
     <section className="panel comments" aria-labelledby="recent-title" aria-busy={loading}>
       <div className="section-heading"><h2 id="recent-title" tabIndex={-1}>{t.recent}</h2><button className="secondary" onClick={() => { setThreadRefresh(value => value + 1); void load(query); }} disabled={loading}>{t.refresh}</button></div>
       <p className="muted">{t.window}</p>
+      {liveState !== 'disabled' && <p className="muted" role="status">{liveState === 'connected' ? t.liveConnected : t.liveOffline}</p>}
+      {hasUpdates && <div className="live-update" role="status"><span>{t.liveUpdates}</span>{' '}
+        <button className="secondary" onClick={() => { setThreadRefresh(value => value + 1); void load(query); }} disabled={loading}>{t.refresh}</button></div>}
       <RootPagination query={query} data={data} busy={loading} labels={t} onChange={setQuery} />
       <p role="status">{loading ? t.loading : !failed && data?.items.length === 0 ? t.empty : ''}</p>
       {failed && <p role="alert" className="error">{t.loadError} {data && t.previousResults}</p>}
@@ -78,6 +97,6 @@ export function App({ client, fileClient }: { client: CommentsClient; fileClient
           requestAnimationFrame(() => document.getElementById('text')?.focus());
         }} />}
     </section>
-    <footer>CommentsService · 1.2.2.3</footer>
+    <footer>CommentsService · 1.2.2.4</footer>
   </main></>;
 }

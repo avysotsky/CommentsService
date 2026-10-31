@@ -1,4 +1,46 @@
-# Junior+ — Events and read cache
+# Junior+ — 1.2.2.4 LiveComments
+
+## English — current behavior
+
+All four Junior+ tools are integrated: commit comment/attachment in PostgreSQL → publish `CommentCreated` → synchronously invalidate the read cache and enqueue a refresh hint → hosted worker → bounded WebSocket fan-out → browser update notice → existing REST queries. Domain remains independent; Application owns event/delivery ports and its DTOs; Infrastructure owns EF/cache/channel adapters; API owns HTTP, hosting and WebSocket connections. No Middle/Middle+ technology, schema change, new database or durable broker is introduced.
+
+`GET /api/comments/live` upgrades to WebSocket only for an exact same-origin browser request. Missing/foreign Origin is rejected (403), plain HTTP is 400, disabled realtime is 404 and exhausted connection capacity is 503. Each connection has one coalescing pending hint, one sender and one receiver. Slow sends time out and release the connection slot; idle connections exchange native ping/pong. Shutdown cancels connections. Incoming application data is unsupported and ends the connection; the endpoint cannot create comments or run queries. Frames contain only `{"type":"connected"}` or `{"type":"commentsChanged"}`, never comment content or client metadata. There is no message history, acknowledgement or exactly-once guarantee.
+
+The SPA displays a localized update notice without moving a reader's page/sort or replacing a draft. Refresh reloads the current root page and expanded reply branches. On connection/reconnection, it re-reads the current view to recover missed hints. Reconnect uses bounded exponential delay, reset after the server's connected frame; offline/manual refresh remains usable. Browser cleanup cancels reconnect timers and closes the socket. Changes arriving during an HTTP fetch retain the notice. This release is a single-process deployment: cache/queue/subscriptions are process-local; external SQL writes expire from cache by TTL and require manual refresh, and multi-replica coherence is not claimed.
+
+## Русский — текущее поведение
+
+Все четыре инструмента Junior+ связаны: запись комментария/вложения в PostgreSQL → `CommentCreated` → синхронный сброс кеша и сигнал в очередь → фоновый обработчик → ограниченная WebSocket-рассылка → уведомление браузера → прежние REST-запросы. Domain независим; Application владеет портами событий/доставки и своими DTO; Infrastructure — адаптерами EF/кеша/канала; API — HTTP, hosting и WebSocket. Технологии Middle/Middle+, новая схема, БД и долговечный брокер не добавлены.
+
+`GET /api/comments/live` переключается на WebSocket только при точном совпадении Origin с сайтом. Отсутствующий/чужой Origin даёт 403, обычный HTTP — 400, отключённый realtime — 404, исчерпание соединений — 503. У каждого соединения один объединяемый сигнал, один отправитель и один получатель. Медленная отправка завершается по таймауту и освобождает место; в простое работают ping/pong. Остановка отменяет соединения. Входящие прикладные данные не поддерживаются и завершают соединение; endpoint не создаёт комментарии и не запускает запросы. Кадры содержат только `{"type":"connected"}` или `{"type":"commentsChanged"}`, без текста и клиентских метаданных. Истории, подтверждений и гарантии exactly-once нет.
+
+SPA показывает локализованное уведомление, сохраняя страницу/сортировку и черновик. Обновление перечитывает текущую страницу корней и раскрытые ответы. При подключении/переподключении перечитывается текущее представление для восстановления пропущенных сигналов. Повторное подключение использует ограниченную экспоненциальную задержку, сбрасываемую кадром connected; ручное обновление работает и без связи. Закрытие клиента отменяет таймеры и закрывает socket. Изменения во время HTTP-чтения сохраняют уведомление. Выпуск рассчитан на один процесс: кеш/очередь/подписки локальны; внешние SQL-записи видны после TTL и ручного обновления, согласованность реплик не заявляется.
+
+## Українська — поточна поведінка
+
+Усі чотири інструменти Junior+ пов'язані: запис коментаря/вкладення в PostgreSQL → `CommentCreated` → синхронне скидання кешу й сигнал у чергу → фоновий обробник → обмежена WebSocket-розсилка → сповіщення браузера → попередні REST-запити. Domain незалежний; Application володіє портами подій/доставки та своїми DTO; Infrastructure — адаптерами EF/кешу/каналу; API — HTTP, hosting і WebSocket. Технології Middle/Middle+, нову схему, БД і довговічний брокер не додано.
+
+`GET /api/comments/live` перемикається на WebSocket лише за точного збігу Origin із сайтом. Відсутній/чужий Origin дає 403, звичайний HTTP — 400, вимкнений realtime — 404, вичерпання з'єднань — 503. Кожне з'єднання має один об'єднуваний сигнал, одного відправника й одного отримувача. Повільне надсилання завершується за таймаутом і звільняє місце; у простої працюють ping/pong. Зупинка скасовує з'єднання. Вхідні прикладні дані не підтримуються й завершують з'єднання; endpoint не створює коментарів і не запускає запитів. Кадри містять лише `{"type":"connected"}` або `{"type":"commentsChanged"}`, без тексту та клієнтських метаданих. Історії, підтверджень і гарантії exactly-once немає.
+
+SPA показує локалізоване сповіщення, зберігаючи сторінку/сортування й чернетку. Оновлення перечитує поточну сторінку коренів і розгорнуті відповіді. Під час підключення/перепідключення перечитується поточне представлення для відновлення пропущених сигналів. Повторне підключення використовує обмежену експоненціальну затримку, що скидається кадром connected; ручне оновлення працює й без зв'язку. Закриття клієнта скасовує таймери й закриває socket. Зміни під час HTTP-читання зберігають сповіщення. Випуск розрахований на один процес: кеш/черга/підписки локальні; зовнішні SQL-записи видимі після TTL і ручного оновлення, узгодженість реплік не заявляється.
+
+| `Runtime.Realtime` | Default / По умолчанию / Типово | Range / Диапазон / Діапазон |
+| --- | --- | --- |
+| Enabled | true | true/false |
+| MaximumConnections | 256 | 1–4096 |
+| SendTimeoutSeconds | 5 | 1–30 |
+| KeepAliveSeconds | 20 | 5–60 |
+| KeepAliveTimeoutSeconds | 10 | 1–30 |
+| ReconnectDelayMilliseconds | 1000 | 100–60000 |
+| MaximumReconnectDelayMilliseconds | 30000 | ReconnectDelayMilliseconds–120000 |
+
+EN: New Cache/Notifications/Realtime sections are additive. Old private config files use defaults when sections are absent; all original settings/PG/env/CLI precedence remain. Restart to apply changes. Only `realtimeEnabled`, `reconnectDelayMilliseconds` and `maximumReconnectDelayMilliseconds` are added to the public allowlist. The first config change moved y=1→2 at revision2; later revisions retain y=2 without resetting z. No migration or checkpoint replacement is required. Preserve your project/environment/overrides/volumes and rebuild only the app. Reverse proxies must forward the WebSocket upgrade on this route over HTTP/1.1, preserve Host/Origin, overwrite trusted forwarded headers, disable buffering and allow heartbeat traffic. [Microsoft WebSocket guidance](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/websockets?view=aspnetcore-10.0), [nginx WebSocket proxying](https://nginx.org/en/docs/http/websocket.html).
+
+RU: Новые секции Cache/Notifications/Realtime добавлены совместимо. Старые приватные конфиги используют значения по умолчанию при отсутствии секций; прежние настройки и приоритет PG/env/CLI сохраняются. Изменения требуют перезапуска. Публичный список дополнен только `realtimeEnabled`, `reconnectDelayMilliseconds`, `maximumReconnectDelayMilliseconds`. Первое изменение конфига увеличило y=1→2 на ревизии2; последующие ревизии сохраняют y=2 без сброса z. Миграции и замена копий не нужны. Сохраняйте проект/окружение/overrides/тома, пересобирайте только app. Обратный прокси должен передавать WebSocket Upgrade этого маршрута через HTTP/1.1, сохранять Host/Origin, заменять доверенные forwarded headers, отключать буферизацию и пропускать heartbeat. Ссылки Microsoft/nginx приведены выше.
+
+UA: Нові секції Cache/Notifications/Realtime додано сумісно. Старі приватні конфіги використовують типові значення за відсутності секцій; попередні налаштування й пріоритет PG/env/CLI збережено. Зміни потребують перезапуску. Публічний список доповнено лише `realtimeEnabled`, `reconnectDelayMilliseconds`, `maximumReconnectDelayMilliseconds`. Перша зміна конфігу збільшила y=1→2 на ревізії2; наступні ревізії зберігають y=2 без скидання z. Міграції й заміна копій не потрібні. Зберігайте проєкт/оточення/overrides/томи, перебудовуйте лише app. Зворотний проксі має передавати WebSocket Upgrade цього маршруту через HTTP/1.1, зберігати Host/Origin, замінювати довірені forwarded headers, вимикати буферизацію та пропускати heartbeat. Посилання Microsoft/nginx наведено вище.
+
+EN: The sections below record what each earlier iteration delivered; their pending items were completed by 1.2.2.4. RU: Ниже — записи прежних итераций; их будущие пункты завершены в 1.2.2.4. UA: Нижче — записи попередніх ітерацій; їхні майбутні пункти завершено в 1.2.2.4.
 
 ## Notification queue / Очередь уведомлений / Черга сповіщень — 1.2.2.3
 

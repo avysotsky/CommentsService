@@ -1,10 +1,10 @@
 # CommentsService
 
-Version: **1.2.2.3** · `CommentsService/v_1.2.2.3_NotificationQueue`
+Version: **1.2.2.4** · `CommentsService/v_1.2.2.4_LiveComments`
 
-Bounded process-local refresh queue with coalescing, background delivery, bounded retries and cancellable shutdown. Persisted comments remain independent of hints. Additive Notifications settings retain compatibility; WebSocket delivery follows next. Backend suites now run sequentially to avoid shared-test-database count races.
+Junior+ integrates post-commit Events, a bounded read Cache, a coalescing notification Queue and same-origin WebSocket updates. New comments/replies show a localized refresh notice; reconnect re-reads data while preserving drafts, page and sort. Additive Cache/Notifications/Realtime settings support old config files. PostgreSQL remains authoritative; notifications/cache are process-local, not durable or multi-replica. No schema migration, new broker, NoSQL or cloud dependency.
 
-327 backend tests (27/85/67/148). EN: queue/retry/shutdown; RU: очередь/повторы/остановка; UA: черга/повтори/зупинка. No migration / Без миграции / Без міграції.
+Passed:337 backend tests (27/85/67/158),31 frontend tests, frontend/Docker builds, real Edge multi-window root/reply/CAPTCHA/refresh/reconnect/draft/sort/EN-RU-UA/360px,18 retained-million cases and public HTTPS/WSS/reconnect/45s heartbeat. Original data/schema/checkpoints/volumes preserved. Host reboot was not repeated.
 
 [Junior+](docs/JUNIOR_PLUS.md)
 

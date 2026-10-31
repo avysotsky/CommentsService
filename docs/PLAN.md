@@ -1,5 +1,11 @@
 # CommentsService — Development plan
 
+EN CURRENT: Junior+ 1.2.2.4 LiveComments completes Events → Cache → Queue → WebSocket in four published iteration branches. The user approved x=2; the first actual config extension moved y=1→2 at revision2, without resetting z. See [Junior+ responsibilities, configuration and verification](JUNIOR_PLUS.md). The following Junior plan is historical and does not override these version rules.
+
+RU ТЕКУЩЕЕ: Junior+1.2.2.4 LiveComments завершает Events → Cache → Queue → WebSocket четырьмя ветками итераций. Пользователь утвердил x=2; первое расширение конфига изменило y=1→2 на ревизии2 без сброса z. [Назначение, конфиг и проверки](JUNIOR_PLUS.md). План Junior ниже исторический, его правила версий заменены текущими.
+
+UA ПОТОЧНЕ: Junior+1.2.2.4 LiveComments завершує Events → Cache → Queue → WebSocket чотирма гілками ітерацій. Користувач затвердив x=2; перше розширення конфігу змінило y=1→2 на ревізії2 без скидання z. [Призначення, конфіг і перевірки](JUNIOR_PLUS.md). План Junior нижче історичний, його правила версій замінено поточними.
+
 ## Status and version rules
 
 Completed correction: `CommentsService/v_1.1.0.6_HomepageHint` clarifies homepage hints/errors in EN/RU/UA; version/schema unchanged.

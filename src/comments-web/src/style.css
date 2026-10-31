@@ -118,3 +118,4 @@ footer { color:#5c6b59; font-size:13px; border-top:1px solid #dfe4d7; padding:20
   .thread-controls td { border-radius:10px; }
   .file-viewer { padding:14px; }
 }
+.live-update { padding: 12px 16px; margin-block: 12px; border: 1px solid #b5cfc3; border-radius: 10px; background: #f0f7f3; }

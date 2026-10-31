@@ -36,7 +36,9 @@ builder.Services.AddInfrastructure(runtime.Database, runtime.Cache);
 builder.Services.AddSingleton(runtime.Notifications);
 builder.Services.AddSingleton<CommentsService.Infrastructure.Notifications.CommentNotificationQueue>();
 builder.Services.AddSingleton<CommentsService.Application.Events.ICommentCreatedHandler>(sp => sp.GetRequiredService<CommentsService.Infrastructure.Notifications.CommentNotificationQueue>());
-builder.Services.AddSingleton<CommentsService.Application.Notifications.ICommentChangeDelivery, CommentsService.Infrastructure.Notifications.LoggedCommentChangeDelivery>();
+builder.Services.AddSingleton(runtime.Realtime);
+builder.Services.AddSingleton<CommentsService.Api.Realtime.LiveCommentBroadcaster>();
+builder.Services.AddSingleton<CommentsService.Application.Notifications.ICommentChangeDelivery>(sp => sp.GetRequiredService<CommentsService.Api.Realtime.LiveCommentBroadcaster>());
 builder.Services.AddHostedService<CommentsService.Api.Notifications.CommentNotificationWorker>();
 builder.Services.AddSingleton<CommentsService.Application.Comments.Markup.ICommentMarkup, CommentsService.Application.Comments.Markup.XhtmlCommentMarkup>();
 builder.Services.AddScoped<ICreateComment, CreateComment>();
@@ -91,6 +93,11 @@ app.Use(async (context, next) =>
         context.Response.StatusCode, Stopwatch.GetElapsedTime(started).TotalMilliseconds);
 });
 app.UseSecurityHeaders();
+app.UseWebSockets(new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromSeconds(runtime.Realtime.KeepAliveSeconds),
+    KeepAliveTimeout = TimeSpan.FromSeconds(runtime.Realtime.KeepAliveTimeoutSeconds)
+});
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 app.UseDefaultFiles();
@@ -101,6 +108,7 @@ app.MapCommentsEndpoints();
 app.MapCaptchaEndpoints();
 app.MapImageEndpoints();
 app.MapTextFileEndpoints();
+app.MapRealtimeEndpoints();
 app.MapFallback("/api/{**path}", () => Results.NotFound());
 app.MapFallbackToFile("/{*path:nonfile}", "index.html");
 

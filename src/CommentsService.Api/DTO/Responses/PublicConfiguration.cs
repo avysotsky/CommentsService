@@ -4,4 +4,5 @@ namespace CommentsService.Api.DTO.Responses;
 public sealed record PublicConfiguration(int RootPageSize, int DefaultListLimit, int MaximumListLimit,
     int UserNameMaxLength, int EmailMaxLength, int HomePageMaxLength, int TextMaxLength,
     int ImageUploadMaxBytes, int ImageMaxWidth, int ImageMaxHeight, int TextFileMaxBytes,
-    int CaptchaCodeLength, string CaptchaAlphabet, int CaptchaLifetimeSeconds);
+    int CaptchaCodeLength, string CaptchaAlphabet, int CaptchaLifetimeSeconds,
+    bool RealtimeEnabled, int ReconnectDelayMilliseconds, int MaximumReconnectDelayMilliseconds);

@@ -2,6 +2,15 @@
   "Runtime": {
     "InstanceId": "commentsservice",
     "HealthPort": 8080,
+    "Realtime": {
+      "Enabled": true,
+      "MaximumConnections": 256,
+      "SendTimeoutSeconds": 5,
+      "KeepAliveSeconds": 20,
+      "KeepAliveTimeoutSeconds": 10,
+      "ReconnectDelayMilliseconds": 1000,
+      "MaximumReconnectDelayMilliseconds": 30000
+    },
     "Notifications": {
       "Capacity": 64,
       "MaximumAttempts": 3,

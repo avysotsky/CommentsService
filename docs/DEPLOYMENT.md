@@ -1,5 +1,11 @@
 # Deployment 1.1.1.16 / Развёртывание / Розгортання
 
+EN Junior+ update: WebSocket /api/comments/live requires HTTP/1.1 Upgrade forwarding, original Host/Origin, trusted overwritten X-Forwarded-Proto/For, buffering disabled and heartbeat-compatible timeouts. Current public WSS handshake, reconnect and45s heartbeat were verified without public database writes. This extends the application virtual host only. [Protocol/configuration](JUNIOR_PLUS.md).
+
+RU Обновление Junior+: /api/comments/live требует передачи Upgrade через HTTP/1.1, исходных Host/Origin, доверенных заменённых X-Forwarded-Proto/For, отключённой буферизации и таймаутов для heartbeat. Публичные WSS/переподключение/heartbeat45с проверены без записи в публичную БД. Расширен только виртуальный хост приложения. [Протокол/конфиг](JUNIOR_PLUS.md).
+
+UA Оновлення Junior+: /api/comments/live потребує передавання Upgrade через HTTP/1.1, початкових Host/Origin, довірених замінених X-Forwarded-Proto/For, вимкненої буферизації й таймаутів для heartbeat. Публічні WSS/перепідключення/heartbeat45с перевірено без запису в публічну БД. Розширено лише віртуальний хост застосунку. [Протокол/конфіг](JUNIOR_PLUS.md).
+
 ## English
 
 Live demo: https://comments.alexvysotsky.com. The user verified a real CAPTCHA-backed comment from mobile Internet with Wi-Fi disabled. The application runs in Docker inside WSL; the existing edge nginx terminates HTTPS and selects this subdomain by hostname. Domain registration, authoritative DNS provider, mail records and existing port-forwarding rules remain unchanged. Cloudflare is not used.

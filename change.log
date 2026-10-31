@@ -2,6 +2,14 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.2.2.4 LiveComments — 2026-10-31
+
+`CommentsService/v_1.2.2.4_LiveComments`
+
+Junior+ integrates post-commit Events, a bounded read Cache, a coalescing notification Queue and same-origin WebSocket updates. New comments/replies show a localized refresh notice; reconnect re-reads data while preserving drafts, page and sort. Additive Cache/Notifications/Realtime settings support old config files. PostgreSQL remains authoritative; notifications/cache are process-local, not durable or multi-replica. No schema migration, new broker, NoSQL or cloud dependency.
+
+Passed:337 backend tests (27/85/67/158),31 frontend tests, frontend/Docker builds, real Edge multi-window root/reply/CAPTCHA/refresh/reconnect/draft/sort/EN-RU-UA/360px,18 retained-million cases and public HTTPS/WSS/reconnect/45s heartbeat. Original data/schema/checkpoints/volumes preserved. Host reboot was not repeated.
+
 ## 1.2.2.3 NotificationQueue — 2026-10-31
 
 `CommentsService/v_1.2.2.3_NotificationQueue`

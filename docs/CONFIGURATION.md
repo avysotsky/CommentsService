@@ -1,5 +1,11 @@
 # Backend configuration / Конфигурация / Конфігурація
 
+EN: Junior+ adds validated Runtime.Cache, Runtime.Notifications and Runtime.Realtime. Old files without these sections use compatible defaults. Only realtime enabled/reconnect delays join the public allowlist; cache/queue/connection policies remain private. [Keys, defaults, ranges and behavior](JUNIOR_PLUS.md).
+
+RU: Junior+ добавляет проверяемые Runtime.Cache, Runtime.Notifications и Runtime.Realtime. Старые файлы без секций используют совместимые значения по умолчанию. Публичный список дополнен только включением realtime и задержками переподключения; политики кеша/очереди/соединений приватны. [Ключи, значения, диапазоны и поведение](JUNIOR_PLUS.md).
+
+UA: Junior+ додає перевірювані Runtime.Cache, Runtime.Notifications і Runtime.Realtime. Старі файли без секцій використовують сумісні типові значення. Публічний список доповнено лише ввімкненням realtime та затримками перепідключення; політики кешу/черги/з’єднань приватні. [Ключі, значення, діапазони й поведінка](JUNIOR_PLUS.md).
+
 ## English
 
 Deployment adds `Runtime.Proxy.KnownProxies`: up to16 explicit IP addresses, default empty (forwarding disabled), with no wildcard/unspecified addresses. Configure only the immediate transport peer seen by the API. The API accepts one symmetric forwarded IP/scheme hop and emits HSTS for forwarded HTTPS. See [deployment](DEPLOYMENT.md).

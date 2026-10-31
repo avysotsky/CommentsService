@@ -1,6 +1,8 @@
 import { limits } from './runtimeConfig.ts';
 export const messages = {
   en: {
+    liveConnected: 'Live updates connected.', liveOffline: 'Live updates reconnecting. Refresh is available.',
+    liveUpdates: 'New comments or replies are available. Refresh when you are ready.',
     title: 'Good conversations start here.', intro: 'Leave a thought. Make a connection. Join the conversation.',
     compose: 'Leave a comment', name: 'User name', email: 'Email', home: 'Homepage (optional)', text: 'Comment',
     nameHint: '1–{userNameMaxLength} Latin letters or digits.', emailHint: 'Your email will be visible to other readers.',
@@ -25,6 +27,8 @@ export const messages = {
     author: 'Author', posted: 'Posted', website: 'Website', language: 'Language',
   },
   ru: {
+    liveConnected: 'Обновления подключены.', liveOffline: 'Восстанавливаем связь. Можно обновить вручную.',
+    liveUpdates: 'Появились новые комментарии или ответы. Обновите список, когда будете готовы.',
     title: 'Хороший разговор начинается здесь.', intro: 'Поделитесь мыслью. Найдите собеседников. Присоединяйтесь к разговору.',
     compose: 'Оставить комментарий', name: 'Имя пользователя', email: 'Email', home: 'Сайт (необязательно)', text: 'Комментарий',
     nameHint: '1–{userNameMaxLength} латинских букв или цифр.', emailHint: 'Ваш email будет виден другим читателям.',
@@ -49,6 +53,8 @@ export const messages = {
     author: 'Автор', posted: 'Дата', website: 'Сайт', language: 'Язык',
   },
   uk: {
+    liveConnected: 'Оновлення підключено.', liveOffline: 'Відновлюємо зв’язок. Можна оновити вручну.',
+    liveUpdates: 'З’явилися нові коментарі або відповіді. Оновіть список, коли будете готові.',
     title: 'Гарна розмова починається тут.', intro: 'Поділіться думкою. Знайдіть співрозмовників. Долучайтеся до розмови.',
     compose: 'Залишити коментар', name: 'Ім’я користувача', email: 'Email', home: 'Сайт (необов’язково)', text: 'Коментар',
     nameHint: '1–{userNameMaxLength} латинських літер або цифр.', emailHint: 'Ваш email буде видимий іншим читачам.',

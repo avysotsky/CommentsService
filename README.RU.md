@@ -1,6 +1,8 @@
 # CommentsService
 
-Версия: **1.1.0.15** · Ветка: `CommentsService/v_1.1.0.15_DtoContracts`
+Версия: **1.1.1.15** · Ветка: `CommentsService/v_1.1.1.15_Configuration`
+
+Backend `config.json`: проверяемые идентификатор инстанса, параметры БД и порт health; сохранены переопределения окружением/CLI и PG-переменные. [Конфигурация и Docker](docs/CONFIGURATION.md). Прошли 270 прежних backend-тестов и 7 новых проверок конфигурации. Далее Logging и повторная приёмка.
 
 Контракты DTO собраны в собственных слоях Application/API, по типу на файл. Маппинг комментария вынесен отдельно; JSON, маршруты и схема БД сохранены. Проверка DtoContracts: 270 backend-тестов (27/84/56/103). Далее — Configuration и Logging; отчёт приёмки описывает предыдущий выпуск Acceptance.
 

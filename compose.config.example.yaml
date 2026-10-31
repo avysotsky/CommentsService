@@ -1,0 +1,9 @@
+services:
+  app:
+    environment:
+      APP_CONFIG: /app/config/config.json
+    volumes:
+      - type: bind
+        source: ${APP_CONFIG_FILE:?Select a private configuration file}
+        target: /app/config/config.json
+        read_only: true

@@ -1,4 +1,5 @@
 using CommentsService.Api.Security;
+using CommentsService.Api.Configuration;
 using CommentsService.Application.Comments.CreateComment;
 using CommentsService.Application.Comments.GetComment;
 using CommentsService.Application.Comments.GetLatestComments;
@@ -7,21 +8,25 @@ using CommentsService.Infrastructure;
 using CommentsService.Infrastructure.Abstractions;
 using CommentsService.Api.Endpoints;
 
-if (args is ["--healthcheck"])
+var healthCommand = args.FirstOrDefault() == "--healthcheck";
+var databaseCommand = args.FirstOrDefault() is "--migrate" or "--check-database";
+var configurationArgs = databaseCommand || healthCommand ? args.Skip(1).ToArray() : args;
+var builder = WebApplication.CreateBuilder(configurationArgs);
+var runtime = RuntimeConfiguration.Load(builder.Configuration, configurationArgs);
+if (healthCommand)
 {
     using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
     try
     {
-        using var response = await client.GetAsync("http://127.0.0.1:8080/health");
+        using var response = await client.GetAsync($"http://127.0.0.1:{runtime.HealthPort}/health");
         return response.IsSuccessStatusCode ? 0 : 1;
     }
     catch (HttpRequestException) { return 1; }
     catch (TaskCanceledException) { return 1; }
 }
 
-var databaseCommand = args is ["--migrate"] or ["--check-database"];
-var builder = WebApplication.CreateBuilder(databaseCommand ? [] : args);
-builder.Services.AddInfrastructure();
+builder.Services.AddSingleton(runtime);
+builder.Services.AddInfrastructure(runtime.Database);
 builder.Services.AddSingleton<CommentsService.Application.Comments.Markup.ICommentMarkup, CommentsService.Application.Comments.Markup.XhtmlCommentMarkup>();
 builder.Services.AddScoped<ICreateComment, CreateComment>();
 builder.Services.AddScoped<IGetComment, GetComment>();

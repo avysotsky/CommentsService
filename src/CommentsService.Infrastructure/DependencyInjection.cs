@@ -11,10 +11,10 @@ namespace CommentsService.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, DatabaseSettings? database = null)
     {
         services.AddDbContext<CommentsDbContext>(options =>
-            options.UseNpgsql(DatabaseOptions.ConnectionString(),
+            options.UseNpgsql(DatabaseOptions.ConnectionString(database),
                 pg => pg.MigrationsHistoryTable("__EFMigrationsHistory", "comments")));
         services.AddSingleton<CommentsService.Application.TextFiles.ITextFileProcessor, CommentsService.Infrastructure.TextFiles.Utf8TextFileProcessor>();
         services.AddScoped<CommentsService.Application.TextFiles.ITextFileQueries, CommentsService.Infrastructure.TextFiles.TextFileQueries>();
@@ -30,8 +30,10 @@ public static class DependencyInjection
         services.AddScoped<ICommentQueries, CommentQueries>();
         services.AddScoped<IDatabaseMigrator, EfDatabaseMigrator>();
         services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", tags: ["database"]);
-        var configured = new[] { "PGHOST", "PGDATABASE", "PGUSER", "PGPASSWORD" }
-            .All(name => !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(name)));
+        var configured = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("PGPASSWORD")) &&
+            new[] { Environment.GetEnvironmentVariable("PGHOST") ?? database?.Host,
+                Environment.GetEnvironmentVariable("PGDATABASE") ?? database?.Database,
+                Environment.GetEnvironmentVariable("PGUSER") ?? database?.Username }.All(value => !string.IsNullOrWhiteSpace(value));
         if (configured) services.AddScoped<IDatabaseStatusReader, EfDatabaseStatusReader>();
         else services.AddScoped<IDatabaseStatusReader, UnconfiguredDatabaseStatusReader>();
         return services;

@@ -1,0 +1,12 @@
+{
+  "Runtime": {
+    "InstanceId": "commentsservice",
+    "HealthPort": 8080,
+    "Database": {
+      "Port": 5432,
+      "TimeoutSeconds": 15,
+      "CommandTimeoutSeconds": 30,
+      "MaximumPoolSize": 100
+    }
+  }
+}

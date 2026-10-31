@@ -2,6 +2,12 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.1.15 Configuration — 2026-10-31
+
+`CommentsService/v_1.1.1.15_Configuration`
+
+Додано перевірюваний під час старту config.json: інстанс, несекретні параметри БД та порт health. Пріоритет defaults/JSON/оточення/CLI; PG-сумісність збережено. Приклад read-only Docker та інструкції EN/RU/UA. y збільшено до 1; міграції немає. Пройшли 270 попередніх backend-тестів і 7 нових перевірок конфігурації.
+
 ## 1.1.0.15 DtoContracts — 2026-10-31
 
 `CommentsService/v_1.1.0.15_DtoContracts`

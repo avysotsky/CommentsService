@@ -1,6 +1,8 @@
 # CommentsService
 
-Version: **1.1.0.15** · Branch: `CommentsService/v_1.1.0.15_DtoContracts`
+Version: **1.1.1.15** · Branch: `CommentsService/v_1.1.1.15_Configuration`
+
+Backend `config.json` supports validated per-instance identity, database connection settings and health port; environment/CLI overrides and PG variables remain supported. [Configuration and Docker mounts](docs/CONFIGURATION.md). Configuration verification: 270 existing backend tests and 7 new configuration tests passed. Logging and acceptance recheck follow.
 
 DTO contracts are grouped in the owning Application/API layers, one type per file. Explicit comment mapping is separate; JSON, routes and database schema are unchanged. DtoContracts verification: 270 backend tests (27/84/56/103). Configuration and logging remain the next corrections; the acceptance report describes the preceding Acceptance release.
 

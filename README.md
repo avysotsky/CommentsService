@@ -1,8 +1,8 @@
 # CommentsService
 
-Version: **1.1.1.15** · Branch: `CommentsService/v_1.1.1.15_AcceptanceRecheck`
+Version: **1.1.1.16** · Branch: `CommentsService/v_1.1.1.16_Deployment`
 
-AcceptanceRecheck passed: 283 backend tests (27/84/56/116), 26 frontend tests, frontend/Docker builds, Edge desktop/360px, 18 retained-million cases, per-instance config/log checks and original-data fingerprints. [Current verification report](docs/ACCEPTANCE_RECHECK.md). Workbench GUI remains pending; Deployment 1.1.1.16 needs a target server.
+Deployment 1.1.1.16 is available at [the live demo](https://comments.alexvysotsky.com). Passed: 288 backend tests (27/84/56/121), 26 frontend tests, frontend/Docker builds, public HTTPS/HSTS and CAPTCHA/TXT/browser checks, trusted-proxy spoof rejection, tunnel reconnection and current-user-data fingerprints. Mobile Internet posting was confirmed by the user. [Deployment and limitations](docs/DEPLOYMENT_VERIFICATION.md). Workbench GUI and a full Windows reboot remain unverified.
 
 Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 
@@ -46,7 +46,7 @@ Keep the same Compose project name and environment file on updates. Development 
 
 ## Updates and recovery
 
-1. For code-only updates, rebuild and restart the app with the same environment, project and volumes. Version 1.1.0.15 has no new migration or dependency.
+1. For code-only updates, rebuild and restart the app with the same environment, project and volumes. Version 1.1.1.16 has no new migration or dependency.
 2. Before schema/data-changing updates, stop every writer, run `scripts/db-checkpoint.py`, then explicitly migrate every used database. Add `--include-benchmark` if the retained benchmark database exists. Restart with the same volumes.
 3. Retain one restore-verified previous checkpoint and the current databases. Never reset shared data for routine tests or remove persistent volumes. Stop services with `docker compose -p commentsservice --profile testing down` when needed; do not delete their volumes.
 4. Verify an existing checkpoint without replacing it:
@@ -84,12 +84,12 @@ In Visual Studio 2026 open `CommentsService.slnx`; it contains backend/test proj
 
 ## Runtime and acceptance
 
-`GET /api/status` returns `{"application":"CommentsService","version":"1.1.0.15","stage":"Acceptance"}`. `/health` checks the process; `/health/database` checks connectivity and current migrations (503 when unavailable/outdated). [API contract](docs/API.md).
+`GET /api/status` returns `{"application":"CommentsService","version":"1.1.1.16","stage":"Deployment"}`. `/health` checks the process; `/health/database` checks connectivity and current migrations (503 when unavailable/outdated). [API contract](docs/API.md).
 
 JSON create/preview requires UTF-8, exact camelCase fields and at most 1 MiB, including chunked bodies. Unknown/duplicate/case-variant fields and invalid input return 400; oversized JSON 413; unsupported media/charset 415. CAPTCHA is process-local, expires after five minutes and is consumed by a verification attempt. Refresh after uncertain/failed submission. File bytes are stored transactionally in PostgreSQL, included in its backups, and omitted from list DTOs.
 
 Automated acceptance passed: 268 backend and 26 frontend tests; frontend/Docker builds; all four migration stages and downgrade guards; restore/upgrade of three preserved checkpoints; independent empty installation; least-privilege roles; current-data recovery with 7 exact attachments and container recreation; browser viewers/RTL/security/pagination; 18 retained-million paging scenarios. Original databases, corpus, volumes, environment and checkpoint hashes remained unchanged.
 
-**Pending:** importing the schema in the MySQL Workbench GUI was not verified. SQL catalog parity passed. External hosting/HTTPS remains 1.1.0.16 Deployment. See [acceptance report and limitations](docs/ACCEPTANCE.md).
+**Pending:** MySQL Workbench GUI import and a controlled Windows reboot. Public HTTPS is deployed; current task startup requires user logon. See [deployment verification](docs/DEPLOYMENT_VERIFICATION.md).
 
 [PostgreSQL schema / Workbench projection](docs/database/SCHEMA.md) · [Architecture](docs/ARCHITECTURE.md) · [Benchmark](docs/BENCHMARK.md)

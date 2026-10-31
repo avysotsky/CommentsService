@@ -4,9 +4,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Version>1.1.1.15</Version>
-    <AssemblyVersion>1.1.1.15</AssemblyVersion>
-    <FileVersion>1.1.1.15</FileVersion>
+    <Version>1.1.1.16</Version>
+    <AssemblyVersion>1.1.1.16</AssemblyVersion>
+    <FileVersion>1.1.1.16</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <Content Update="config.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />

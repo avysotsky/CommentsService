@@ -2,6 +2,12 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.1.16 Deployment — 2026-10-31
+
+`CommentsService/v_1.1.1.16_Deployment`
+
+Публічний HTTPS https://comments.alexvysotsky.com через наявний nginx і керований приватний SSH-тунель до WSL/Docker. Namecheap/DNS/пошту/попередні правила роутера й інші сайти збережено; окремий сертифікат/renewal hook. Явна довіра IP/схемі проксі, один hop, відмова підробці й HSTS. Пройшли288backend(27/84/56/121),26frontend, збирання, публічні CAPTCHA/TXT/preview/replay/mobile browser та автоматичне перепідключення. Відбитки поточних користувацьких даних/набору/схеми/історії/томів/оточення/копій/перегляду попередні; міграцій/залежностей немає. Автозапуск потребує входу Windows; reboot/Workbench GUI не перевірено. docs/DEPLOYMENT_VERIFICATION.md.
+
 ## 1.1.1.15 AcceptanceRecheck — 2026-10-31
 
 Виправлено пріоритет параметрів БД: явні CLI host/port перевизначають змінні PG; додано регресійну перевірку.

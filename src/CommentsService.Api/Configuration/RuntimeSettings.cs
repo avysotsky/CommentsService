@@ -8,11 +8,14 @@ public sealed class RuntimeSettings
     public int HealthPort { get; set; } = 8080;
     public DatabaseSettings Database { get; set; } = new();
     public LogSettings Logging { get; set; } = new();
+    public ProxySettings Proxy { get; set; } = new();
 
     public void Validate()
     {
         if (Logging is null) throw new InvalidOperationException("Missing logging settings.");
         Logging.Validate();
+        if (Proxy is null) throw new InvalidOperationException("Missing proxy settings.");
+        Proxy.Validate();
         if (InstanceId is null || Database is null || InstanceId.Length is < 1 or > 64 || InstanceId.Any(character => !char.IsAsciiLetterOrDigit(character) && character is not ('-' or '_')) ||
             HealthPort is < 1 or > 65535 || Database.Port is < 1 or > 65535 ||
             Database.TimeoutSeconds is < 1 or > 300 || Database.CommandTimeoutSeconds is < 1 or > 300 ||

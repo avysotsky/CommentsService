@@ -69,6 +69,11 @@ if (databaseCommand)
     return 0;
 }
 
+if (runtime.Proxy.KnownProxies.Length != 0)
+{
+    app.UseForwardedHeaders(runtime.Proxy.CreateOptions());
+    app.UseHsts();
+}
 app.Use(async (context, next) =>
 {
     using var trace = LogContext.PushProperty("TraceId", context.TraceIdentifier);

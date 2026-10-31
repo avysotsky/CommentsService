@@ -1,3 +1,22 @@
+CommentsService - 1.3.3.2 MessageBroker
+Branch: CommentsService/v_1.3.3.2_MessageBroker
+
+EN: RabbitMQ now carries comment-change signals in the background. If disabled, disconnected, stalled or overloaded, the existing local queue keeps WebSocket refresh working; comment writes, GraphQL/REST, CAPTCHA, preview and files remain independent of the broker. Runtime.Broker adds private validated settings; credentials are separate environment secrets. PostgreSQL schema/data and the public configuration contract are unchanged. No outbox, NoSQL, cloud or replica deployment.
+
+Passed: 387 backend tests (27/85/67/208), 33 frontend tests, frontend/Docker builds, real Edge with RabbitMQ healthy/paused/stopped/recovered and no app restart, six GraphQL sorts, real CAPTCHA/root/reply, preview, exact TXT, WebSocket refresh/reconnect, drafts, EN/RU/UA and 360px. Startup with the broker already stopped and later recovery also passed. Original data/schema/history/corpus/checkpoints/env/volumes/preview preserved. The earlier million-row paging acceptance was not repeated because read queries are unchanged.
+
+RU: RabbitMQ передаёт сигналы изменения комментариев в фоне. При отключении, потере связи, зависании или перегрузке прежняя локальная очередь сохраняет WebSocket-обновления; запись, GraphQL/REST, CAPTCHA, preview и файлы не зависят от брокера. Runtime.Broker содержит приватные проверяемые параметры; секреты вынесены в отдельное окружение. Схема/данные PostgreSQL и публичный контракт конфига прежние. Outbox, NoSQL, Cloud и реплики не добавлены.
+
+Прошли 387 backend-тестов (27/85/67/208), 33 frontend, сборки frontend/Docker, Edge с работающим/приостановленным/остановленным/восстановленным RabbitMQ без перезапуска app, шесть сортировок GraphQL, реальные CAPTCHA/корень/ответ, preview, точный TXT, WS-обновление/переподключение, черновики, EN/RU/UA и 360px. Запуск при уже остановленном брокере и последующее восстановление также прошли. Исходные данные/схема/история/миллион/копии/env/тома/preview сохранены. Прежняя приёмка пагинации миллиона не повторялась: запросы чтения не менялись.
+
+UA: RabbitMQ передає сигнали зміни коментарів у фоні. За вимкнення, втрати зв’язку, зависання чи перевантаження попередня локальна черга зберігає WebSocket-оновлення; запис, GraphQL/REST, CAPTCHA, preview та файли не залежать від брокера. Runtime.Broker містить приватні перевірювані параметри; секрети винесено в окреме оточення. Схема/дані PostgreSQL і публічний контракт конфігу попередні. Outbox, NoSQL, Cloud і репліки не додані.
+
+Пройшли 387 backend-тестів (27/85/67/208), 33 frontend, збирання frontend/Docker, Edge з працюючим/призупиненим/зупиненим/відновленим RabbitMQ без перезапуску app, шість сортувань GraphQL, справжні CAPTCHA/корінь/відповідь, preview, точний TXT, WS-оновлення/перепідключення, чернетки, EN/RU/UA та 360px. Запуск за вже зупиненого брокера й подальше відновлення також пройшли. Початкові дані/схема/історія/мільйон/копії/env/томи/preview збережено. Попереднє приймання пагінації мільйона не повторювалось: запити читання не змінювались.
+
+[Broker](docs/MESSAGE_BROKER.md) · [EN](README.md) · [RU](README.RU.md) · [UA](README.UA.md)
+
+Historical releases / История / Історія:
+
 CommentsService - 1.3.3.1 GraphQL
 Branch: CommentsService/v_1.3.3.1_GraphQL
 

@@ -1,14 +1,14 @@
 # CommentsService
 
-Версія: **1.3.3.1** · `CommentsService/v_1.3.3.1_GraphQL`
+Версія: **1.3.3.2** · `CommentsService/v_1.3.3.2_MessageBroker`
 
-GraphQL додає обмежений endpoint читання /api/graphql і читання кореневої сторінки SPA через нього. Попередні REST-запис/відповіді/файли, Events/Cache/Queue/WebSocket та дані PostgreSQL збережено. Runtime.GraphQL задає перевірювані межі; публічний лише graphQLEnabled. Міграцій схеми, брокера, NoSQL та Cloud немає. Виконано лише пункт Graph, а не весь Middle.
+RabbitMQ передає сигнали зміни коментарів у фоні. За вимкнення, втрати зв’язку, зависання чи перевантаження попередня локальна черга зберігає WebSocket-оновлення; запис, GraphQL/REST, CAPTCHA, preview та файли не залежать від брокера. Runtime.Broker містить приватні перевірювані параметри; секрети винесено в окреме оточення. Схема/дані PostgreSQL і публічний контракт конфігу попередні. Outbox, NoSQL, Cloud і репліки не додані.
 
-Пройшли 370 різних backend-тестів (27 Domain / 85 Application / 67 Data / 191 API, включно з фінальним цільовим повтором), 33 frontend-тести, збирання frontend/Docker, Edge з трьома вікнами/CAPTCHA/коренем/відповіддю/WS-оновленням/перепідключенням/збереженням чернетки й запиту/EN-RU-UA/360px та 18 сценаріїв GraphQL збереженого мільйона по два вимірювання з паритетом порядку REST. Пройшли справжні HTTP-межі байтів/кодування/глибини/варіантів маршруту та публічні HTTPS/GraphQL/WSS. Початкові дані, схема, копії, оточення, томи й попередній preview збережено. Reboot і попереднє приймання heartbeat не повторювались. [GraphQL](docs/GRAPHQL.md).
+Пройшли 387 backend-тестів (27/85/67/208), 33 frontend, збирання frontend/Docker, Edge з працюючим/призупиненим/зупиненим/відновленим RabbitMQ без перезапуску app, шість сортувань GraphQL, справжні CAPTCHA/корінь/відповідь, preview, точний TXT, WS-оновлення/перепідключення, чернетки, EN/RU/UA та 360px. Запуск за вже зупиненого брокера й подальше відновлення також пройшли. Початкові дані/схема/історія/мільйон/копії/env/томи/preview збережено. Попереднє приймання пагінації мільйона не повторювалось: запити читання не змінювались.
 
-[GraphQL](docs/GRAPHQL.md) · [Junior+](docs/JUNIOR_PLUS.md)
+[Message broker](docs/MESSAGE_BROKER.md) · [GraphQL](docs/GRAPHQL.md) · [Junior+](docs/JUNIOR_PLUS.md)
 
-<!-- GRAPHQL-CURRENT-END -->
+<!-- MESSAGE-BROKER-CURRENT-END -->
 
 Структуровані JSON-логи консолі/файла налаштовуються через `Runtime.Logging`: InstanceId, TraceId, рівні/категорії, ротація та зберігання. Docker зберігає логи в окремому томі. [Налаштування й політика даних](docs/LOGGING.md).
 

@@ -18,8 +18,12 @@ public sealed class RuntimeSettings
 
     public GraphQLSettings GraphQL { get; set; } = new();
 
+    public CommentsService.Infrastructure.Broker.BrokerSettings Broker { get; set; } = new();
+
     public void Validate()
     {
+        if (Broker is null) throw new InvalidOperationException("Missing broker settings.");
+        Broker.Validate();
         if (GraphQL is null) throw new InvalidOperationException("Missing GraphQL settings.");
         GraphQL.Validate();
         if (Cache is null) throw new InvalidOperationException("Missing read cache settings.");

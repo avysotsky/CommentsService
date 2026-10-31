@@ -2,6 +2,14 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.3.3.2 MessageBroker - 2026-10-31
+
+`CommentsService/v_1.3.3.2_MessageBroker`
+
+RabbitMQ now carries comment-change signals in the background. If disabled, disconnected, stalled or overloaded, the existing local queue keeps WebSocket refresh working; comment writes, GraphQL/REST, CAPTCHA, preview and files remain independent of the broker. Runtime.Broker adds private validated settings; credentials are separate environment secrets. PostgreSQL schema/data and the public configuration contract are unchanged. No outbox, NoSQL, cloud or replica deployment.
+
+Passed: 387 backend tests (27/85/67/208), 33 frontend tests, frontend/Docker builds, real Edge with RabbitMQ healthy/paused/stopped/recovered and no app restart, six GraphQL sorts, real CAPTCHA/root/reply, preview, exact TXT, WebSocket refresh/reconnect, drafts, EN/RU/UA and 360px. Startup with the broker already stopped and later recovery also passed. Original data/schema/history/corpus/checkpoints/env/volumes/preview preserved. The earlier million-row paging acceptance was not repeated because read queries are unchanged. [Details](docs/MESSAGE_BROKER.md).
+
 ## 1.3.3.1 GraphQL - 2026-10-31
 
 `CommentsService/v_1.3.3.1_GraphQL`

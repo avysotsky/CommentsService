@@ -17,6 +17,9 @@ services:
 
   app:
     build: .
+    env_file:
+      - path: .env.broker
+        required: false
     volumes:
       - application_logs:/app/logs
     environment:
@@ -48,6 +51,29 @@ services:
       interval: 3s
       timeout: 3s
       retries: 20
+    restart: unless-stopped
+
+  broker:
+    profiles: [broker]
+    image: rabbitmq:4.4.0
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - ': "$${RABBITMQ_DEFAULT_USER:?Generate the private broker environment first}"; : "$${RABBITMQ_DEFAULT_PASS:?Generate the private broker environment first}"; exec /usr/local/bin/docker-entrypoint.sh rabbitmq-server'
+    env_file:
+      - path: .env.broker
+        required: false
+    environment:
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbit disk_free_limit 33554432 -rabbit vm_memory_high_watermark 0.6"
+    tmpfs:
+      - /var/lib/rabbitmq:size=134217728,mode=1777
+    mem_limit: 512m
+    cpus: 1
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
     restart: unless-stopped
 
 volumes:

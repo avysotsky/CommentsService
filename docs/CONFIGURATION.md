@@ -1,5 +1,11 @@
 # Backend configuration / Конфигурация / Конфігурація
 
+EN: RabbitMQ now carries comment-change signals in the background. If disabled, disconnected, stalled or overloaded, the existing local queue keeps WebSocket refresh working; comment writes, GraphQL/REST, CAPTCHA, preview and files remain independent of the broker. Runtime.Broker adds private validated settings; credentials are separate environment secrets. PostgreSQL schema/data and the public configuration contract are unchanged. No outbox, NoSQL, cloud or replica deployment. [Broker](MESSAGE_BROKER.md).
+
+RU: RabbitMQ передаёт сигналы изменения комментариев в фоне. При отключении, потере связи, зависании или перегрузке прежняя локальная очередь сохраняет WebSocket-обновления; запись, GraphQL/REST, CAPTCHA, preview и файлы не зависят от брокера. Runtime.Broker содержит приватные проверяемые параметры; секреты вынесены в отдельное окружение. Схема/данные PostgreSQL и публичный контракт конфига прежние. Outbox, NoSQL, Cloud и реплики не добавлены. [Broker](MESSAGE_BROKER.md).
+
+UA: RabbitMQ передає сигнали зміни коментарів у фоні. За вимкнення, втрати зв’язку, зависання чи перевантаження попередня локальна черга зберігає WebSocket-оновлення; запис, GraphQL/REST, CAPTCHA, preview та файли не залежать від брокера. Runtime.Broker містить приватні перевірювані параметри; секрети винесено в окреме оточення. Схема/дані PostgreSQL і публічний контракт конфігу попередні. Outbox, NoSQL, Cloud і репліки не додані. [Broker](MESSAGE_BROKER.md).
+
 EN: GraphQL adds a bounded read-only /api/graphql endpoint and uses it for SPA root-page reads. Existing REST writes/replies/files, Events/Cache/Queue/WebSocket and PostgreSQL data remain. Runtime.GraphQL adds validated limits; only graphQLEnabled is public. No schema migration, broker, NoSQL or cloud. This completes the Graph item only, not the entire Middle level. [GraphQL](GRAPHQL.md).
 
 RU: GraphQL добавляет ограниченный endpoint чтения /api/graphql и чтение корневой страницы SPA через него. Прежние REST-запись/ответы/файлы, Events/Cache/Queue/WebSocket и данные PostgreSQL сохранены. Runtime.GraphQL задаёт проверяемые лимиты; публичен только graphQLEnabled. Миграций схемы, брокера, NoSQL и Cloud нет. Выполнен только пункт Graph, а не весь Middle. [GraphQL](GRAPHQL.md).

@@ -78,6 +78,17 @@
       "MaximumTypeCost": 2000,
       "ExecutionTimeoutSeconds": 10,
       "MaximumConcurrentRequests": 16
+    },
+    "Broker": {
+      "Enabled": false,
+      "Host": "broker",
+      "Port": 5672,
+      "Username": "comments_app",
+      "Exchange": "commentsservice.comments.v1",
+      "Capacity": 128,
+      "OperationTimeoutSeconds": 2,
+      "ReconnectDelayMilliseconds": 2000,
+      "FallbackDelayMilliseconds": 1000
     }
   }
 }

@@ -11,3 +11,9 @@ EN: GraphQL uses HotChocolate.AspNetCore 16.7.3 (MIT); the upstream license is s
 RU: GraphQL использует HotChocolate.AspNetCore 16.7.3 (MIT); исходная лицензия включена в HotChocolate-LICENSE.txt. Встроенный Nitro отключён; его отдельные исходные условия сохранены в Nitro-LICENSE.txt.
 
 UA: GraphQL використовує HotChocolate.AspNetCore 16.7.3 (MIT); початкову ліцензію включено в HotChocolate-LICENSE.txt. Вбудований Nitro вимкнено; його окремі початкові умови збережено в Nitro-LICENSE.txt.
+
+EN: Broker integration uses RabbitMQ.Client 7.2.2, dual-licensed Apache-2.0/MPL-2.0. Upstream license files are preserved here as RabbitMQ.Client-LICENSE*.txt and included in the runtime image. [Source](https://github.com/rabbitmq/rabbitmq-dotnet-client/tree/v7.2.2).
+
+RU: Брокер использует RabbitMQ.Client 7.2.2 с двойной лицензией Apache-2.0/MPL-2.0. Исходные лицензии сохранены здесь как RabbitMQ.Client-LICENSE*.txt и включены в образ. Источник указан выше.
+
+UA: Брокер використовує RabbitMQ.Client 7.2.2 з подвійною ліцензією Apache-2.0/MPL-2.0. Початкові ліцензії збережено тут як RabbitMQ.Client-LICENSE*.txt і включено до образу. Джерело вказано вище.

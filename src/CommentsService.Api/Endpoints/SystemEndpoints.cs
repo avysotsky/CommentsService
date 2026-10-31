@@ -9,7 +9,7 @@ public static class SystemEndpoints
     public static IEndpointRouteBuilder MapSystemEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("/api/status", () => new ApplicationStatus(
-            "CommentsService", typeof(SystemEndpoints).Assembly.GetName().Version!.ToString(), "GraphQL"));
+            "CommentsService", typeof(SystemEndpoints).Assembly.GetName().Version!.ToString(), "MessageBroker"));
         endpoints.MapGet("/api/config", (CommentsService.Api.Configuration.RuntimeSettings runtime) =>
         {
             var limits = runtime.Limits;

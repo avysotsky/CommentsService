@@ -1,14 +1,14 @@
 # CommentsService
 
-Version: **1.3.3.1** · `CommentsService/v_1.3.3.1_GraphQL`
+Version: **1.3.3.2** · `CommentsService/v_1.3.3.2_MessageBroker`
 
-GraphQL adds a bounded read-only /api/graphql endpoint and uses it for SPA root-page reads. Existing REST writes/replies/files, Events/Cache/Queue/WebSocket and PostgreSQL data remain. Runtime.GraphQL adds validated limits; only graphQLEnabled is public. No schema migration, broker, NoSQL or cloud. This completes the Graph item only, not the entire Middle level.
+RabbitMQ now carries comment-change signals in the background. If disabled, disconnected, stalled or overloaded, the existing local queue keeps WebSocket refresh working; comment writes, GraphQL/REST, CAPTCHA, preview and files remain independent of the broker. Runtime.Broker adds private validated settings; credentials are separate environment secrets. PostgreSQL schema/data and the public configuration contract are unchanged. No outbox, NoSQL, cloud or replica deployment.
 
-Passed: 370 distinct backend tests (27 Domain / 85 Application / 67 Data / 191 API, including the final focused rerun), 33 frontend tests, frontend/Docker builds, real Edge with three windows/CAPTCHA/root/reply/WS refresh/reconnect/draft/query retention/EN-RU-UA/360px, and 18 retained-million GraphQL cases with two samples and REST order parity. Native HTTP byte/encoding/depth/route guards and public HTTPS/GraphQL/WSS checks passed. Original data, schema, checkpoints, environment, volumes and existing preview were preserved. No reboot or repeat of the prior heartbeat acceptance. [GraphQL](docs/GRAPHQL.md).
+Passed: 387 backend tests (27/85/67/208), 33 frontend tests, frontend/Docker builds, real Edge with RabbitMQ healthy/paused/stopped/recovered and no app restart, six GraphQL sorts, real CAPTCHA/root/reply, preview, exact TXT, WebSocket refresh/reconnect, drafts, EN/RU/UA and 360px. Startup with the broker already stopped and later recovery also passed. Original data/schema/history/corpus/checkpoints/env/volumes/preview preserved. The earlier million-row paging acceptance was not repeated because read queries are unchanged.
 
-[GraphQL](docs/GRAPHQL.md) · [Junior+](docs/JUNIOR_PLUS.md)
+[Message broker](docs/MESSAGE_BROKER.md) · [GraphQL](docs/GRAPHQL.md) · [Junior+](docs/JUNIOR_PLUS.md)
 
-<!-- GRAPHQL-CURRENT-END -->
+<!-- MESSAGE-BROKER-CURRENT-END -->
 
 Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 

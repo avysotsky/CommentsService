@@ -1,6 +1,7 @@
 import { limits } from './runtimeConfig.ts';
 export const messages = {
   en: {
+    searchTitle: 'Find a comment', searchQuery: 'Words or author name', searchButton: 'Search', searchHint: 'Search updates shortly after a comment is saved. The main list remains available.', searchEmpty: 'No matching comments.', searchUnavailable: 'Search is temporarily unavailable. You can still read and post comments below.', openDiscussion: 'Open discussion', discussion: 'Discussion', selectedComment: 'Selected comment', searchInvalid: 'Enter a shorter, non-empty search.',
     liveConnected: 'Live updates connected.', liveOffline: 'Live updates reconnecting. Refresh is available.',
     liveUpdates: 'New comments or replies are available. Refresh when you are ready.',
     title: 'Good conversations start here.', intro: 'Leave a thought. Make a connection. Join the conversation.',
@@ -27,6 +28,7 @@ export const messages = {
     author: 'Author', posted: 'Posted', website: 'Website', language: 'Language',
   },
   ru: {
+    searchTitle: 'Найти комментарий', searchQuery: 'Слова или имя автора', searchButton: 'Найти', searchHint: 'Поиск обновляется вскоре после сохранения. Основной список остаётся доступным.', searchEmpty: 'Совпадений не найдено.', searchUnavailable: 'Поиск временно недоступен. Читать и писать комментарии ниже по-прежнему можно.', openDiscussion: 'Открыть обсуждение', discussion: 'Обсуждение', selectedComment: 'Найденный комментарий', searchInvalid: 'Введите непустой запрос покороче.',
     liveConnected: 'Обновления подключены.', liveOffline: 'Восстанавливаем связь. Можно обновить вручную.',
     liveUpdates: 'Появились новые комментарии или ответы. Обновите список, когда будете готовы.',
     title: 'Хороший разговор начинается здесь.', intro: 'Поделитесь мыслью. Найдите собеседников. Присоединяйтесь к разговору.',
@@ -53,6 +55,7 @@ export const messages = {
     author: 'Автор', posted: 'Дата', website: 'Сайт', language: 'Язык',
   },
   uk: {
+    searchTitle: 'Знайти коментар', searchQuery: 'Слова або ім’я автора', searchButton: 'Знайти', searchHint: 'Пошук оновлюється невдовзі після збереження. Основний список залишається доступним.', searchEmpty: 'Збігів не знайдено.', searchUnavailable: 'Пошук тимчасово недоступний. Читати й писати коментарі нижче й далі можна.', openDiscussion: 'Відкрити обговорення', discussion: 'Обговорення', selectedComment: 'Знайдений коментар', searchInvalid: 'Введіть непорожній коротший запит.',
     liveConnected: 'Оновлення підключено.', liveOffline: 'Відновлюємо зв’язок. Можна оновити вручну.',
     liveUpdates: 'З’явилися нові коментарі або відповіді. Оновіть список, коли будете готові.',
     title: 'Гарна розмова починається тут.', intro: 'Поділіться думкою. Знайдіть співрозмовників. Долучайтеся до розмови.',

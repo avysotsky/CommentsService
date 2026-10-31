@@ -89,6 +89,23 @@
       "OperationTimeoutSeconds": 2,
       "ReconnectDelayMilliseconds": 2000,
       "FallbackDelayMilliseconds": 1000
+    },
+    "Search": {
+      "Enabled": false,
+      "Endpoint": "http://elasticsearch:9200",
+      "Username": "comments_search",
+      "Index": "comments-v1",
+      "MaximumQueryLength": 200,
+      "PageSize": 10,
+      "MaximumPage": 100,
+      "TimeoutSeconds": 2,
+      "MaximumConcurrentRequests": 4,
+      "BatchSize": 50,
+      "BatchDelayMilliseconds": 1000,
+      "ReconcileIntervalSeconds": 30,
+      "FailureRetrySeconds": 5,
+      "Capacity": 256,
+      "MaximumIndexBytes": 1073741824
     }
   }
 }

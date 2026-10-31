@@ -119,3 +119,10 @@ footer { color:#5c6b59; font-size:13px; border-top:1px solid #dfe4d7; padding:20
   .file-viewer { padding:14px; }
 }
 .live-update { padding: 12px 16px; margin-block: 12px; border: 1px solid #b5cfc3; border-radius: 10px; background: #f0f7f3; }
+
+.search form { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; }
+.search form label { width: 100%; }
+.search form input { flex: 1 1 12rem; min-width: 0; }
+.search-results article, .search-discussion { margin-top: 1rem; padding: 1rem; border: 1px solid var(--line, #d9e1d3); border-radius: .75rem; }
+.search-excerpt { max-height: 9rem; overflow: auto; margin: .75rem 0; overflow-wrap: anywhere; }
+.search-results nav { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: 1rem; }

@@ -20,8 +20,12 @@ public sealed class RuntimeSettings
 
     public CommentsService.Infrastructure.Broker.BrokerSettings Broker { get; set; } = new();
 
+    public CommentsService.Infrastructure.Search.SearchSettings Search { get; set; } = new();
+
     public void Validate()
     {
+        if (Search is null) throw new InvalidOperationException("Missing search settings.");
+        Search.Validate();
         if (Broker is null) throw new InvalidOperationException("Missing broker settings.");
         Broker.Validate();
         if (GraphQL is null) throw new InvalidOperationException("Missing GraphQL settings.");

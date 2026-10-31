@@ -59,6 +59,17 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
     options.ValueLengthLimit = runtime.Requests.FormValueMaxLength;
     options.ValueCountLimit = runtime.Requests.FormValueCountLimit;
 });
+builder.Services.AddSingleton(runtime.Search);
+builder.Services.AddSingleton(runtime.Search.Limits);
+builder.Services.AddSingleton<CommentsService.Infrastructure.Search.SearchSignals>();
+builder.Services.AddSingleton<CommentsService.Infrastructure.Search.RabbitSearchSubscriber>();
+builder.Services.AddSingleton<CommentsService.Api.Search.SearchCapacity>();
+builder.Services.AddSingleton<CommentsService.Application.Search.ICommentSearchIndex>(_ =>
+    new CommentsService.Infrastructure.Search.ElasticCommentIndex(runtime.Search, CommentsService.Infrastructure.Search.ElasticCommentIndex.CreateClient(),
+        runtime.Database.Database ?? Environment.GetEnvironmentVariable("PGDATABASE") ?? "unconfigured"));
+builder.Services.AddScoped<CommentsService.Application.Search.ISearchComments, CommentsService.Application.Search.SearchComments>();
+builder.Services.AddHostedService<CommentsService.Api.Search.CommentSearchWorker>();
+builder.Services.AddHostedService<CommentsService.Api.Search.SearchBrokerWorker>();
 builder.Services.AddCommentGraphQL(runtime);
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
@@ -113,6 +124,7 @@ app.UseStaticFiles();
 if (runtime.GraphQL.Enabled) app.MapGraphQLHttp("/api/graphql");
 app.MapSystemEndpoints();
 app.MapCommentsEndpoints();
+app.MapSearchEndpoints();
 app.MapCaptchaEndpoints();
 app.MapImageEndpoints();
 app.MapTextFileEndpoints();

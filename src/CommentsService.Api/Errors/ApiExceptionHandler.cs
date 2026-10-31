@@ -10,6 +10,7 @@ public sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : I
     {
         var status = exception switch
         {
+            CommentsService.Application.Search.SearchUnavailableException => StatusCodes.Status503ServiceUnavailable,
             StorageUnavailableException => StatusCodes.Status503ServiceUnavailable,
             BadHttpRequestException request => request.StatusCode,
             JsonException => StatusCodes.Status400BadRequest,
@@ -17,7 +18,7 @@ public sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : I
         };
         if (status >= 500) logger.LogError("Request failed with status {Status}; trace {TraceId}; type {ErrorType}.", status, context.TraceIdentifier, exception.GetType().Name);
         else logger.LogInformation("Request rejected with status {Status}; trace {TraceId}.", status, context.TraceIdentifier);
-        await Results.Problem(statusCode: status, title: status switch
+        await Results.Problem(statusCode: status, title: exception is CommentsService.Application.Search.SearchUnavailableException ? "Comment search is unavailable." : status switch
         {
             503 => "Comments storage is unavailable.",
             400 => "Invalid request body.",

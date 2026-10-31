@@ -5,4 +5,4 @@ public sealed record PublicConfiguration(int RootPageSize, int DefaultListLimit,
     int UserNameMaxLength, int EmailMaxLength, int HomePageMaxLength, int TextMaxLength,
     int ImageUploadMaxBytes, int ImageMaxWidth, int ImageMaxHeight, int TextFileMaxBytes,
     int CaptchaCodeLength, string CaptchaAlphabet, int CaptchaLifetimeSeconds,
-    bool GraphQLEnabled, bool RealtimeEnabled, int ReconnectDelayMilliseconds, int MaximumReconnectDelayMilliseconds);
+    bool SearchEnabled, int SearchQueryMaxLength, bool GraphQLEnabled, bool RealtimeEnabled, int ReconnectDelayMilliseconds, int MaximumReconnectDelayMilliseconds);

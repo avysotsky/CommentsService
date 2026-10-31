@@ -2,6 +2,14 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.3.3.3 CommentSearch - 2026-10-31
+
+`CommentsService/v_1.3.3.3_CommentSearch`
+
+Optional Elasticsearch full-text search now finds roots and replies by words or author name, with paging and discussion navigation. Search has separate bounded requests, background indexing and a RabbitMQ consumer; SQL reconciliation repairs missed signals and stale entries. PostgreSQL remains authoritative and all earlier functionality remains independent of Elasticsearch availability. Indexes are automatically partitioned by database. No SQL migration, outbox, cloud or replica deployment.
+
+Verification: 418 distinct backend tests (27/85/67/239), 36 frontend tests, frontend/Docker builds; real Edge EN/RU/UA search, selected reply/discussion, ES pause/stop/recovery while posting/CAPTCHA/preview/exact TXT/GraphQL six sorts/WS/drafts remain usable; SQL reconciliation after RabbitMQ loss; offline startup and recovery without app restart; strict private mapping, scoped credentials, orphan cleanup and index reconstruction. Original data/schema/history/million/checkpoints/env/volumes/preview preserved. Earlier million paging/reboot/heartbeat acceptance was not repeated. [Details](docs/COMMENT_SEARCH.md).
+
 ## 1.3.3.2 MessageBroker - 2026-10-31
 
 `CommentsService/v_1.3.3.2_MessageBroker`

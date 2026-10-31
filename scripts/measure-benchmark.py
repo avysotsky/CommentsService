@@ -42,7 +42,7 @@ try:
         compose += ['--env-file', a.env_file, '-p', a.project, '--profile', 'testing']
         container = subprocess.check_output(compose + ['run', '-d', '--no-deps', '--name', name,
             '-p', '127.0.0.1:' + str(url.port or 80) + ':8080', '-e', 'PGHOST=test-database',
-            '-e', 'PGDATABASE=comments_benchmark', '-e', 'PGPASSWORD', 'app'], env=env).decode().strip()
+            '-e', 'PGDATABASE=comments_benchmark', '-e', 'Runtime__Search__Enabled=false', '-e', 'PGPASSWORD', 'app'], env=env).decode().strip()
         for _ in range(150):
             try:
                 get('/health/database'); break

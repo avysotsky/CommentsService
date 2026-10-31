@@ -33,6 +33,7 @@ public static class DependencyInjection
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IUnitOfWork, EfUnitOfWork>();
         services.AddScoped<CommentQueries>();
+        services.AddScoped<CommentsService.Application.Search.ICommentSearchSource, CommentsService.Infrastructure.Search.CommentSearchSource>();
         services.AddScoped<ICommentQueries>(sp =>
         {
             var queries = sp.GetRequiredService<CommentQueries>();

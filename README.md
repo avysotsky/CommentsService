@@ -1,14 +1,14 @@
 # CommentsService
 
-Version: **1.3.3.2** · `CommentsService/v_1.3.3.2_MessageBroker`
+Version: **1.3.3.3** · `CommentsService/v_1.3.3.3_CommentSearch`
 
-RabbitMQ now carries comment-change signals in the background. If disabled, disconnected, stalled or overloaded, the existing local queue keeps WebSocket refresh working; comment writes, GraphQL/REST, CAPTCHA, preview and files remain independent of the broker. Runtime.Broker adds private validated settings; credentials are separate environment secrets. PostgreSQL schema/data and the public configuration contract are unchanged. No outbox, NoSQL, cloud or replica deployment.
+Optional Elasticsearch full-text search now finds roots and replies by words or author name, with paging and discussion navigation. Search has separate bounded requests, background indexing and a RabbitMQ consumer; SQL reconciliation repairs missed signals and stale entries. PostgreSQL remains authoritative and all earlier functionality remains independent of Elasticsearch availability. Indexes are automatically partitioned by database. No SQL migration, outbox, cloud or replica deployment.
 
-Passed: 387 backend tests (27/85/67/208), 33 frontend tests, frontend/Docker builds, real Edge with RabbitMQ healthy/paused/stopped/recovered and no app restart, six GraphQL sorts, real CAPTCHA/root/reply, preview, exact TXT, WebSocket refresh/reconnect, drafts, EN/RU/UA and 360px. Startup with the broker already stopped and later recovery also passed. Original data/schema/history/corpus/checkpoints/env/volumes/preview preserved. The earlier million-row paging acceptance was not repeated because read queries are unchanged.
+Verification: 418 distinct backend tests (27/85/67/239), 36 frontend tests, frontend/Docker builds; real Edge EN/RU/UA search, selected reply/discussion, ES pause/stop/recovery while posting/CAPTCHA/preview/exact TXT/GraphQL six sorts/WS/drafts remain usable; SQL reconciliation after RabbitMQ loss; offline startup and recovery without app restart; strict private mapping, scoped credentials, orphan cleanup and index reconstruction. Original data/schema/history/million/checkpoints/env/volumes/preview preserved. Earlier million paging/reboot/heartbeat acceptance was not repeated. [Details](docs/COMMENT_SEARCH.md).
 
-[Message broker](docs/MESSAGE_BROKER.md) · [GraphQL](docs/GRAPHQL.md) · [Junior+](docs/JUNIOR_PLUS.md)
+[Search](docs/COMMENT_SEARCH.md) · [Broker](docs/MESSAGE_BROKER.md) · [GraphQL](docs/GRAPHQL.md)
 
-<!-- MESSAGE-BROKER-CURRENT-END -->
+<!-- COMMENT-SEARCH-CURRENT-END -->
 
 Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 

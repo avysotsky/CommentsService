@@ -9,4 +9,6 @@ defaults.realtimeEnabled = realtime.Enabled;
 defaults.reconnectDelayMilliseconds = realtime.ReconnectDelayMilliseconds;
 defaults.maximumReconnectDelayMilliseconds = realtime.MaximumReconnectDelayMilliseconds;
 defaults.graphQLEnabled = JSON.parse(readFileSync(new URL('../../CommentsService.Api/config.json', import.meta.url))).Runtime.GraphQL.Enabled;
+defaults.searchEnabled = false;
+defaults.searchQueryMaxLength = 200;
 configure(defaults);

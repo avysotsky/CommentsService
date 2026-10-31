@@ -1,6 +1,8 @@
 # CommentsService
 
-Version: **1.1.0.15** · Branch: `CommentsService/v_1.1.0.15_Acceptance`
+Version: **1.1.0.15** · Branch: `CommentsService/v_1.1.0.15_DtoContracts`
+
+DTO contracts are grouped in the owning Application/API layers, one type per file. Explicit comment mapping is separate; JSON, routes and database schema are unchanged. DtoContracts verification: 270 backend tests (27/84/56/103). Configuration and logging remain the next corrections; the acceptance report describes the preceding Acceptance release.
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 

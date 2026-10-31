@@ -3,8 +3,6 @@ using CommentsService.Application.Common;
 
 namespace CommentsService.Application.Comments.GetReplies;
 
-public sealed record ReplyCursor(DateTimeOffset CreatedAt, Guid Id);
-public sealed record RepliesPage(IReadOnlyList<CommentDto> Items, Guid? NextAfter);
 public interface IGetReplies
 {
     Task<Validated<RepliesPage>> ExecuteAsync(Guid parentId, int limit = 25, Guid? after = null,

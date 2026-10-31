@@ -1,4 +1,5 @@
 using CommentsService.Application.Captcha;
+using CommentsService.Api.DTO.Responses;
 namespace CommentsService.Api.Endpoints;
 
 public static class CaptchaEndpoints
@@ -12,7 +13,7 @@ public static class CaptchaEndpoints
             try
             {
                 var challenge = issuer.Issue(replace);
-                return Results.Ok(new { challenge.Id, imageDataUrl = "data:image/png;base64," + Convert.ToBase64String(challenge.Image), challenge.ExpiresAt });
+                return Results.Ok(new CaptchaResponse(challenge.Id, "data:image/png;base64," + Convert.ToBase64String(challenge.Image), challenge.ExpiresAt));
             }
             catch (CaptchaCapacityException) { return Results.Problem(statusCode: 429, title: "CAPTCHA capacity reached. Try again later."); }
         });

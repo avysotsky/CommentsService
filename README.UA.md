@@ -1,6 +1,8 @@
 # CommentsService
 
-Версія: **1.1.0.15** · Гілка: `CommentsService/v_1.1.0.15_Acceptance`
+Версія: **1.1.0.15** · Гілка: `CommentsService/v_1.1.0.15_DtoContracts`
+
+Контракти DTO зібрано у власних шарах Application/API, по типу на файл. Маппінг коментаря винесено окремо; JSON, маршрути й схему БД збережено. Перевірка DtoContracts: 270 backend-тестів (27/84/56/103). Далі — Configuration та Logging; звіт приймання описує попередній випуск Acceptance.
 
 [English](README.md) · [Русский](README.RU.md) · [Українська](README.UA.md)
 

@@ -1,13 +1,10 @@
 using CommentsService.Application.Common;
 namespace CommentsService.Application.TextFiles;
 
-public sealed record TextFileUpload(string FileName, long Length, Stream Content);
-public sealed record PreparedTextFile(string FileName, byte[] Data);
 public interface ITextFileProcessor
 {
     Task<Validated<PreparedTextFile>> ProcessAsync(TextFileUpload upload, CancellationToken cancellationToken = default);
 }
-public sealed record StoredTextFile(byte[] Data);
 public interface ITextFileQueries { Task<StoredTextFile?> FindAsync(Guid id, CancellationToken cancellationToken = default); }
 public interface IGetTextFile { Task<StoredTextFile?> ExecuteAsync(Guid id, CancellationToken cancellationToken = default); }
 public sealed class GetTextFile(ITextFileQueries queries) : IGetTextFile

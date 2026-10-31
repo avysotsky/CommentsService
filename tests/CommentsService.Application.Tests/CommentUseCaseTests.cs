@@ -216,17 +216,17 @@ public sealed class CommentUseCaseTests
         public Task<CommentDto?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             QueryCalls++; Token = cancellationToken;
-            return Task.FromResult(Comments.SingleOrDefault(x => x.Id == id) is { } found ? CommentDto.From(found) : null);
+            return Task.FromResult(Comments.SingleOrDefault(x => x.Id == id) is { } found ? CommentMapping.From(found) : null);
         }
         public Task<CommentsService.Application.Comments.GetRootPage.RootCommentsPage> GetRootPageAsync(
             CommentsService.Application.Comments.GetRootPage.RootPageQuery query, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<IReadOnlyList<CommentDto>> GetRepliesAsync(Guid parentId, int limit,
             CommentsService.Application.Comments.GetReplies.ReplyCursor? after, CancellationToken cancellationToken = default) =>
-            Task.FromResult<IReadOnlyList<CommentDto>>(Comments.Where(c => c.ParentId == parentId).Select(CommentDto.From).Take(limit).ToArray());
+            Task.FromResult<IReadOnlyList<CommentDto>>(Comments.Where(c => c.ParentId == parentId).Select(CommentMapping.From).Take(limit).ToArray());
         public Task<IReadOnlyList<CommentDto>> GetLatestAsync(int limit, CancellationToken cancellationToken = default)
         {
             QueryCalls++; Token = cancellationToken; Limit = limit;
-            return Task.FromResult<IReadOnlyList<CommentDto>>(Comments.Take(limit).Select(CommentDto.From).ToArray());
+            return Task.FromResult<IReadOnlyList<CommentDto>>(Comments.Take(limit).Select(CommentMapping.From).ToArray());
         }
     }
 }

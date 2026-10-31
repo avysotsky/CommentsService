@@ -2,6 +2,12 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.0.15 DtoContracts — 2026-10-31
+
+`CommentsService/v_1.1.0.15_DtoContracts`
+
+Контракти Application/API перенесено у власні папки DTO, по типу на файл, зі збереженням просторів імен та JSON. Маппінг коментаря винесено окремо; відповіді status/health/CAPTCHA типізовано. Залежності й міграції попередні. Пройшли 270 backend-тестів (27/84/56/103), включно з точними JSON-контрактами.
+
 ## 1.1.0.15 Acceptance — 2026-10-30
 
 `CommentsService/v_1.1.0.15_Acceptance`

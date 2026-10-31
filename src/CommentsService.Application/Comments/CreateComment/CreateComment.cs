@@ -45,6 +45,6 @@ public sealed class CreateComment(ICommentRepository repository, IUnitOfWork uni
         if (textFile is not null) _ = new TextAttachment(comment, textFile.FileName, textFile.Data);
         repository.Add(comment);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        return Validated<CommentDto>.Success(CommentDto.From(comment));
+        return Validated<CommentDto>.Success(CommentMapping.From(comment));
     }
 }

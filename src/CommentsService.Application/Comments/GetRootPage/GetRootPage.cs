@@ -5,8 +5,6 @@ namespace CommentsService.Application.Comments.GetRootPage;
 
 public enum CommentSort { UserName, Email, CreatedAt }
 public enum SortDirection { Asc, Desc }
-public sealed record RootPageQuery(int Page, CommentSort Sort, SortDirection Direction);
-public sealed record RootCommentsPage(IReadOnlyList<CommentDto> Items, int Page, int PageSize, long TotalCount, long TotalPages);
 public interface IGetRootPage
 {
     Task<Validated<RootCommentsPage>> ExecuteAsync(int page = 1, string sort = "createdAt", string direction = "desc",

@@ -74,15 +74,15 @@ public sealed class CommentThreadTests
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) { Saves++; return Task.FromResult(2); }
         Task<Comment?> ICommentRepository.FindByIdAsync(Guid id, CancellationToken cancellationToken) => Task.FromResult(Rows.SingleOrDefault(x => x.Id == id));
         public Task<CommentDto?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        { Reads++; return Task.FromResult(Rows.SingleOrDefault(x => x.Id == id) is { } c ? CommentDto.From(c) : null); }
+        { Reads++; return Task.FromResult(Rows.SingleOrDefault(x => x.Id == id) is { } c ? CommentMapping.From(c) : null); }
         public Task<IReadOnlyList<CommentDto>> GetLatestAsync(int limit, CancellationToken cancellationToken = default) =>
-            Task.FromResult<IReadOnlyList<CommentDto>>(Rows.Where(x => x.ParentId == null).Select(CommentDto.From).Take(limit).ToArray());
+            Task.FromResult<IReadOnlyList<CommentDto>>(Rows.Where(x => x.ParentId == null).Select(CommentMapping.From).Take(limit).ToArray());
         public Task<CommentsService.Application.Comments.GetRootPage.RootCommentsPage> GetRootPageAsync(
             CommentsService.Application.Comments.GetRootPage.RootPageQuery query, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<IReadOnlyList<CommentDto>> GetRepliesAsync(Guid parentId, int limit, ReplyCursor? after, CancellationToken cancellationToken = default)
         {
             Reads++; Limit = limit; Cursor = after; Token = cancellationToken;
-            var ordered = Rows.Where(x => x.ParentId == parentId).Reverse().Select(CommentDto.From);
+            var ordered = Rows.Where(x => x.ParentId == parentId).Reverse().Select(CommentMapping.From);
             if (after is not null) ordered = ordered.SkipWhile(x => x.Id != after.Id).Skip(1);
             return Task.FromResult<IReadOnlyList<CommentDto>>(ordered.Take(limit).ToArray());
         }

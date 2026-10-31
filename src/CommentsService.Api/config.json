@@ -14,6 +14,40 @@
       "TimeoutSeconds": 15,
       "CommandTimeoutSeconds": 30,
       "MaximumPoolSize": 100
+    },
+    "Limits": {
+      "RootPageSize": 25,
+      "DefaultListLimit": 25,
+      "MaximumListLimit": 100,
+      "UserNameMaxLength": 100,
+      "EmailMaxLength": 254,
+      "HomePageMaxLength": 2048,
+      "TextMaxLength": 65536,
+      "UserAgentMaxLength": 2048,
+      "MarkupMaxDepth": 32,
+      "MarkupMaxNodes": 4096,
+      "ImageUploadMaxBytes": 5242880,
+      "ImageMaxWidth": 320,
+      "ImageMaxHeight": 240,
+      "ImageDecodeMaxDimension": 10000,
+      "ImageDecodeMaxPixels": 16000000,
+      "ImageProcessingConcurrency": 2,
+      "TextFileMaxBytes": 102400
+    },
+    "Captcha": {
+      "LifetimeSeconds": 300,
+      "Capacity": 2048,
+      "CodeLength": 6,
+      "Alphabet": "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"
+    },
+    "Requests": {
+      "JsonMaxBytes": 1048576,
+      "JsonMaxDepth": 16,
+      "BodyMaxBytes": 6291456,
+      "MultipartMaxBytes": 5242880,
+      "FormValueMaxLength": 262144,
+      "FormValueCountLimit": 16,
+      "HealthTimeoutSeconds": 2
     }
   }
 }

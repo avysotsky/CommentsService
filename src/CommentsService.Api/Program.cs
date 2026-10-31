@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(configurationArgs);
 var runtime = RuntimeConfiguration.Load(builder.Configuration, configurationArgs);
 if (healthCommand)
 {
-    using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
+    using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(runtime.Requests.HealthTimeoutSeconds) };
     try
     {
         using var response = await client.GetAsync($"http://127.0.0.1:{runtime.HealthPort}/health");
@@ -29,6 +29,8 @@ if (healthCommand)
 }
 
 builder.Services.AddSingleton(runtime);
+builder.Services.AddSingleton(runtime.Limits);
+builder.Services.AddSingleton(runtime.Captcha);
 RuntimeLogging.Configure(builder, runtime);
 builder.Services.AddInfrastructure(runtime.Database);
 builder.Services.AddSingleton<CommentsService.Application.Comments.Markup.ICommentMarkup, CommentsService.Application.Comments.Markup.XhtmlCommentMarkup>();
@@ -41,13 +43,13 @@ builder.Services.AddScoped<CommentsService.Application.Comments.GetReplies.IGetR
 builder.Services.AddScoped<IGetLatestComments, GetLatestComments>();
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 5 * 1024 * 1024;
-    options.ValueLengthLimit = 262144;
-    options.ValueCountLimit = 16;
+    options.MultipartBodyLengthLimit = runtime.Requests.MultipartMaxBytes;
+    options.ValueLengthLimit = runtime.Requests.FormValueMaxLength;
+    options.ValueCountLimit = runtime.Requests.FormValueCountLimit;
 });
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
-builder.WebHost.ConfigureKestrel(options => { options.AddServerHeader = false; options.Limits.MaxRequestBodySize = 6 * 1024 * 1024; });
+builder.WebHost.ConfigureKestrel(options => { options.AddServerHeader = false; options.Limits.MaxRequestBodySize = runtime.Requests.BodyMaxBytes; });
 await using var app = builder.Build();
 var operationLogger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("CommentsService.Api.Operations");
 operationLogger.LogInformation("Host initialized for {Operation}", databaseCommand ? args[0] : "serve");

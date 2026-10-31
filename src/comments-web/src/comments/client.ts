@@ -1,3 +1,4 @@
+import { limits } from '../runtimeConfig.ts';
 import type { Comment, CommentInput, CommentsClient, FieldErrors } from './model';
 
 export class CommentsRequestError extends Error {
@@ -25,13 +26,13 @@ export class HttpCommentsClient implements CommentsClient {
   }
 
   async replies(parentId: string, after?: string | null, signal?: AbortSignal) {
-    const query = new URLSearchParams({ limit: '25' });
+    const query = new URLSearchParams({ limit: String(limits.defaultListLimit) });
     if (after) query.set('after', after);
     return this.read<import('./model').RepliesPage>(await this.request(`/api/comments/${encodeURIComponent(parentId)}/replies?${query}`, { signal, cache: 'no-store' }));
   }
 
   async latest(signal?: AbortSignal): Promise<Comment[]> {
-    return this.read(await this.request('/api/comments?limit=25', { signal, cache: 'no-store' }));
+    return this.read(await this.request(`/api/comments?limit=${limits.defaultListLimit}`, { signal, cache: 'no-store' }));
   }
 
   async create(input: CommentInput): Promise<Comment> {

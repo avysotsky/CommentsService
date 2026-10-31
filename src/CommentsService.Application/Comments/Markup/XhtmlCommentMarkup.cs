@@ -8,15 +8,16 @@ using CommentsService.Domain.Entities;
 namespace CommentsService.Application.Comments.Markup;
 
 // A bounded, strict fragment parser. Never repair or silently strip rejected markup.
-public sealed class XhtmlCommentMarkup : ICommentMarkup
+public sealed class XhtmlCommentMarkup(ApplicationLimits? settings = null) : ICommentMarkup
 {
+    private readonly ApplicationLimits limits = settings ?? new();
     private static readonly Regex MarkupStart = new(@"<\s*[/!?\p{L}]",
         RegexOptions.CultureInvariant | RegexOptions.NonBacktracking);
 
     public Validated<CommentPreview> Validate(string? text)
     {
-        if (string.IsNullOrWhiteSpace(text) || text.Length > Comment.TextMaxLength)
-            return Invalid("Comment text is required and must not exceed 65536 characters.");
+        if (string.IsNullOrWhiteSpace(text) || text.Length > limits.TextMaxLength)
+            return Invalid($"Comment text is required and must not exceed {limits.TextMaxLength} characters.");
         try { XmlConvert.VerifyXmlChars(text); }
         catch (XmlException) { return Invalid("Comment text must contain valid XML Unicode characters."); }
         if (!MarkupStart.IsMatch(text)) return Validated<CommentPreview>.Success(new(WebUtility.HtmlEncode(text)));
@@ -25,13 +26,13 @@ public sealed class XhtmlCommentMarkup : ICommentMarkup
             using var reader = XmlReader.Create(new StringReader("<root>" + text + "</root>"), new XmlReaderSettings
             {
                 DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null,
-                MaxCharactersInDocument = Comment.TextMaxLength + 13, IgnoreWhitespace = false
+                MaxCharactersInDocument = limits.TextMaxLength + 13, IgnoreWhitespace = false
             });
             var html = new StringBuilder();
             var links = 0; var nodes = 0; var visibleText = false;
             while (reader.Read())
             {
-                if (++nodes > 4096 || reader.Depth > 32) return Invalid("Markup is too complex (maximum depth 32 and 4096 nodes).");
+                if (++nodes > limits.MarkupMaxNodes || reader.Depth > limits.MarkupMaxDepth) return Invalid($"Markup is too complex (maximum depth {limits.MarkupMaxDepth} and {limits.MarkupMaxNodes} nodes).");
                 if (reader.Depth == 0 && reader.Name == "root") continue;
                 switch (reader.NodeType)
                 {
@@ -78,7 +79,7 @@ public sealed class XhtmlCommentMarkup : ICommentMarkup
         catch (XmlException) { return Invalid("Use well-formed XHTML with closed, correctly nested tags and escaped & and < characters."); }
     }
 
-    private static bool SafeLink(string? value) => value is not null && value.Length <= 2048 &&
+    private bool SafeLink(string? value) => value is not null && value.Length <= limits.HomePageMaxLength &&
         !value.Any(c => char.IsControl(c) || char.IsWhiteSpace(c)) &&
         Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
         uri.Scheme is "http" or "https" && uri.Host.Length != 0 && uri.UserInfo.Length == 0 &&

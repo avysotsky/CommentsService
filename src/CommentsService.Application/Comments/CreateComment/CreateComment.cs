@@ -4,7 +4,7 @@ using CommentsService.Domain.Entities;
 
 namespace CommentsService.Application.Comments.CreateComment;
 
-public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork, CommentsService.Application.Comments.Markup.ICommentMarkup markup, CommentsService.Application.Captcha.ICaptchaVerifier captcha, CommentsService.Application.Images.IImageProcessor images, CommentsService.Application.TextFiles.ITextFileProcessor textFiles) : ICreateComment
+public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork, CommentsService.Application.Comments.Markup.ICommentMarkup markup, CommentsService.Application.Captcha.ICaptchaVerifier captcha, CommentsService.Application.Images.IImageProcessor images, CommentsService.Application.TextFiles.ITextFileProcessor textFiles, ApplicationLimits? limits = null) : ICreateComment
 {
     public async Task<Validated<CommentDto>> ExecuteAsync(CreateCommentInput input, ClientMetadata client,
         CancellationToken cancellationToken = default)
@@ -14,7 +14,7 @@ public sealed class CreateComment(ICommentRepository repository, IUnitOfWork uni
         cancellationToken.ThrowIfCancellationRequested();
         var normalized = input with { UserName = input.UserName?.Trim(), Email = input.Email?.Trim(),
             HomePage = string.IsNullOrWhiteSpace(input.HomePage) ? null : input.HomePage.Trim() };
-        var errors = CreateCommentValidator.Validate(normalized, markup);
+        var errors = CreateCommentValidator.Validate(normalized, markup, limits ?? new());
         if (normalized.Image is not null && normalized.TextFile is not null) errors["textFile"] = ["Choose either an image or a TXT file."];
         if (errors.Count != 0) return Validated<CommentDto>.Invalid(errors);
         if (!captcha.Verify(normalized.CaptchaId, normalized.CaptchaCode))

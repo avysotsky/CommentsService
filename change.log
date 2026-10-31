@@ -2,6 +2,12 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.1.17 RuntimeLimits — 2026-10-31
+
+`CommentsService/v_1.1.1.17_RuntimeLimits`
+
+Moved operational pagination/field/upload/image/CAPTCHA/request constants into validated config.json policies. Added explicit public settings DTO and startup loading/retry; frontend checks, lengths, queries, counters and EN/RU/UA labels follow runtime values. Original Junior defaults preserved; fixed schema/security ceilings remain. Passed305backend(27/84/56/138),28frontend, frontend/Docker builds, custom-config Edge desktop/360px, default public checks and unchanged persistent-state fingerprints. No migrations or dependencies. Workbench/reboot status clarified: native model verified with documented caveat; logon-autostart reboot passed on prior1.1.1.16, not repeated for this update. See docs/RUNTIME_LIMITS.md.
+
 ## 1.1.1.16 WorkbenchSchema — 2026-10-31
 
 `CommentsService/v_1.1.1.16_WorkbenchSchema`

@@ -10,13 +10,14 @@ public interface IGetReplies
 }
 
 // Cursor pages bound the number of direct replies, never the depth of the discussion.
-public sealed class GetReplies(ICommentQueries queries) : IGetReplies
+public sealed class GetReplies(ICommentQueries queries, ApplicationLimits? settings = null) : IGetReplies
 {
+    private readonly ApplicationLimits limits = settings ?? new();
     public async Task<Validated<RepliesPage>> ExecuteAsync(Guid parentId, int limit = 25, Guid? after = null,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (limit is < 1 or > 100) return Invalid("limit", "Limit must be between 1 and 100.");
+        if (limit < 1 || limit > limits.MaximumListLimit) return Invalid("limit", $"Limit must be between 1 and {limits.MaximumListLimit}.");
         if (await queries.FindByIdAsync(parentId, cancellationToken) is null)
             return Invalid("parentId", "Comment was not found.");
         ReplyCursor? cursor = null;

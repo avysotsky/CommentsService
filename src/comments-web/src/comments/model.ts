@@ -1,3 +1,4 @@
+import { limits } from '../runtimeConfig.ts';
 export type CommentInput = { userName: string; email: string; homePage: string; text: string; parentId?: string | null; captchaId?: string; captchaCode?: string; image?: File | null; textFile?: File | null };
 export type Comment = Omit<CommentInput, 'homePage' | 'parentId' | 'image' | 'textFile'> & { id: string; homePage: string | null; createdAt: string; parentId: string | null; rootId: string; image: { id: string; fileName: string; width: number; height: number } | null; textFile: { id: string; fileName: string; sizeBytes: number } | null };
 export type Field = 'userName' | 'email' | 'homePage' | 'text';
@@ -10,7 +11,7 @@ export const defaultRootQuery: RootPageQuery = { page: 1, sort: 'createdAt', dir
 export function readRootQuery(search: string): RootPageQuery {
   const params = new URLSearchParams(search), page = Number(params.get('page') ?? 1);
   const sort = params.get('sort'), direction = params.get('direction');
-  return { page: Number.isInteger(page) && page >= 1 && page <= 85899345 ? page : 1,
+  return { page: Number.isInteger(page) && page >= 1 && page <= Math.floor(2147483647 / limits.rootPageSize) ? page : 1,
     sort: sort === 'userName' || sort === 'email' ? sort : 'createdAt', direction: direction === 'asc' ? 'asc' : 'desc' };
 }
 export type CaptchaChallenge = { id: string; imageDataUrl: string; expiresAt: string };
@@ -37,10 +38,10 @@ export type ValidationCode = 'nameError' | 'emailError' | 'homeError' | 'textErr
 export function validate(input: CommentInput): Partial<Record<Field, ValidationCode>> {
   const errors: Partial<Record<Field, ValidationCode>> = {};
   const name = input.userName.trim(), email = input.email.trim(), home = input.homePage.trim();
-  if (!/^[A-Za-z0-9]{1,100}$/.test(name)) errors.userName = 'nameError';
-  if (email.length > 254 || !/^[^\s<>@\u0000-\u001f\u007f]+@[^\s<>@\u0000-\u001f\u007f]+$/u.test(email)) errors.email = 'emailError';
-  if (home && (home.length > 2048 || !safeHomePage(home))) errors.homePage = 'homeError';
-  if (!input.text.trim() || input.text.length > 65536 || input.text.includes('\0') || !input.text.isWellFormed()) errors.text = 'textError';
+  if ((!/^[A-Za-z0-9]+$/.test(name) || name.length > limits.userNameMaxLength)) errors.userName = 'nameError';
+  if (email.length > limits.emailMaxLength || !/^[^\s<>@\u0000-\u001f\u007f]+@[^\s<>@\u0000-\u001f\u007f]+$/u.test(email)) errors.email = 'emailError';
+  if (home && (home.length > limits.homePageMaxLength || !safeHomePage(home))) errors.homePage = 'homeError';
+  if (!input.text.trim() || input.text.length > limits.textMaxLength || input.text.includes('\0') || !input.text.isWellFormed()) errors.text = 'textError';
 
   return errors;
 }

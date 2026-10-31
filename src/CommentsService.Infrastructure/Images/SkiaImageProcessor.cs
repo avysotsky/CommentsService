@@ -3,13 +3,13 @@ using CommentsService.Application.Images;
 using SkiaSharp;
 namespace CommentsService.Infrastructure.Images;
 
-public sealed class SkiaImageProcessor : IImageProcessor
+public sealed class SkiaImageProcessor(ApplicationLimits? settings = null) : IImageProcessor
 {
-    public const int MaxUploadBytes = 5 * 1024 * 1024;
-    private readonly SemaphoreSlim slots = new(2);
+    private readonly ApplicationLimits limits = settings ?? new();
+    private readonly SemaphoreSlim slots = new((settings ?? new()).ImageProcessingConcurrency);
     public async Task<Validated<PreparedImage>> ProcessAsync(ImageUpload upload, CancellationToken cancellationToken = default)
     {
-        if (upload.Length is < 1 or > MaxUploadBytes) return Invalid("Image must be between 1 byte and 5 MiB.");
+        if (upload.Length < 1 || upload.Length > limits.ImageUploadMaxBytes) return Invalid($"Image must contain 1..{limits.ImageUploadMaxBytes} bytes.");
         var name = Path.GetFileName(upload.FileName.Replace('\\', '/'));
         var extension = Path.GetExtension(name).ToLowerInvariant();
         if (extension is not (".jpg" or ".jpeg" or ".gif" or ".png")) return Invalid("Only JPG, GIF and PNG are allowed.");
@@ -17,7 +17,7 @@ public sealed class SkiaImageProcessor : IImageProcessor
         var buffer = new byte[81920]; int read;
         while ((read = await upload.Content.ReadAsync(buffer, cancellationToken)) != 0)
         {
-            if (source.Length + read > MaxUploadBytes) return Invalid("Image exceeds 5 MiB.");
+            if (source.Length + read > limits.ImageUploadMaxBytes) return Invalid($"Image exceeds {limits.ImageUploadMaxBytes} bytes.");
             await source.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
         }
         if (source.Length != upload.Length) return Invalid("Image length is invalid.");
@@ -31,13 +31,13 @@ public sealed class SkiaImageProcessor : IImageProcessor
                 (extension == ".gif" && format == SKEncodedImageFormat.Gif) || (extension == ".png" && format == SKEncodedImageFormat.Png)))
                 return Invalid("Image contents do not match its extension.");
             var w = codec.Info.Width; var h = codec.Info.Height;
-            if (w < 1 || h < 1 || w > 10000 || h > 10000 || (long)w * h > 16000000) return Invalid("Image dimensions exceed safe decoding limits.");
+            if (w < 1 || h < 1 || w > limits.ImageDecodeMaxDimension || h > limits.ImageDecodeMaxDimension || (long)w * h > limits.ImageDecodeMaxPixels) return Invalid("Image dimensions exceed safe decoding limits.");
             cancellationToken.ThrowIfCancellationRequested();
             using var bitmap = new SKBitmap(w, h);
             if (codec.GetPixels(bitmap.Info, bitmap.GetPixels()) != SKCodecResult.Success) return Invalid("Image is incomplete or corrupt.");
             var origin = (int)codec.EncodedOrigin; var swap = origin >= 5;
             var ow = swap ? h : w; var oh = swap ? w : h;
-            var ratio = Math.Min(1d, Math.Min(320d / ow, 240d / oh));
+            var ratio = Math.Min(1d, Math.Min((double)limits.ImageMaxWidth / ow, (double)limits.ImageMaxHeight / oh));
             var tw = Math.Max(1, (int)Math.Floor(ow * ratio)); var th = Math.Max(1, (int)Math.Floor(oh * ratio));
             using var target = new SKBitmap(tw, th); using var canvas = new SKCanvas(target); canvas.Clear(SKColors.Transparent);
             float a = 1, b = 0, c = 0, d = 0, e = 1, f = 0;

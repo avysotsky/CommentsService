@@ -1,3 +1,4 @@
+import './configure.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fileUrl, attachments } from '../src/files/model.ts';

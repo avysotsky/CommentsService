@@ -1,3 +1,4 @@
+import { limits } from '../runtimeConfig.ts';
 import { fieldError } from './validation';
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
@@ -46,7 +47,7 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
     const open = tag === 'a' ? '<a href="https://example.com/" title="">' : `<${tag}>`;
     const close = `</${tag}>`;
     const text = input.text.slice(0, start) + open + input.text.slice(start, end) + close + input.text.slice(end);
-    if (text.length > 65536) return;
+    if (text.length > limits.textMaxLength) return;
     changedText(); setInput(previous => ({ ...previous, text })); setNotice(null);
     setErrors(previous => ({ ...previous, text: undefined })); setServerErrors(previous => ({ ...previous, text: undefined }));
     requestAnimationFrame(() => { textarea.focus(); textarea.setSelectionRange(start + open.length, end + open.length); });
@@ -71,13 +72,13 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
     const invalid = validate(input);
     setErrors(invalid); setServerErrors({}); setNotice(null);
     if (Object.keys(invalid).length) { setNotice('validationError'); focusField(Object.keys(invalid)[0]); return; }
-    if (image && (image.size === 0 || image.size > 5 * 1024 * 1024 || !/\.(jpe?g|gif|png)$/i.test(image.name))) {
+    if (image && (image.size === 0 || image.size > limits.imageUploadMaxBytes || !/\.(jpe?g|gif|png)$/i.test(image.name))) {
       setImageError(true); imageInput.current?.focus(); return;
     }
-    if (textFile && (textFile.size === 0 || textFile.size > 102400 || !/\.txt$/i.test(textFile.name))) {
+    if (textFile && (textFile.size === 0 || textFile.size > limits.textFileMaxBytes || !/\.txt$/i.test(textFile.name))) {
       setTextFileError(true); textFileInput.current?.focus(); return;
     }
-    if (!captcha.challenge || captcha.expired || !/^[A-Za-z2-9]{6}$/.test(captcha.code.trim())) {
+    if (!captcha.challenge || captcha.expired || (captcha.code.trim().length !== limits.captchaCodeLength || [...captcha.code.trim().toUpperCase()].some(character => !limits.captchaAlphabet.includes(character)))) {
       captcha.setInvalid(true); document.getElementById('captchaCode')?.focus(); return;
     }
     captcha.setInvalid(false);
@@ -111,9 +112,9 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
     };
     return <div className={`field field-${name}`} key={name}>
       <label htmlFor={name}>{title}{name !== 'homePage' && <span aria-hidden="true"> *</span>}</label>
-      {name === 'text' ? <textarea {...props} rows={6} required maxLength={65536} dir="auto" /> :
+      {name === 'text' ? <textarea {...props} rows={6} required maxLength={limits.textMaxLength} dir="auto" /> :
         <input {...props} type={name === 'email' ? 'email' : name === 'homePage' ? 'url' : 'text'}
-          required={name !== 'homePage'} maxLength={name === 'userName' ? 100 : name === 'email' ? 254 : 2048}
+          required={name !== 'homePage'} maxLength={name === 'userName' ? limits.userNameMaxLength : name === 'email' ? limits.emailMaxLength : limits.homePageMaxLength}
           dir={name === 'userName' ? 'auto' : 'ltr'} autoCapitalize="none" spellCheck={false}
           autoComplete={name === 'userName' ? 'username' : name === 'email' ? 'email' : 'url'} />}
       <small id={`${name}-hint`}>{hint}</small>
@@ -169,17 +170,17 @@ export function CommentForm({ client, labels: t, onCreated, replyTo, onCancelRep
       <div className="field captcha-field">
         <label htmlFor="captchaCode">{t.captchaLabel} <span aria-hidden="true">*</span></label>
         <div className="captcha-image-row">
-          {captcha.challenge && <img width={200} height={64} src={captcha.challenge.imageDataUrl} alt={t.captchaImage} />}
+          {captcha.challenge && <img width={limits.captchaCodeLength * 30 + 20} height={64} src={captcha.challenge.imageDataUrl} alt={t.captchaImage} />}
           <button type="button" className="secondary" disabled={sending || captcha.busy} onClick={() => { captcha.setInvalid(false); void captcha.renew(); }}>{t.captchaRefresh}</button>
         </div>
         <span role="status">{captcha.busy ? t.captchaLoading : ''}</span>
-        <input id="captchaCode" name="captchaCode" value={captcha.code} maxLength={6} required autoComplete="off" spellCheck={false} dir="ltr" autoCapitalize="characters"
+        <input id="captchaCode" name="captchaCode" value={captcha.code} maxLength={limits.captchaCodeLength} required autoComplete="off" spellCheck={false} dir="ltr" autoCapitalize="characters"
           disabled={sending || captcha.busy || !captcha.challenge} aria-invalid={captcha.invalid || captcha.expired}
           aria-describedby="captcha-hint captcha-error" onChange={event => { captcha.setCode(event.target.value); captcha.setInvalid(false); setNotice(null); }} />
         <small id="captcha-hint">{t.captchaHint}</small>
         <small id="captcha-error" className="error" role="alert">{captcha.failed ? t.captchaUnavailable : captcha.expired ? t.captchaExpired : captcha.invalid ? t.captchaInvalid : ''}</small>
       </div>
-      <div className="form-bottom"><span className="counter"><span className="sr-only">{t.characterCount}: </span>{input.text.length.toLocaleString()} / 65,536</span>
+      <div className="form-bottom"><span className="counter"><span className="sr-only">{t.characterCount}: </span>{input.text.length.toLocaleString()} / {limits.textMaxLength.toLocaleString()}</span>
         <button type="submit" disabled={sending || captcha.busy || !captcha.challenge || captcha.expired}>{sending ? t.sending : t.submit} <span aria-hidden="true">↗</span></button></div>
       <div role={notice === 'success' ? 'status' : 'alert'} className={notice === 'success' ? 'success' : 'error'}>{notice && t[notice]}</div>
     </form>

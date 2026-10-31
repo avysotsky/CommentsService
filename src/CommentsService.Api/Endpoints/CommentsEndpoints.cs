@@ -21,7 +21,7 @@ public static class CommentsEndpoints
             var result = markup.Validate(body.Text);
             return result.IsValid ? Results.Ok(result.Value) : Results.ValidationProblem(result.Errors.ToDictionary());
         });
-        group.MapPost("", async (HttpContext context, ICreateComment create, CancellationToken token) =>
+        group.MapPost("", async (HttpContext context, ICreateComment create, CommentsService.Application.Common.ApplicationLimits limits, CancellationToken token) =>
         {
             if (!context.Request.HasJsonContentType() && !(context.Request.HasFormContentType &&
                 context.Request.ContentType!.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase)))
@@ -33,7 +33,7 @@ public static class CommentsEndpoints
             var ip = context.Connection.RemoteIpAddress ?? IPAddress.Any;
             if (ip.IsIPv4MappedToIPv6) ip = ip.MapToIPv4();
             var userAgent = context.Request.Headers.UserAgent.ToString();
-            var client = new ClientMetadata(ip, userAgent[..Math.Min(userAgent.Length, ClientMetadata.UserAgentMaxLength)]);
+            var client = new ClientMetadata(ip, userAgent[..Math.Min(userAgent.Length, limits.UserAgentMaxLength)]);
             var result = await create.ExecuteAsync(input, client, token);
             if (!result.IsValid) return Results.ValidationProblem(result.Errors.ToDictionary());
             return Results.Created($"/api/comments/{result.Value!.Id}", result.Value);
@@ -45,9 +45,9 @@ public static class CommentsEndpoints
             return result.IsValid ? Results.Ok(result.Value) : Results.ValidationProblem(result.Errors.ToDictionary());
         });
         group.MapGet("/{id:guid}/replies", async (Guid id, int? limit, Guid? after,
-            CommentsService.Application.Comments.GetReplies.IGetReplies get, CancellationToken token) =>
+            CommentsService.Application.Comments.GetReplies.IGetReplies get, CommentsService.Application.Common.ApplicationLimits limits, CancellationToken token) =>
         {
-            var result = await get.ExecuteAsync(id, limit ?? 25, after, token);
+            var result = await get.ExecuteAsync(id, limit ?? limits.DefaultListLimit, after, token);
             if (result.IsValid) return Results.Ok(result.Value);
             return result.Errors.ContainsKey("parentId") ? Results.Problem(statusCode: 404, title: "Comment was not found.") :
                 Results.ValidationProblem(result.Errors.ToDictionary());
@@ -55,9 +55,9 @@ public static class CommentsEndpoints
         group.MapGet("/{id:guid}", async (Guid id, IGetComment get, CancellationToken token) =>
             await get.ExecuteAsync(id, token) is { } comment ? Results.Ok(comment) : Results.Problem(
                 statusCode: StatusCodes.Status404NotFound, title: "Comment was not found."));
-        group.MapGet("", async (int? limit, IGetLatestComments get, CancellationToken token) =>
+        group.MapGet("", async (int? limit, IGetLatestComments get, CommentsService.Application.Common.ApplicationLimits limits, CancellationToken token) =>
         {
-            var result = await get.ExecuteAsync(limit ?? GetLatestComments.DefaultLimit, token);
+            var result = await get.ExecuteAsync(limit ?? limits.DefaultListLimit, token);
             return result.IsValid ? Results.Ok(result.Value) : Results.ValidationProblem(result.Errors.ToDictionary());
         });
         return endpoints;

@@ -1,3 +1,4 @@
+import './configure.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { messages } from '../src/messages.ts';

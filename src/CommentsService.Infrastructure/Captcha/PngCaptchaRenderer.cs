@@ -27,7 +27,7 @@ public sealed class PngCaptchaRenderer : ICaptchaImageRenderer
     ];
     public byte[] Render(string code)
     {
-        const int width = 200, height = 64;
+        var width = code.Length * 30 + 20; const int height = 64;
         var pixels = new byte[height * (1 + width * 3)];
         void Dot(int x, int y, byte r, byte g, byte b)
         {

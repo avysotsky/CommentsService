@@ -8,10 +8,15 @@ public sealed class RuntimeSettings
     public int HealthPort { get; set; } = 8080;
     public DatabaseSettings Database { get; set; } = new();
     public LogSettings Logging { get; set; } = new();
+    public CommentsService.Application.Common.ApplicationLimits Limits { get; set; } = new();
+    public CommentsService.Infrastructure.Captcha.CaptchaSettings Captcha { get; set; } = new();
+    public RequestSettings Requests { get; set; } = new();
     public ProxySettings Proxy { get; set; } = new();
 
     public void Validate()
     {
+        if (Limits is null || Captcha is null || Requests is null) throw new InvalidOperationException("Missing runtime policies.");
+        Limits.Validate(); Captcha.Validate(); Requests.Validate();
         if (Logging is null) throw new InvalidOperationException("Missing logging settings.");
         Logging.Validate();
         if (Proxy is null) throw new InvalidOperationException("Missing proxy settings.");

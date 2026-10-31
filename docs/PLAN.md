@@ -5,8 +5,8 @@
 Completed correction: `CommentsService/v_1.1.0.6_HomepageHint` clarifies homepage hints/errors in EN/RU/UA; version/schema unchanged.
 
 The approved sequence starts at `CommentsService/v_1.1.0.1_Init`.
-Current milestone: 1.1.1.16 Deployment, public HTTPS and mobile-Internet posting verified. Onion architecture preserved. Workbench GUI and Windows reboot remain unverified; startup requires user logon. [Current verification](DEPLOYMENT_VERIFICATION.md).
-Keep w=1, x=1, y=0; increment only revision z. Configuration extraction is deferred.
+Current milestone:1.1.1.17 RuntimeLimits completed. [Current settings and verification](RUNTIME_LIMITS.md). Default live deployment preserves Junior limits. Earlier pending statuses below are historical.
+Keep w=1,x=1,y=1 after implemented Configuration; increment only revision z for new iterations.
 Each completed iteration is pushed to its own branch with current read.me,
 README and change.log. README.md is English, README.RU.md Russian, README.UA.md
 Ukrainian. Change logs: change.log (EN), change.log.ru (RU), change.log.ua (UA).
@@ -92,8 +92,8 @@ query checks, not the brokers/NoSQL/cloud architecture of higher assignment leve
 Завершена доработка `CommentsService/v_1.1.0.6_HomepageHint`: понятные подсказки/ошибки сайта на EN/RU/UA; версия/схема прежние.
 
 Согласованная последовательность начинается с `CommentsService/v_1.1.0.1_Init`.
-Текущий этап1.1.1.16 Deployment: публичный HTTPS и запись с мобильного интернета проверены. Onion сохранён. Workbench GUI и перезагрузка Windows не подтверждены; нужен вход пользователя. [Текущая проверка](DEPLOYMENT_VERIFICATION.md).
-w=1, x=1, y=0 сохраняются, увеличивается только ревизия z. Вынос в конфиг отложен.
+Текущий этап1.1.1.17 RuntimeLimits завершён. [Настройки и проверки](RUNTIME_LIMITS.md). Публичный инстанс сохраняет значения Junior. Старые pending ниже — история.
+После реализации Configuration сохраняются w=1,x=1,y=1; новые итерации увеличивают только z.
 Каждая завершённая итерация отправляется в свою ветку с актуальными read.me,
 README и change.log. README.md — английский, README.RU.md — русский, README.UA.md —
 украинский. Журналы: change.log (EN), change.log.ru (RU), change.log.ua (UA).
@@ -181,8 +181,8 @@ README и change.log. README.md — английский, README.RU.md — ру�
 Завершено доопрацювання `CommentsService/v_1.1.0.6_HomepageHint`: зрозумілі підказки/помилки сайту на EN/RU/UA; версія/схема попередні.
 
 Погоджена послідовність починається з `CommentsService/v_1.1.0.1_Init`.
-Поточний етап1.1.1.16 Deployment: публічний HTTPS і запис із мобільного інтернету перевірено. Onion збережено. Workbench GUI та перезавантаження Windows не підтверджено; потрібен вхід користувача. [Поточна перевірка](DEPLOYMENT_VERIFICATION.md).
-w=1, x=1, y=0 зберігаються, збільшується лише ревізія z. Винесення даних у конфігурацію відкладено.
+Поточний етап1.1.1.17 RuntimeLimits завершено. [Налаштування й перевірки](RUNTIME_LIMITS.md). Публічний інстанс зберігає значення Junior. Старі pending нижче — історія.
+Після реалізації Configuration зберігаються w=1,x=1,y=1; нові ітерації збільшують лише z.
 Кожна завершена ітерація публікується у своїй гілці з актуальними read.me,
 README і change.log. README.md — англійською, README.RU.md — російською, README.UA.md —
 українською. Журнали: change.log (EN), change.log.ru (RU), change.log.ua (UA).

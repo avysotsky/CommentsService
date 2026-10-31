@@ -4,19 +4,20 @@ using CommentsService.Application.TextFiles;
 using CommentsService.Domain.Entities;
 namespace CommentsService.Infrastructure.TextFiles;
 
-public sealed class Utf8TextFileProcessor : ITextFileProcessor
+public sealed class Utf8TextFileProcessor(ApplicationLimits? settings = null) : ITextFileProcessor
 {
+    private readonly ApplicationLimits limits = settings ?? new();
     private static readonly UTF8Encoding StrictUtf8 = new(false, true);
     public async Task<Validated<PreparedTextFile>> ProcessAsync(TextFileUpload upload, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (upload.Length is < 1 or > TextAttachment.MaxBytes) return Invalid("TXT must contain 1..102400 bytes.");
+        if (upload.Length < 1 || upload.Length > limits.TextFileMaxBytes) return Invalid($"TXT must contain 1..{limits.TextFileMaxBytes} bytes.");
         var name = Path.GetFileName(upload.FileName.Replace('\\', '/'));
         if (!Path.GetExtension(name).Equals(".txt", StringComparison.OrdinalIgnoreCase)) return Invalid("Only TXT files are allowed.");
         using var content = new MemoryStream(); var buffer = new byte[8192]; int count;
         while ((count = await upload.Content.ReadAsync(buffer, cancellationToken)) != 0)
         {
-            if (content.Length + count > TextAttachment.MaxBytes) return Invalid("TXT exceeds 100 KiB.");
+            if (content.Length + count > limits.TextFileMaxBytes) return Invalid($"TXT exceeds {limits.TextFileMaxBytes} bytes.");
             await content.WriteAsync(buffer.AsMemory(0, count), cancellationToken);
         }
         if (content.Length != upload.Length) return Invalid("TXT length is invalid.");

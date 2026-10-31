@@ -50,8 +50,9 @@ public sealed class CaptchaTests
     public void CapacityIsBoundedAndExpiredSlotsAreRecovered()
     {
         var clock = new Clock(); var service = new MemoryCaptchaService(clock, new Renderer());
-        for (var i = 0; i < MemoryCaptchaService.Capacity; i++) service.Issue();
-        Assert.Throws<CaptchaCapacityException>(() => service.Issue()); clock.Now += MemoryCaptchaService.Lifetime;
+        var defaults = new CaptchaSettings();
+        for (var i = 0; i < defaults.Capacity; i++) service.Issue();
+        Assert.Throws<CaptchaCapacityException>(() => service.Issue()); clock.Now += TimeSpan.FromSeconds(defaults.LifetimeSeconds);
         Assert.NotNull(service.Issue());
     }
     [Fact]

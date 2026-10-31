@@ -1,10 +1,10 @@
 # CommentsService
 
-Version: **1.1.1.16** · Branch: `CommentsService/v_1.1.1.16_WorkbenchSchema`
+Version: **1.1.1.17** · Branch: `CommentsService/v_1.1.1.17_RuntimeLimits`
 
-Native [Workbench model](docs/database/commentsservice.mwb) and [preview](docs/database/workbench-schema.png) are now included, generated and reopened in real Workbench. [Scope and shutdown caveat](docs/database/WORKBENCH.md). Application code and runtime remain Deployment1.1.1.16.
+Operational limits now come from backend `config.json`: pagination, field lengths, attachments, image processing, CAPTCHA and requests. The SPA loads an allowlisted public configuration for matching validation and EN/RU/UA hints. Original Junior defaults remain unchanged; schema/security ceilings stay enforced. [Settings, ranges and verification](docs/RUNTIME_LIMITS.md).
 
-Deployment 1.1.1.16 is available at [the live demo](https://comments.alexvysotsky.com). Passed: 288 backend tests (27/84/56/121), 26 frontend tests, frontend/Docker builds, public HTTPS/HSTS and CAPTCHA/TXT/browser checks, trusted-proxy spoof rejection, tunnel reconnection and current-user-data fingerprints. Mobile Internet posting was confirmed by the user. [Deployment and limitations](docs/DEPLOYMENT_VERIFICATION.md). Workbench GUI and a full Windows reboot remain unverified.
+Passed:305 backend tests (27/84/56/138),28 frontend tests, frontend/Docker builds, custom-config Edge desktop/360px and default public checks. Current demo: [CommentsService](https://comments.alexvysotsky.com). The native [Workbench model](docs/database/commentsservice.mwb) was saved/reopened in actual Workbench; [manual-menu/shutdown caveat](docs/database/WORKBENCH.md) remains. Host reboot/logon autostart was verified on1.1.1.16; this app update did not repeat a reboot. Databases, retained corpus, volumes and checkpoints are preserved.
 
 Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 
@@ -92,6 +92,6 @@ JSON create/preview requires UTF-8, exact camelCase fields and at most 1 MiB, in
 
 Automated acceptance passed: 268 backend and 26 frontend tests; frontend/Docker builds; all four migration stages and downgrade guards; restore/upgrade of three preserved checkpoints; independent empty installation; least-privilege roles; current-data recovery with 7 exact attachments and container recreation; browser viewers/RTL/security/pagination; 18 retained-million paging scenarios. Original databases, corpus, volumes, environment and checkpoint hashes remained unchanged.
 
-**Pending:** MySQL Workbench GUI import and a controlled Windows reboot. Public HTTPS is deployed; current task startup requires user logon. See [deployment verification](docs/DEPLOYMENT_VERIFICATION.md).
+Current limits, verified behavior and remaining manual-tool caveats: [RuntimeLimits](docs/RUNTIME_LIMITS.md).
 
 [PostgreSQL schema / Workbench projection](docs/database/SCHEMA.md) · [Architecture](docs/ARCHITECTURE.md) · [Benchmark](docs/BENCHMARK.md)

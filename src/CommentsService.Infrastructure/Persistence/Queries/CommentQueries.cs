@@ -41,10 +41,10 @@ internal sealed class CommentQueries(CommentsDbContext db) : ICommentQueries
                 _ => descending ? roots.OrderByDescending(c => c.CreatedAt) : roots.OrderBy(c => c.CreatedAt)
             };
             ordered = descending ? ordered.ThenByDescending(c => c.Id) : ordered.ThenBy(c => c.Id);
-            var items = await Project(ordered.Skip((query.Page - 1) * GetRootPage.PageSize).Take(GetRootPage.PageSize)).ToListAsync(cancellationToken);
+            var items = await Project(ordered.Skip((query.Page - 1) * query.PageSize).Take(query.PageSize)).ToListAsync(cancellationToken);
             if (transaction is not null) await transaction.CommitAsync(cancellationToken);
-            return new RootCommentsPage(items, query.Page, GetRootPage.PageSize, count,
-                (count + GetRootPage.PageSize - 1) / GetRootPage.PageSize);
+            return new RootCommentsPage(items, query.Page, query.PageSize, count,
+                (count + query.PageSize - 1) / query.PageSize);
         });
 
     public Task<CommentDto?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default) =>

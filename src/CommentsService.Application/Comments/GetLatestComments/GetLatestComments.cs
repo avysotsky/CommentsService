@@ -8,16 +8,15 @@ public interface IGetLatestComments
     Task<Validated<IReadOnlyList<CommentDto>>> ExecuteAsync(int limit, CancellationToken cancellationToken = default);
 }
 
-public sealed class GetLatestComments(ICommentQueries queries) : IGetLatestComments
+public sealed class GetLatestComments(ICommentQueries queries, ApplicationLimits? settings = null) : IGetLatestComments
 {
-    public const int DefaultLimit = 25;
-    public const int MaxLimit = 100;
+    private readonly ApplicationLimits limits = settings ?? new();
 
     public async Task<Validated<IReadOnlyList<CommentDto>>> ExecuteAsync(int limit, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (limit is < 1 or > MaxLimit)
-            return Validated<IReadOnlyList<CommentDto>>.Invalid(new() { ["limit"] = ["Limit must be between 1 and 100."] });
+        if (limit < 1 || limit > limits.MaximumListLimit)
+            return Validated<IReadOnlyList<CommentDto>>.Invalid(new() { ["limit"] = [$"Limit must be between 1 and {limits.MaximumListLimit}."] });
         return Validated<IReadOnlyList<CommentDto>>.Success(await queries.GetLatestAsync(limit, cancellationToken));
     }
 }

@@ -1,3 +1,4 @@
+import './configure.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { validate, safeHomePage, readRootQuery } from '../src/comments/model.ts';

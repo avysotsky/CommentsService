@@ -4,7 +4,7 @@ using CommentsService.Domain.Entities;
 
 namespace CommentsService.Application.Comments.CreateComment;
 
-public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork, CommentsService.Application.Comments.Markup.ICommentMarkup markup, CommentsService.Application.Captcha.ICaptchaVerifier captcha, CommentsService.Application.Images.IImageProcessor images, CommentsService.Application.TextFiles.ITextFileProcessor textFiles, ApplicationLimits? limits = null) : ICreateComment
+public sealed class CreateComment(ICommentRepository repository, IUnitOfWork unitOfWork, CommentsService.Application.Comments.Markup.ICommentMarkup markup, CommentsService.Application.Captcha.ICaptchaVerifier captcha, CommentsService.Application.Images.IImageProcessor images, CommentsService.Application.TextFiles.ITextFileProcessor textFiles, ApplicationLimits? limits = null, CommentsService.Application.Events.ICommentEvents? events = null) : ICreateComment
 {
     public async Task<Validated<CommentDto>> ExecuteAsync(CreateCommentInput input, ClientMetadata client,
         CancellationToken cancellationToken = default)
@@ -45,6 +45,9 @@ public sealed class CreateComment(ICommentRepository repository, IUnitOfWork uni
         if (textFile is not null) _ = new TextAttachment(comment, textFile.FileName, textFile.Data);
         repository.Add(comment);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        return Validated<CommentDto>.Success(CommentMapping.From(comment));
+        var result = CommentMapping.From(comment);
+        // The committed write must not become a failed HTTP request if its client disconnects.
+        events?.Publish(new(Guid.NewGuid(), result.Id, result.ParentId, result.RootId, result.CreatedAt));
+        return Validated<CommentDto>.Success(result);
     }
 }

@@ -1,10 +1,14 @@
 # CommentsService
 
-Версия: **1.1.1.17** · Ветка: `CommentsService/v_1.1.1.17_RuntimeLimits`
+Версия: **1.2.1.1** · `CommentsService/v_1.2.1.1_CommentEvents`
 
-Рабочие ограничения берутся из backend `config.json`: пагинация, длины полей, вложения, обработка изображений, CAPTCHA и запросы. SPA получает разрешённые публичные настройки для согласованных проверок и подсказок EN/RU/UA. Прежние значения Junior сохранены; пределы схемы/безопасности действуют. [Настройки, диапазоны и проверки](docs/RUNTIME_LIMITS.md).
+События Application после сохранения с изоляцией подписчиков и структурированным журналом без содержимого комментария. Конфиг, схема и REST совместимы. Очередь, кеш и WebSocket — следующие итерации.
 
-Прошли305 backend-тестов (27/84/56/138),28 frontend, сборки frontend/Docker, Edge desktop/360px с изменённым конфигом и проверки публичного инстанса. Демо: [CommentsService](https://comments.alexvysotsky.com). Нативная [модель Workbench](docs/database/commentsservice.mwb) сохранена/повторно открыта настоящим Workbench; [оговорка ручного меню/завершения](docs/database/WORKBENCH.md) сохраняется. Reboot/автозапуск после входа проверен на1.1.1.16; для обновления приложения reboot не повторяли. БД, сохранённый набор, тома и копии сохранены.
+Verification / Проверки / Перевірки: 307 backend tests (27/85/57/138); previous frontend checks remain historical. No migration.
+
+[Junior+](docs/JUNIOR_PLUS.md)
+
+<!-- JUNIOR-PLUS-CURRENT-END -->
 
 Структурированные JSON-логи консоли/файла настраиваются через `Runtime.Logging`: InstanceId, TraceId, уровни/категории, ротация и хранение. Docker сохраняет логи в отдельном томе. [Настройки и политика данных](docs/LOGGING.md).
 

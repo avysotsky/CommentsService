@@ -195,6 +195,44 @@ public sealed class CommentUseCaseTests
                 Validated<CommentsService.Application.TextFiles.PreparedTextFile>.Invalid(new() { ["textFile"]=["Rejected"] }));
     }
 
+    [Fact]
+    public async Task EventContainsCommittedIdentityAndOnlyFollowsSuccessfulSave()
+    {
+        var store = new Storage();
+        var events = new CapturedEvents(store);
+        var create = new CreateComment(store, store, new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(),
+            new AcceptCaptcha(), new TestImageProcessor(), new TestTextFileProcessor(), events: events);
+        Assert.False((await create.ExecuteAsync(Input with { Text = "" }, Client)).IsValid);
+        Assert.Empty(events.Items);
+        var root = (await create.ExecuteAsync(Input, Client)).Value!;
+        var reply = (await create.ExecuteAsync(Input with { ParentId = root.Id }, Client)).Value!;
+        Assert.Equal(2, events.Items.Count);
+        Assert.Equal(root.Id, events.Items[0].CommentId);
+        Assert.Null(events.Items[0].ParentId);
+        Assert.Equal(root.Id, events.Items[1].RootId);
+        Assert.Equal(root.Id, events.Items[1].ParentId);
+        Assert.Equal(reply.CreatedAt, events.Items[1].CreatedAt);
+        Assert.NotEqual(Guid.Empty, events.Items[0].EventId);
+        Assert.NotEqual(events.Items[0].EventId, events.Items[1].EventId);
+
+        var failing = new Storage { FailSave = true };
+        var failedEvents = new CapturedEvents(failing);
+        await Assert.ThrowsAsync<StorageUnavailableException>(() => new CreateComment(failing, failing,
+            new CommentsService.Application.Comments.Markup.XhtmlCommentMarkup(), new AcceptCaptcha(),
+            new TestImageProcessor(), new TestTextFileProcessor(), events: failedEvents).ExecuteAsync(Input, Client));
+        Assert.Empty(failedEvents.Items);
+    }
+
+    private sealed class CapturedEvents(Storage storage) : CommentsService.Application.Events.ICommentEvents
+    {
+        public List<CommentsService.Application.Events.CommentCreated> Items { get; } = [];
+        public void Publish(CommentsService.Application.Events.CommentCreated notification)
+        {
+            Assert.Equal(Items.Count + 1, storage.SaveCalls);
+            Items.Add(notification);
+        }
+    }
+
     private sealed class Storage : ICommentRepository, IUnitOfWork, ICommentQueries
     {
         public List<Comment> Comments { get; } = [];

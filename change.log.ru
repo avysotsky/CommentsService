@@ -2,6 +2,14 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.2.1.1 CommentEvents — 2026-10-31
+
+`CommentsService/v_1.2.1.1_CommentEvents`
+
+События Application после сохранения с изоляцией подписчиков и структурированным журналом без содержимого комментария. Конфиг, схема и REST совместимы. Очередь, кеш и WebSocket — следующие итерации.
+
+Verification / Проверки / Перевірки: 307 backend tests (27/85/57/138); previous frontend checks remain historical. No migration.
+
 ## 1.1.1.17 RuntimeLimits — 2026-10-31
 
 `CommentsService/v_1.1.1.17_RuntimeLimits`

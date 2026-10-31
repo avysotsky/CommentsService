@@ -13,6 +13,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, DatabaseSettings? database = null)
     {
+        services.AddScoped<CommentsService.Application.Events.ICommentEvents, Events.CommentEvents>();
+        services.AddSingleton<CommentsService.Application.Events.ICommentCreatedHandler, Events.CommentCreatedLog>();
         services.AddDbContext<CommentsDbContext>(options =>
             options.UseNpgsql(DatabaseOptions.ConnectionString(database),
                 pg => pg.MigrationsHistoryTable("__EFMigrationsHistory", "comments")));

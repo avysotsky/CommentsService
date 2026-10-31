@@ -1,10 +1,14 @@
 # CommentsService
 
-Version: **1.1.1.17** · Branch: `CommentsService/v_1.1.1.17_RuntimeLimits`
+Version: **1.2.1.1** · `CommentsService/v_1.2.1.1_CommentEvents`
 
-Operational limits now come from backend `config.json`: pagination, field lengths, attachments, image processing, CAPTCHA and requests. The SPA loads an allowlisted public configuration for matching validation and EN/RU/UA hints. Original Junior defaults remain unchanged; schema/security ceilings stay enforced. [Settings, ranges and verification](docs/RUNTIME_LIMITS.md).
+Post-commit application events with isolated subscribers and metadata-only structured logging. Config, schema and REST remain compatible. Queue, cache and WebSocket follow in later iterations.
 
-Passed:305 backend tests (27/84/56/138),28 frontend tests, frontend/Docker builds, custom-config Edge desktop/360px and default public checks. Current demo: [CommentsService](https://comments.alexvysotsky.com). The native [Workbench model](docs/database/commentsservice.mwb) was saved/reopened in actual Workbench; [manual-menu/shutdown caveat](docs/database/WORKBENCH.md) remains. Host reboot/logon autostart was verified on1.1.1.16; this app update did not repeat a reboot. Databases, retained corpus, volumes and checkpoints are preserved.
+Verification / Проверки / Перевірки: 307 backend tests (27/85/57/138); previous frontend checks remain historical. No migration.
+
+[Junior+](docs/JUNIOR_PLUS.md)
+
+<!-- JUNIOR-PLUS-CURRENT-END -->
 
 Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 

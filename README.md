@@ -1,6 +1,8 @@
 # CommentsService
 
-Version: **1.1.1.16** · Branch: `CommentsService/v_1.1.1.16_Deployment`
+Version: **1.1.1.16** · Branch: `CommentsService/v_1.1.1.16_WorkbenchSchema`
+
+Native [Workbench model](docs/database/commentsservice.mwb) and [preview](docs/database/workbench-schema.png) are now included, generated and reopened in real Workbench. [Scope and shutdown caveat](docs/database/WORKBENCH.md). Application code and runtime remain Deployment1.1.1.16.
 
 Deployment 1.1.1.16 is available at [the live demo](https://comments.alexvysotsky.com). Passed: 288 backend tests (27/84/56/121), 26 frontend tests, frontend/Docker builds, public HTTPS/HSTS and CAPTCHA/TXT/browser checks, trusted-proxy spoof rejection, tunnel reconnection and current-user-data fingerprints. Mobile Internet posting was confirmed by the user. [Deployment and limitations](docs/DEPLOYMENT_VERIFICATION.md). Workbench GUI and a full Windows reboot remain unverified.
 

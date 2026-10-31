@@ -1,6 +1,8 @@
-# Database schema / Схема БД / Схема БД — 1.1.0.15
+# Database schema / Схема БД / Схема БД — 1.1.1.16
 
 ## English
+
+Native [commentsservice.mwb](commentsservice.mwb) and [diagram preview](workbench-schema.png) are available. Real Workbench8.0.47 imported/saved/reopened the model:5tables/25columns/12indexes/5PK/4FK; live catalog parity passed. Manual menu clicks were not performed, and the Windows process reported a shutdown exit anomaly. [Verification and generation](WORKBENCH.md). Schema/migrations are unchanged; older acceptance wording below is historical.
 
 The application is 1.1.0.15; the schema remains migration 20261030130243_TextAttachments. The authoritative model is EF Core in Infrastructure/Persistence; [postgresql.sql](postgresql.sql) is the idempotent export. All four migration IDs are listed in [MIGRATIONS.md](MIGRATIONS.md). All application tables/history are in schema `comments`.
 
@@ -12,6 +14,8 @@ Bounds: username 100 Latin letters/digits, e-mail 254, homepage 2048, text 65536
 
 ## Русский
 
+Добавлены [commentsservice.mwb](commentsservice.mwb) и [превью](workbench-schema.png). Настоящий Workbench8.0.47 импортировал/сохранил/повторно открыл модель:5таблиц/25колонок/12индексов/5PK/4FK; паритет живого каталога прошёл. Ручных кликов меню не было, процесс Windows сообщил аномальный код завершения. [Проверка и генерация](WORKBENCH.md). Схема/миграции прежние; нижние формулировки прежней приёмки исторические.
+
 Приложение имеет версию 1.1.0.15; схема остаётся на миграции 20261030130243_TextAttachments. Эталонная модель EF Core — Infrastructure/Persistence; [postgresql.sql](postgresql.sql) — идемпотентный экспорт. Четыре ID миграций перечислены в [MIGRATIONS.md](MIGRATIONS.md). Таблицы/история находятся в схеме `comments`.
 
 Каталог содержит 5 таблиц, 25 колонок, 12 индексов, 4 внешних ключа и 6 checks. Authors хранит введённую личность, не аутентификацию; e-mail публичен и не уникален. Comments хранит текст, время UTC, серверные inet IP/UserAgent и неизменяемые ссылки родителя/корня. Составной FK запрещает другой корень родителя; удаление автора/родителя ограничено. ImageAttachments и TextAttachments имеют уникальный CommentId и каскад только с владельцем. Domain/Application обеспечивают одно изображение ИЛИ TXT; байты лежат в PostgreSQL bytea и backup. Прежние поля/ID сохраняются при расширении схемы.
@@ -21,6 +25,8 @@ Bounds: username 100 Latin letters/digits, e-mail 254, homepage 2048, text 65536
 [workbench.sql](workbench.sql) — только MySQL-проекция для визуализации. UUID отображается в CHAR(36), inet — VARCHAR(45), UTC timestamptz — DATETIME(6), bytea — MEDIUMBLOB, VARCHAR(65536) — MEDIUMTEXT с пояснением. Проверки PostgreSQL остаются эталонными в экспорте. Импорт: File → Import → Reverse Engineer MySQL Create Script, UTF-8, размещение на диаграмме; затем сохранить `.mwb`. Не развёртывайте проекцию в PostgreSQL. Автоматически совпали колонки/типы/NULL/уникальность и порядок индексов/FK/правила удаления; GUI-импорт не подтверждён. См. [приёмку](../ACCEPTANCE.md).
 
 ## Українська
+
+Додано [commentsservice.mwb](commentsservice.mwb) і [прев'ю](workbench-schema.png). Справжній Workbench8.0.47 імпортував/зберіг/повторно відкрив модель:5таблиць/25колонок/12індексів/5PK/4FK; паритет живого каталогу пройшов. Ручних кліків меню не було, процес Windows повідомив аномальний код завершення. [Перевірка й генерація](WORKBENCH.md). Схема/міграції попередні; нижні формулювання попереднього приймання історичні.
 
 Застосунок має версію 1.1.0.15; схема залишається на міграції 20261030130243_TextAttachments. Еталонна модель EF Core — Infrastructure/Persistence; [postgresql.sql](postgresql.sql) — ідемпотентний експорт. Чотири ID міграцій наведено в [MIGRATIONS.md](MIGRATIONS.md). Таблиці/історія розміщені у схемі `comments`.
 

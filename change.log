@@ -2,6 +2,12 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.1.1.16 WorkbenchSchema — 2026-10-31
+
+`CommentsService/v_1.1.1.16_WorkbenchSchema`
+
+Added native commentsservice.mwb, readable PNG EER diagram and portable Workbench export script. Actual Workbench8.0.47 imported SQL with0errors, saved/reopened the model and verified5tables/25columns/12indexes/5PK/4FK/5figures/4connections; live PostgreSQL catalog parity passed. No DB connection/data mutation by model generation, no runtime/dependency/schema changes. Process shutdown0xC0020001 and manual-GUI/reboot limitations documented; no clean-exit claim. Correction branch keeps version1.1.1.16.
+
 ## 1.1.1.16 Deployment — 2026-10-31
 
 `CommentsService/v_1.1.1.16_Deployment`

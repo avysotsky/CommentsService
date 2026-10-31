@@ -1,6 +1,8 @@
 # CommentsService
 
-Версия: **1.1.1.16** · Ветка: `CommentsService/v_1.1.1.16_Deployment`
+Версия: **1.1.1.16** · Ветка: `CommentsService/v_1.1.1.16_WorkbenchSchema`
+
+Добавлены нативная [модель Workbench](docs/database/commentsservice.mwb) и [превью](docs/database/workbench-schema.png), созданные и повторно открытые настоящим Workbench. [Объём проверки и оговорка завершения](docs/database/WORKBENCH.md). Код/запуск приложения остаются Deployment1.1.1.16.
 
 Deployment 1.1.1.16 доступен: [живое демо](https://comments.alexvysotsky.com). Прошли288backend (27/84/56/121),26frontend, сборки frontend/Docker, публичные HTTPS/HSTS/CAPTCHA/TXT/браузер, защита доверенного прокси, переподключение и отпечатки текущих пользовательских данных. Пользователь подтвердил запись с мобильного интернета. [Развёртывание и ограничения](docs/DEPLOYMENT_VERIFICATION.md). GUI Workbench и полная перезагрузка Windows не проверены.
 

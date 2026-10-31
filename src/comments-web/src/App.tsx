@@ -64,7 +64,7 @@ export function App({ client, fileClient }: { client: CommentsClient; fileClient
       <label className="language" htmlFor="language">{t.language}<select id="language" aria-label={t.language} value={language} onChange={event => setLanguage(event.target.value as Language)}>
         <option value="en">English</option><option value="ru">Русский</option><option value="uk">Українська</option>
       </select></label></header>
-    <div className="hero"><p className="eyebrow">1.2.2.2</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
+    <div className="hero"><p className="eyebrow">1.2.2.3</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
     <CommentForm client={client} labels={t} onCreated={created} replyTo={replyTo} onCancelReply={() => setReplyTo(null)} />
     <section className="panel comments" aria-labelledby="recent-title" aria-busy={loading}>
       <div className="section-heading"><h2 id="recent-title" tabIndex={-1}>{t.recent}</h2><button className="secondary" onClick={() => { setThreadRefresh(value => value + 1); void load(query); }} disabled={loading}>{t.refresh}</button></div>
@@ -78,6 +78,6 @@ export function App({ client, fileClient }: { client: CommentsClient; fileClient
           requestAnimationFrame(() => document.getElementById('text')?.focus());
         }} />}
     </section>
-    <footer>CommentsService · 1.2.2.2</footer>
+    <footer>CommentsService · 1.2.2.3</footer>
   </main></>;
 }

@@ -1,17 +1,19 @@
-CommentsService — 1.2.2.2 ReadCache
-Branch: CommentsService/v_1.2.2.2_ReadCache
+CommentsService — 1.2.2.3 NotificationQueue
+Branch: CommentsService/v_1.2.2.3_NotificationQueue
 
-EN: Bounded process-local cache for root pages/latest comments, invalidated synchronously by committed events; TTL and generation checks prevent persistent stale fills. Additive Runtime.Cache defaults preserve old config files; no migration. Queue/WebSocket remain pending.
+EN: Bounded process-local refresh queue with coalescing, background delivery, bounded retries and cancellable shutdown. Persisted comments remain independent of hints. Additive Notifications settings retain compatibility; WebSocket delivery follows next. Backend suites now run sequentially to avoid shared-test-database count races.
 
-RU: Ограниченный кеш страниц корней/последних комментариев; события сохранения синхронно сбрасывают его, TTL и поколения защищают от устаревшего заполнения. Runtime.Cache добавлен совместимо со старыми конфигами; миграций нет. Очередь/WebSocket впереди.
+RU: Ограниченная очередь сигналов обновления: объединение при перегрузке, фоновая доставка, ограниченные повторы и отмена при остановке. Сохранённые комментарии независимы от сигналов. Notifications добавлен совместимо; WebSocket далее. Backend-наборы выполняются последовательно, устраняя гонку счётчиков общей тестовой БД.
 
-UA: Обмежений кеш сторінок коренів/останніх коментарів; події збереження синхронно скидають його, TTL і покоління захищають від застарілого заповнення. Runtime.Cache додано сумісно зі старими конфігами; міграцій немає. Черга/WebSocket попереду.
+UA: Обмежена черга сигналів оновлення: об’єднання під час перевантаження, фонова доставка, обмежені повтори й скасування під час зупинки. Збережені коментарі незалежні від сигналів. Notifications додано сумісно; WebSocket далі. Backend-набори виконуються послідовно, усуваючи гонку лічильників спільної тестової БД.
 
-318 backend tests (27/85/67/139). EN: cache and commit-invalidation checks; RU: проверки кеша и сброса после записи; UA: перевірки кешу та скидання після запису.
+327 backend tests (27/85/67/148). EN: queue/retry/shutdown; RU: очередь/повторы/остановка; UA: черга/повтори/зупинка. No migration / Без миграции / Без міграції.
 
 [EN](README.md) · [RU](README.RU.md) · [UA](README.UA.md) · [Junior+](docs/JUNIOR_PLUS.md)
 
 <!-- JUNIOR-PLUS-CURRENT-END -->
+
+Historical release notes / Исторические записи / Історичні записи:
 
 Historical release notes / Исторические записи / Історичні записи:
 

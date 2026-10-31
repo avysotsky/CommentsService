@@ -1,10 +1,10 @@
 # CommentsService
 
-Version: **1.2.2.2** · `CommentsService/v_1.2.2.2_ReadCache`
+Version: **1.2.2.3** · `CommentsService/v_1.2.2.3_NotificationQueue`
 
-Bounded process-local cache for root pages/latest comments, invalidated synchronously by committed events; TTL and generation checks prevent persistent stale fills. Additive Runtime.Cache defaults preserve old config files; no migration. Queue/WebSocket remain pending.
+Bounded process-local refresh queue with coalescing, background delivery, bounded retries and cancellable shutdown. Persisted comments remain independent of hints. Additive Notifications settings retain compatibility; WebSocket delivery follows next. Backend suites now run sequentially to avoid shared-test-database count races.
 
-318 backend tests (27/85/67/139). EN: cache and commit-invalidation checks; RU: проверки кеша и сброса после записи; UA: перевірки кешу та скидання після запису.
+327 backend tests (27/85/67/148). EN: queue/retry/shutdown; RU: очередь/повторы/остановка; UA: черга/повтори/зупинка. No migration / Без миграции / Без міграції.
 
 [Junior+](docs/JUNIOR_PLUS.md)
 

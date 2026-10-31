@@ -13,11 +13,14 @@ public sealed class RuntimeSettings
     public RequestSettings Requests { get; set; } = new();
     public ProxySettings Proxy { get; set; } = new();
     public CommentsService.Infrastructure.Caching.CacheSettings Cache { get; set; } = new();
+    public CommentsService.Infrastructure.Notifications.NotificationSettings Notifications { get; set; } = new();
 
     public void Validate()
     {
         if (Cache is null) throw new InvalidOperationException("Missing read cache settings.");
         Cache.Validate();
+        if (Notifications is null) throw new InvalidOperationException("Missing notification settings.");
+        Notifications.Validate();
         if (Limits is null || Captcha is null || Requests is null) throw new InvalidOperationException("Missing runtime policies.");
         Limits.Validate(); Captcha.Validate(); Requests.Validate();
         if (Logging is null) throw new InvalidOperationException("Missing logging settings.");

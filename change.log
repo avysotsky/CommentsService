@@ -2,6 +2,14 @@
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)
 
+## 1.2.2.3 NotificationQueue — 2026-10-31
+
+`CommentsService/v_1.2.2.3_NotificationQueue`
+
+Bounded process-local refresh queue with coalescing, background delivery, bounded retries and cancellable shutdown. Persisted comments remain independent of hints. Additive Notifications settings retain compatibility; WebSocket delivery follows next. Backend suites now run sequentially to avoid shared-test-database count races.
+
+327 backend tests (27/85/67/148). EN: queue/retry/shutdown; RU: очередь/повторы/остановка; UA: черга/повтори/зупинка. No migration / Без миграции / Без міграції.
+
 ## 1.2.2.2 ReadCache — 2026-10-31
 
 `CommentsService/v_1.2.2.2_ReadCache`

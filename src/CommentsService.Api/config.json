@@ -2,6 +2,11 @@
   "Runtime": {
     "InstanceId": "commentsservice",
     "HealthPort": 8080,
+    "Notifications": {
+      "Capacity": 64,
+      "MaximumAttempts": 3,
+      "RetryDelayMilliseconds": 200
+    },
     "Cache": {
       "Enabled": true,
       "LifetimeSeconds": 15,

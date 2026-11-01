@@ -106,6 +106,22 @@
       "FailureRetrySeconds": 5,
       "Capacity": 256,
       "MaximumIndexBytes": 1073741824
+    },
+    "Cloud": {
+      "Enabled": false,
+      "AllowedCommentIds": [],
+      "ReplayCommentIds": [],
+      "Capacity": 64,
+      "MaximumConcurrency": 2,
+      "MaximumAttempts": 3,
+      "WriteTimeoutSeconds": 5,
+      "ReadTimeoutMilliseconds": 1000,
+      "RetryDelayMilliseconds": 500,
+      "FailureThreshold": 5,
+      "BreakSeconds": 300,
+      "MaximumUploadBytes": 10485760,
+      "MaximumDownloadBytes": 20971520,
+      "MaximumRequests": 256
     }
   }
 }

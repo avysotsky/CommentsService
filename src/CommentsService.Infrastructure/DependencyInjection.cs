@@ -6,6 +6,7 @@ using CommentsService.Infrastructure.Abstractions;
 using CommentsService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CommentsService.Infrastructure;
 
@@ -26,6 +27,8 @@ public static class DependencyInjection
         services.AddSingleton<CommentsService.Application.Images.IImageProcessor, CommentsService.Infrastructure.Images.SkiaImageProcessor>();
         services.AddScoped<CommentsService.Application.Images.IImageQueries, CommentsService.Infrastructure.Images.ImageQueries>();
         services.AddSingleton(TimeProvider.System);
+        services.TryAddSingleton<Cloud.CloudSettings>();
+        services.AddScoped<CommentsService.Application.Cloud.ICloudAttachmentSource, Cloud.CloudAttachmentSource>();
         services.AddSingleton<CommentsService.Infrastructure.Captcha.ICaptchaImageRenderer, CommentsService.Infrastructure.Captcha.PngCaptchaRenderer>();
         services.AddSingleton<CommentsService.Infrastructure.Captcha.MemoryCaptchaService>();
         services.AddSingleton<CommentsService.Application.Captcha.ICaptchaIssuer>(sp => sp.GetRequiredService<CommentsService.Infrastructure.Captcha.MemoryCaptchaService>());

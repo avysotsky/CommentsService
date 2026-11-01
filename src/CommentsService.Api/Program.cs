@@ -70,6 +70,18 @@ builder.Services.AddSingleton<CommentsService.Application.Search.ICommentSearchI
 builder.Services.AddScoped<CommentsService.Application.Search.ISearchComments, CommentsService.Application.Search.SearchComments>();
 builder.Services.AddHostedService<CommentsService.Api.Search.CommentSearchWorker>();
 builder.Services.AddHostedService<CommentsService.Api.Search.SearchBrokerWorker>();
+builder.Services.AddSingleton(runtime.Cloud);
+builder.Services.AddSingleton<CommentsService.Infrastructure.Cloud.CloudCopySignals>();
+builder.Services.AddSingleton<CommentsService.Application.Cloud.ICloudCopySignals>(sp => sp.GetRequiredService<CommentsService.Infrastructure.Cloud.CloudCopySignals>());
+builder.Services.AddSingleton<CommentsService.Application.Events.ICommentCreatedHandler>(sp => sp.GetRequiredService<CommentsService.Infrastructure.Cloud.CloudCopySignals>());
+builder.Services.AddSingleton<CommentsService.Application.Cloud.IAttachmentCloud>(sp =>
+    new CommentsService.Infrastructure.Cloud.SupabaseAttachmentCloud(runtime.Cloud,
+        CommentsService.Infrastructure.Cloud.SupabaseAttachmentCloud.CreateClient(),
+        sp.GetRequiredService<ILogger<CommentsService.Infrastructure.Cloud.SupabaseAttachmentCloud>>(),
+        runtime.Database.Database ?? Environment.GetEnvironmentVariable("PGDATABASE") ?? "unconfigured",
+        Environment.GetEnvironmentVariable("SUPABASE_URL"), Environment.GetEnvironmentVariable("SUPABASE_SECRET_KEY"),
+        Environment.GetEnvironmentVariable("SUPABASE_BUCKET")));
+builder.Services.AddHostedService<CommentsService.Api.Cloud.CloudAttachmentWorker>();
 builder.Services.AddCommentGraphQL(runtime);
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();

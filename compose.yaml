@@ -22,6 +22,8 @@ services:
         required: false
       - path: .env.search
         required: false
+      - path: .env.cloud
+        required: false
     volumes:
       - application_logs:/app/logs
     environment:

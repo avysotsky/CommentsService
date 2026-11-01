@@ -53,3 +53,12 @@ Deployment додає `Runtime.Proxy.KnownProxies`: до16 явних IP, тип
 Секція `Runtime`: `InstanceId` (1–64 ASCII-літери/цифри/дефіс/підкреслення), `HealthPort` (1–65535), `Database`: необов’язкові `Host`, `Database`, `Username`, `Port` (1–65535), `TimeoutSeconds`/`CommandTimeoutSeconds` (1–300), `MaximumPoolSize` (1–1000). Пароль — лише `PGPASSWORD`. Попередні `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER` мають пріоритет над JSON. Приклади перевизначень: `Runtime__InstanceId` в оточенні та `--Runtime:InstanceId=second` у CLI. Завантаження єдине для `--migrate`, `--check-database`, `--healthcheck`; параметри можуть іти після команди. HealthPort має відповідати HTTP-порту ASPNETCORE_HTTP_PORTS/URLs.
 
 Для Docker скопіюйте `compose.config.example.yaml` в override, задайте `APP_CONFIG_FILE` своїм приватним файлом і додайте разом зі звичайними Compose-файлами/оточенням, зберігаючи проєкт/томи. Монтування `/app/config/config.json` доступне лише для читання. Різним інстансам потрібні різні ідентифікатори, порти й файли; незалежним даним — окремі БД/сховища. Frontend використовує відносний `/api`, приватний конфіг йому не передається. CAPTCHA лишається в процесі; реплікам спільного сайту потрібні sticky routing чи окремо спроєктоване сховище. Робочі параметри CAPTCHA, розміру сторінки, завантажень/запитів тепер налаштовуються через Runtime; обов’язкову CAPTCHA й межі схеми/безпеки збережено. [Усі ключі, діапазони й перевірки](RUNTIME_LIMITS.md). Зміни потребують перезапуску, hot reload немає.
+
+
+## CloudAttachments 1.3.3.4 — EN / RU / UA
+
+EN: Optional Cloud ports/adapters, consent lists, bounded post-commit worker and canonical SQL fallback: [Cloud documentation](CLOUD_ATTACHMENTS.md). No schema migration or new provider dependency in inner layers. Public configuration has no Cloud secrets or consent IDs.
+
+RU: Необязательные порты/адаптеры Cloud, списки разрешений, ограниченный worker после commit и резервное SQL-чтение: [документация Cloud](CLOUD_ATTACHMENTS.md). Без миграции схемы/зависимости внутренних слоёв от провайдера. Публичный конфиг не содержит секретов Cloud/ID разрешений.
+
+UA: Необов’язкові порти/адаптери Cloud, списки дозволів, обмежений worker після commit та резервне SQL-читання: [документація Cloud](CLOUD_ATTACHMENTS.md). Без міграції схеми/залежності внутрішніх шарів від провайдера. Публічний конфіг не містить секретів Cloud/ID дозволів.

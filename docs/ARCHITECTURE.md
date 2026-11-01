@@ -243,3 +243,12 @@ EN: Runtime boundaries and dependencies are unchanged. The two verification CLI 
 RU: Границы и зависимости приложения прежние. Два CLI-инструмента — операционные адаптеры вне Domain/Application: сравнение метаданных не пишет данные; проверка копии использует собственную временную БД и не переключает рабочие подключения. Доменные/архитектурные тесты прошли; EF не обнаружил изменений модели/новой миграции.
 
 UA: Межі й залежності застосунку попередні. Два CLI-інструменти — операційні адаптери поза Domain/Application: порівняння метаданих не пише дані; перевірка копії використовує власну тимчасову БД і не перемикає робочі підключення. Доменні/архітектурні тести пройшли; EF не знайшов змін моделі/нової міграції.
+
+
+## CloudAttachments 1.3.3.4 — EN / RU / UA
+
+EN: Optional Cloud ports/adapters, consent lists, bounded post-commit worker and canonical SQL fallback: [Cloud documentation](CLOUD_ATTACHMENTS.md). No schema migration or new provider dependency in inner layers. Public configuration has no Cloud secrets or consent IDs.
+
+RU: Необязательные порты/адаптеры Cloud, списки разрешений, ограниченный worker после commit и резервное SQL-чтение: [документация Cloud](CLOUD_ATTACHMENTS.md). Без миграции схемы/зависимости внутренних слоёв от провайдера. Публичный конфиг не содержит секретов Cloud/ID разрешений.
+
+UA: Необов’язкові порти/адаптери Cloud, списки дозволів, обмежений worker після commit та резервне SQL-читання: [документація Cloud](CLOUD_ATTACHMENTS.md). Без міграції схеми/залежності внутрішніх шарів від провайдера. Публічний конфіг не містить секретів Cloud/ID дозволів.

@@ -1,14 +1,14 @@
 # CommentsService
 
-Version: **1.3.3.3** · `CommentsService/v_1.3.3.3_CommentSearch`
+Version: **1.3.3.4** · `CommentsService/v_1.3.3.4_CloudAttachments`
 
-Optional Elasticsearch full-text search now finds roots and replies by words or author name, with paging and discussion navigation. Search has separate bounded requests, background indexing and a RabbitMQ consumer; SQL reconciliation repairs missed signals and stale entries. PostgreSQL remains authoritative and all earlier functionality remains independent of Elasticsearch availability. Indexes are automatically partitioned by database. No SQL migration, outbox, cloud or replica deployment.
+Supabase Storage Free is an optional mirror for explicitly approved image/TXT attachments. PostgreSQL retains every original and remains authoritative; comment/file writes never wait for Cloud. Existing REST/GraphQL, CAPTCHA, preview, search, Events, RabbitMQ, cache and WS remain available when Cloud is absent or restricted. Only explicitly listed own test comments may be mirrored in this release. No SQL migration, backfill, outbox or replica deployment.
 
-Verification: 418 distinct backend tests (27/85/67/239), 36 frontend tests, frontend/Docker builds; real Edge EN/RU/UA search, selected reply/discussion, ES pause/stop/recovery while posting/CAPTCHA/preview/exact TXT/GraphQL six sorts/WS/drafts remain usable; SQL reconciliation after RabbitMQ loss; offline startup and recovery without app restart; strict private mapping, scoped credentials, orphan cleanup and index reconstruction. Original data/schema/history/million/checkpoints/env/volumes/preview preserved. Earlier million paging/reboot/heartbeat acceptance was not repeated. [Details](docs/COMMENT_SEARCH.md).
+[Cloud setup, limits and rollback](docs/CLOUD_ATTACHMENTS.md) · [Search](docs/COMMENT_SEARCH.md) · [Broker](docs/MESSAGE_BROKER.md) · [GraphQL](docs/GRAPHQL.md)
 
-[Search](docs/COMMENT_SEARCH.md) · [Broker](docs/MESSAGE_BROKER.md) · [GraphQL](docs/GRAPHQL.md)
+Verified:449 distinct backend tests (27 Domain,85 Application,67 Data,270 API),36 frontend tests and frontend/Docker builds. Real Edge created own PNG/TXT root/reply with CAPTCHA, checked exact file responses/headers/downloads, six GraphQL sorts, preview, WS/drafts and EN/RU/UA mobile layout. Real Supabase copied2 own files totaling267bytes; authenticated downloads matched, public access was denied; final image confirmed2 copies and5 verified reads. Invalid/missing key startup preserved writes/TXT/WS and SQL reads. Quota/429/5xx/timeout/corruption/concurrency/retry/budget behavior was tested with injected provider responses, not actual quota exhaustion or a real paused project. Event dispatch does not wait for a blocked worker. Owned SQL/cloud fixtures were removed, including proof that SQL-deleted IDs stay404 before cloud cleanup. Public HTTPS/HSTS/database/GraphQL/search/WSS/reconnect checks were read-only. Original data/schema/history/corpus/checkpoints/env/volumes/preview fingerprints matched. Prior Junior/million/reboot acceptance was not repeated. Current live deployment keeps consent/replay lists empty; ordinary user uploads are not sent to Cloud.
 
-<!-- COMMENT-SEARCH-CURRENT-END -->
+<!-- CLOUD-ATTACHMENTS-CURRENT-END -->
 
 Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 

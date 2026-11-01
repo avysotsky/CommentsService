@@ -1,3 +1,9 @@
+1.3.3.4 CloudAttachments — 2026-11-01
+Branch: CommentsService/v_1.3.3.4_CloudAttachments
+Supabase Storage Free is an optional mirror for explicitly approved image/TXT attachments. PostgreSQL retains every original and remains authoritative; comment/file writes never wait for Cloud. Existing REST/GraphQL, CAPTCHA, preview, search, Events, RabbitMQ, cache and WS remain available when Cloud is absent or restricted. Only explicitly listed own test comments may be mirrored in this release. No SQL migration, backfill, outbox or replica deployment.
+Verified:449 distinct backend tests (27 Domain,85 Application,67 Data,270 API),36 frontend tests and frontend/Docker builds. Real Edge created own PNG/TXT root/reply with CAPTCHA, checked exact file responses/headers/downloads, six GraphQL sorts, preview, WS/drafts and EN/RU/UA mobile layout. Real Supabase copied2 own files totaling267bytes; authenticated downloads matched, public access was denied; final image confirmed2 copies and5 verified reads. Invalid/missing key startup preserved writes/TXT/WS and SQL reads. Quota/429/5xx/timeout/corruption/concurrency/retry/budget behavior was tested with injected provider responses, not actual quota exhaustion or a real paused project. Event dispatch does not wait for a blocked worker. Owned SQL/cloud fixtures were removed, including proof that SQL-deleted IDs stay404 before cloud cleanup. Public HTTPS/HSTS/database/GraphQL/search/WSS/reconnect checks were read-only. Original data/schema/history/corpus/checkpoints/env/volumes/preview fingerprints matched. Prior Junior/million/reboot acceptance was not repeated. Current live deployment keeps consent/replay lists empty; ordinary user uploads are not sent to Cloud.
+Details: docs/CLOUD_ATTACHMENTS.md
+
 # CommentsService — Change log
 
 [English](change.log) · [Русский](change.log.ru) · [Українська](change.log.ua)

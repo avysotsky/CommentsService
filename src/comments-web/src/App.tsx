@@ -87,7 +87,7 @@ export function App({ client, fileClient }: { client: CommentsClient; fileClient
       <label className="language" htmlFor="language">{t.language}<select id="language" aria-label={t.language} value={language} onChange={event => setLanguage(event.target.value as Language)}>
         <option value="en">English</option><option value="ru">Русский</option><option value="uk">Українська</option>
       </select></label></header>
-    <div className="hero"><p className="eyebrow">1.3.3.3</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
+    <div className="hero"><p className="eyebrow">1.3.3.4</p><h1>{t.title}</h1><p className="intro">{t.intro}</p></div>
     <CommentForm client={client} labels={t} onCreated={created} replyTo={replyTo} onCancelReply={() => setReplyTo(null)} />
     {limits.searchEnabled && <CommentSearch labels={t} language={language} client={client} fileClient={fileClient} onReply={selectReply} lastCreated={lastCreated} refreshVersion={threadRefresh} />}
     <section className="panel comments" aria-labelledby="recent-title" aria-busy={loading}>
@@ -102,6 +102,6 @@ export function App({ client, fileClient }: { client: CommentsClient; fileClient
       {data && data.items.length > 0 && <CommentsTable key={`${loadedQuery?.page}:${loadedQuery?.sort}:${loadedQuery?.direction}`}
         comments={data.items} fileClient={fileClient} labels={t} language={language} client={client} lastCreated={lastCreated} refreshVersion={threadRefresh} onReply={selectReply} />}
     </section>
-    <footer>CommentsService · 1.3.3.3</footer>
+    <footer>CommentsService · 1.3.3.4</footer>
   </main></>;
 }

@@ -1,132 +1,15 @@
-CommentsService - 1.3.3.4 CloudAttachments
-Branch: CommentsService/v_1.3.3.4_CloudAttachments
+CommentsService — 1.3.3.4 CloudAttachments / MiddleAcceptance
+Branch: CommentsService/v_1.3.3.4_MiddleAcceptance
+Demo: https://comments.alexvysotsky.com
 
-EN: Supabase Storage Free is an optional mirror for explicitly approved image/TXT attachments. PostgreSQL retains every original and remains authoritative; comment/file writes never wait for Cloud. Existing REST/GraphQL, CAPTCHA, preview, search, Events, RabbitMQ, cache and WS remain available when Cloud is absent or restricted. Only explicitly listed own test comments may be mirrored in this release. No SQL migration, backfill, outbox or replica deployment.
+EN: Current submission:1.3.3.4 MiddleAcceptance. Runtime remains1.3.3.4/CloudAttachments. All Junior/Junior+ and selected Middle features are implemented; final acceptance corrects documentation and verifies published-source installation and owner-only Cloud demonstration. GraphQL root-page reads; RabbitMQ change signals with local fallback; Elasticsearch root/reply search with SQL reconciliation; Supabase private optional attachment copies with SQL originals. Cloud consent/replay lists are empty by default. No schema migration, provider/package/runtime change, new production service or volume. Preserve existing environment and all deployment overrides. Middle+ load tests, outbox, durable delivery and replicas need a separate scope.
 
-RU: Supabase Storage Free — дополнительная копия явно разрешённых изображений/TXT. Все оригиналы остаются в PostgreSQL; запись комментария и файла не ждёт Cloud. REST/GraphQL, CAPTCHA, preview, поиск, Events, RabbitMQ, кеш и WS сохраняются при отсутствии или ограничении облака. В этом выпуске разрешены только собственные тестовые комментарии из явного списка. Миграции SQL, массового переноса, outbox и реплик нет.
+RU: Текущая сдача:1.3.3.4 MiddleAcceptance. Runtime остаётся1.3.3.4/CloudAttachments. Junior/Junior+ и выбранные Middle-функции реализованы; финальная приёмка исправляет документы и проверяет установку опубликованного кода и Cloud-демонстрацию только своих файлов. GraphQL читает корневые страницы; RabbitMQ передаёт сигналы с локальным fallback; Elasticsearch ищет корни/ответы со сверкой SQL; Supabase хранит необязательные приватные копии при сохранении оригиналов SQL. Списки Cloud разрешений/replay по умолчанию пусты. Без миграции схемы, изменения провайдера/пакетов/runtime, новых рабочих сервисов/томов. Сохранить прежнее окружение и все overrides запуска. Нагрузка Middle+, outbox, долговечная доставка и реплики требуют отдельного объёма.
 
-UA: Supabase Storage Free — додаткова копія явно дозволених зображень/TXT. Усі оригінали залишаються в PostgreSQL; запис коментаря/файлу не чекає Cloud. REST/GraphQL, CAPTCHA, preview, пошук, Events, RabbitMQ, кеш і WS працюють за відсутності чи обмеження хмари. У випуску дозволено лише власні тестові коментарі з явного списку. Міграцій SQL, масового перенесення, outbox і реплік немає.
+UA: Поточна здача:1.3.3.4 MiddleAcceptance. Runtime залишається1.3.3.4/CloudAttachments. Junior/Junior+ та обрані Middle-функції реалізовано; фінальне приймання виправляє документи й перевіряє інсталяцію опублікованого коду та Cloud-демонстрацію лише власних файлів. GraphQL читає кореневі сторінки; RabbitMQ передає сигнали з локальним fallback; Elasticsearch шукає корені/відповіді зі звіркою SQL; Supabase зберігає необов’язкові приватні копії зі збереженням оригіналів SQL. Списки Cloud дозволів/replay типово порожні. Без міграції схеми, зміни провайдера/пакетів/runtime, нових робочих сервісів/томів. Зберегти попереднє оточення й усі overrides запуску. Навантаження Middle+, outbox, довговічне доставлення та репліки потребують окремого обсягу.
 
-EN: Verified:449 distinct backend tests (27 Domain,85 Application,67 Data,270 API),36 frontend tests and frontend/Docker builds. Real Edge created own PNG/TXT root/reply with CAPTCHA, checked exact file responses/headers/downloads, six GraphQL sorts, preview, WS/drafts and EN/RU/UA mobile layout. Real Supabase copied2 own files totaling267bytes; authenticated downloads matched, public access was denied; final image confirmed2 copies and5 verified reads. Invalid/missing key startup preserved writes/TXT/WS and SQL reads. Quota/429/5xx/timeout/corruption/concurrency/retry/budget behavior was tested with injected provider responses, not actual quota exhaustion or a real paused project. Event dispatch does not wait for a blocked worker. Owned SQL/cloud fixtures were removed, including proof that SQL-deleted IDs stay404 before cloud cleanup. Public HTTPS/HSTS/database/GraphQL/search/WSS/reconnect checks were read-only. Original data/schema/history/corpus/checkpoints/env/volumes/preview fingerprints matched. Prior Junior/million/reboot acceptance was not repeated. Current live deployment keeps consent/replay lists empty; ordinary user uploads are not sent to Cloud.
+EN: Setup and user guide: README.md; final installation and Cloud demo: docs/MIDDLE_ACCEPTANCE.md; schema: docs/database/commentsservice.mwb. Verification:449backend/36frontend, real Cloud and browser evidence; installation results are in final acceptance.
 
-RU: Проверено:449 различных backend-тестов (27 Domain,85 Application,67 Data,270 API),36 frontend и сборки frontend/Docker. Реальный Edge создал свои PNG/TXT в корне/ответе с CAPTCHA; проверены точные байты/заголовки/скачивание,6сортировок GraphQL, preview, WS/черновик и EN/RU/UA mobile. Настоящий Supabase принял2своих файла общим размером267байт; авторизованное скачивание совпало, публичный доступ закрыт; финальный образ подтвердил2копии и5проверенных чтений. Запуск с неверным/отсутствующим ключом сохранил запись/TXT/WS/SQL-чтение. Квоты/429/5xx/таймаут/повреждение/параллелизм/повторы/бюджеты проверены подставными ответами провайдера, без реального исчерпания квот/паузы проекта. Events не ждёт заблокированный worker. Свои SQL/cloud-фикстуры удалены; до очистки Cloud подтверждён404 SQL-удалённых ID. Публичные HTTPS/HSTS/БД/GraphQL/search/WSS/reconnect проверены только чтением. Исходные отпечатки данных/схемы/истории/миллиона/копий/env/томов/preview совпали. Прежние Junior/миллион/reboot не повторялись. Рабочие списки разрешения/повтора пусты; пользовательские файлы в Cloud не отправляются.
+RU: Установка и функции: README.RU.md; финальная установка и Cloud-демо: docs/MIDDLE_ACCEPTANCE.md; схема: docs/database/commentsservice.mwb. Проверки:449backend/36frontend, реальное облако и браузер; итоги установки — в финальной приёмке.
 
-UA: Перевірено:449різних backend-тестів (27 Domain,85 Application,67 Data,270 API),36 frontend і збирання frontend/Docker. Справжній Edge створив власні PNG/TXT у корені/відповіді з CAPTCHA; перевірено точні байти/заголовки/завантаження,6сортувань GraphQL, preview, WS/чернетку та EN/RU/UA mobile. Справжній Supabase прийняв2власні файли загалом267байтів; авторизоване завантаження збіглося, публічний доступ закрито; фінальний образ підтвердив2копії та5перевірених читань. Старт із хибним/відсутнім ключем зберіг запис/TXT/WS/SQL-читання. Квоти/429/5xx/таймаут/пошкодження/паралельність/повтори/бюджети перевірено підставними відповідями провайдера, без справжнього вичерпання квот/паузи проєкту. Events не чекає заблокований worker. Власні SQL/cloud-фікстури видалено; до очищення Cloud підтверджено404 SQL-видалених ID. Публічні HTTPS/HSTS/БД/GraphQL/search/WSS/reconnect перевірено лише читанням. Початкові відбитки даних/схеми/історії/мільйона/копій/env/томів/preview збіглися. Попередні Junior/мільйон/reboot не повторювалися. Робочі списки дозволу/повтору порожні; користувацькі файли в Cloud не надсилаються.
-
-Details: docs/CLOUD_ATTACHMENTS.md
-
-Previous release / Предыдущий выпуск / Попередній випуск:
-CommentsService - 1.3.3.3 CommentSearch
-Branch: CommentsService/v_1.3.3.3_CommentSearch
-
-EN: Optional Elasticsearch full-text search now finds roots and replies by words or author name, with paging and discussion navigation. Search has separate bounded requests, background indexing and a RabbitMQ consumer; SQL reconciliation repairs missed signals and stale entries. PostgreSQL remains authoritative and all earlier functionality remains independent of Elasticsearch availability. Indexes are automatically partitioned by database. No SQL migration, outbox, cloud or replica deployment.
-
-Verification: 418 distinct backend tests (27/85/67/239), 36 frontend tests, frontend/Docker builds; real Edge EN/RU/UA search, selected reply/discussion, ES pause/stop/recovery while posting/CAPTCHA/preview/exact TXT/GraphQL six sorts/WS/drafts remain usable; SQL reconciliation after RabbitMQ loss; offline startup and recovery without app restart; strict private mapping, scoped credentials, orphan cleanup and index reconstruction. Original data/schema/history/million/checkpoints/env/volumes/preview preserved. Earlier million paging/reboot/heartbeat acceptance was not repeated. [Details](docs/COMMENT_SEARCH.md).
-
-RU: Необязательный полнотекстовый поиск Elasticsearch находит корни и ответы по словам или имени автора, с пагинацией и переходом к обсуждению. Запросы, фоновая индексация и потребитель RabbitMQ изолированы; SQL-сверка исправляет пропуски и устаревшие записи. Источник истины - PostgreSQL, прежние функции не зависят от доступности Elasticsearch. Индексы автоматически разделены по БД. Без миграции SQL, outbox, Cloud и реплик.
-
-Проверки: 418 различных backend-тестов (27/85/67/239), 36 frontend, сборки frontend/Docker; Edge EN/RU/UA, найденный ответ/обсуждение, пауза/остановка/возврат ES при работающих записи/CAPTCHA/preview/точном TXT/6сортировках GraphQL/WS/черновиках; сверка SQL после потери RabbitMQ; запуск без ES и восстановление без рестарта app; приватный mapping, ограниченные права, удаление сирот и восстановление индекса. Исходные данные/схема/история/миллион/копии/env/тома/preview сохранены. Прежние проверки пагинации миллиона/reboot/heartbeat не повторялись. [Подробнее](docs/COMMENT_SEARCH.md).
-
-UA: Необов’язковий повнотекстовий пошук Elasticsearch знаходить корені й відповіді за словами чи ім’ям автора, з пагінацією та переходом до обговорення. Запити, фонову індексацію й споживача RabbitMQ ізольовано; SQL-звірка виправляє пропуски й застарілі записи. Джерело істини - PostgreSQL, попередні функції не залежать від доступності Elasticsearch. Індекси автоматично розділено за БД. Без міграції SQL, outbox, Cloud і реплік.
-
-Перевірки: 418 різних backend-тестів (27/85/67/239), 36 frontend, збирання frontend/Docker; Edge EN/RU/UA, знайдена відповідь/обговорення, пауза/зупинка/повернення ES за працюючих запису/CAPTCHA/preview/точного TXT/6сортувань GraphQL/WS/чернеток; звірка SQL після втрати RabbitMQ; запуск без ES і відновлення без рестарту app; приватний mapping, обмежені права, видалення сиріт і відновлення індексу. Початкові дані/схема/історія/мільйон/копії/env/томи/preview збережено. Попередні перевірки пагінації мільйона/reboot/heartbeat не повторювались. [Докладніше](docs/COMMENT_SEARCH.md).
-
-[EN](README.md) · [RU](README.RU.md) · [UA](README.UA.md)
-
-Historical releases / История / Історія:
-
-CommentsService - 1.3.3.2 MessageBroker
-Branch: CommentsService/v_1.3.3.2_MessageBroker
-
-EN: RabbitMQ now carries comment-change signals in the background. If disabled, disconnected, stalled or overloaded, the existing local queue keeps WebSocket refresh working; comment writes, GraphQL/REST, CAPTCHA, preview and files remain independent of the broker. Runtime.Broker adds private validated settings; credentials are separate environment secrets. PostgreSQL schema/data and the public configuration contract are unchanged. No outbox, NoSQL, cloud or replica deployment.
-
-Passed: 387 backend tests (27/85/67/208), 33 frontend tests, frontend/Docker builds, real Edge with RabbitMQ healthy/paused/stopped/recovered and no app restart, six GraphQL sorts, real CAPTCHA/root/reply, preview, exact TXT, WebSocket refresh/reconnect, drafts, EN/RU/UA and 360px. Startup with the broker already stopped and later recovery also passed. Original data/schema/history/corpus/checkpoints/env/volumes/preview preserved. The earlier million-row paging acceptance was not repeated because read queries are unchanged.
-
-RU: RabbitMQ передаёт сигналы изменения комментариев в фоне. При отключении, потере связи, зависании или перегрузке прежняя локальная очередь сохраняет WebSocket-обновления; запись, GraphQL/REST, CAPTCHA, preview и файлы не зависят от брокера. Runtime.Broker содержит приватные проверяемые параметры; секреты вынесены в отдельное окружение. Схема/данные PostgreSQL и публичный контракт конфига прежние. Outbox, NoSQL, Cloud и реплики не добавлены.
-
-Прошли 387 backend-тестов (27/85/67/208), 33 frontend, сборки frontend/Docker, Edge с работающим/приостановленным/остановленным/восстановленным RabbitMQ без перезапуска app, шесть сортировок GraphQL, реальные CAPTCHA/корень/ответ, preview, точный TXT, WS-обновление/переподключение, черновики, EN/RU/UA и 360px. Запуск при уже остановленном брокере и последующее восстановление также прошли. Исходные данные/схема/история/миллион/копии/env/тома/preview сохранены. Прежняя приёмка пагинации миллиона не повторялась: запросы чтения не менялись.
-
-UA: RabbitMQ передає сигнали зміни коментарів у фоні. За вимкнення, втрати зв’язку, зависання чи перевантаження попередня локальна черга зберігає WebSocket-оновлення; запис, GraphQL/REST, CAPTCHA, preview та файли не залежать від брокера. Runtime.Broker містить приватні перевірювані параметри; секрети винесено в окреме оточення. Схема/дані PostgreSQL і публічний контракт конфігу попередні. Outbox, NoSQL, Cloud і репліки не додані.
-
-Пройшли 387 backend-тестів (27/85/67/208), 33 frontend, збирання frontend/Docker, Edge з працюючим/призупиненим/зупиненим/відновленим RabbitMQ без перезапуску app, шість сортувань GraphQL, справжні CAPTCHA/корінь/відповідь, preview, точний TXT, WS-оновлення/перепідключення, чернетки, EN/RU/UA та 360px. Запуск за вже зупиненого брокера й подальше відновлення також пройшли. Початкові дані/схема/історія/мільйон/копії/env/томи/preview збережено. Попереднє приймання пагінації мільйона не повторювалось: запити читання не змінювались.
-
-[Broker](docs/MESSAGE_BROKER.md) · [EN](README.md) · [RU](README.RU.md) · [UA](README.UA.md)
-
-Historical releases / История / Історія:
-
-CommentsService - 1.3.3.1 GraphQL
-Branch: CommentsService/v_1.3.3.1_GraphQL
-
-EN: GraphQL adds a bounded read-only /api/graphql endpoint and uses it for SPA root-page reads. Existing REST writes/replies/files, Events/Cache/Queue/WebSocket and PostgreSQL data remain. Runtime.GraphQL adds validated limits; only graphQLEnabled is public. No schema migration, broker, NoSQL or cloud. This completes the Graph item only, not the entire Middle level.
-
-Passed: 370 distinct backend tests (27 Domain / 85 Application / 67 Data / 191 API, including the final focused rerun), 33 frontend tests, frontend/Docker builds, real Edge with three windows/CAPTCHA/root/reply/WS refresh/reconnect/draft/query retention/EN-RU-UA/360px, and 18 retained-million GraphQL cases with two samples and REST order parity. Native HTTP byte/encoding/depth/route guards and public HTTPS/GraphQL/WSS checks passed. Original data, schema, checkpoints, environment, volumes and existing preview were preserved. No reboot or repeat of the prior heartbeat acceptance. [GraphQL](docs/GRAPHQL.md).
-
-RU: GraphQL добавляет ограниченный endpoint чтения /api/graphql и чтение корневой страницы SPA через него. Прежние REST-запись/ответы/файлы, Events/Cache/Queue/WebSocket и данные PostgreSQL сохранены. Runtime.GraphQL задаёт проверяемые лимиты; публичен только graphQLEnabled. Миграций схемы, брокера, NoSQL и Cloud нет. Выполнен только пункт Graph, а не весь Middle.
-
-Прошли 370 различных backend-тестов (27 Domain / 85 Application / 67 Data / 191 API, включая финальный целевой повтор), 33 frontend-теста, сборки frontend/Docker, Edge с тремя окнами/CAPTCHA/корнем/ответом/WS-обновлением/переподключением/сохранением черновика и запроса/EN-RU-UA/360px и 18 сценариев GraphQL сохранённого миллиона по два замера с паритетом порядка REST. Прошли реальные HTTP-ограничения байтов/кодировки/глубины/вариантов маршрута и публичные HTTPS/GraphQL/WSS. Исходные данные, схема, копии, окружение, тома и прежний preview сохранены. Reboot и прежняя приёмка heartbeat не повторялись. [GraphQL](docs/GRAPHQL.md).
-
-UA: GraphQL додає обмежений endpoint читання /api/graphql і читання кореневої сторінки SPA через нього. Попередні REST-запис/відповіді/файли, Events/Cache/Queue/WebSocket та дані PostgreSQL збережено. Runtime.GraphQL задає перевірювані межі; публічний лише graphQLEnabled. Міграцій схеми, брокера, NoSQL та Cloud немає. Виконано лише пункт Graph, а не весь Middle.
-
-Пройшли 370 різних backend-тестів (27 Domain / 85 Application / 67 Data / 191 API, включно з фінальним цільовим повтором), 33 frontend-тести, збирання frontend/Docker, Edge з трьома вікнами/CAPTCHA/коренем/відповіддю/WS-оновленням/перепідключенням/збереженням чернетки й запиту/EN-RU-UA/360px та 18 сценаріїв GraphQL збереженого мільйона по два вимірювання з паритетом порядку REST. Пройшли справжні HTTP-межі байтів/кодування/глибини/варіантів маршруту та публічні HTTPS/GraphQL/WSS. Початкові дані, схема, копії, оточення, томи й попередній preview збережено. Reboot і попереднє приймання heartbeat не повторювались. [GraphQL](docs/GRAPHQL.md).
-
-[EN](README.md) · [RU](README.RU.md) · [UA](README.UA.md)
-
-Historical releases / История / Історія:
-
-CommentsService — 1.2.2.4 LiveComments
-Branch: CommentsService/v_1.2.2.4_LiveComments
-
-EN: Junior+ integrates post-commit Events, a bounded read Cache, a coalescing notification Queue and same-origin WebSocket updates. New comments/replies show a localized refresh notice; reconnect re-reads data while preserving drafts, page and sort. Additive Cache/Notifications/Realtime settings support old config files. PostgreSQL remains authoritative; notifications/cache are process-local, not durable or multi-replica. No schema migration, new broker, NoSQL or cloud dependency.
-
-Passed:337 backend tests (27/85/67/158),31 frontend tests, frontend/Docker builds, real Edge multi-window root/reply/CAPTCHA/refresh/reconnect/draft/sort/EN-RU-UA/360px,18 retained-million cases and public HTTPS/WSS/reconnect/45s heartbeat. Original data/schema/checkpoints/volumes preserved. Host reboot was not repeated.
-
-RU: Junior+ объединяет Events после сохранения, ограниченный Cache чтения, Queue сигналов с объединением и WebSocket своего сайта. Новые комментарии/ответы показывают уведомление об обновлении; переподключение перечитывает данные, сохраняя черновик, страницу и сортировку. Cache/Notifications/Realtime совместимы со старыми конфигами. Источник данных — PostgreSQL; уведомления/кеш локальны процессу, без долговечности и согласованности реплик. Миграций схемы, нового брокера, NoSQL и облачных зависимостей нет.
-
-Прошли337 backend-тестов (27/85/67/158),31 frontend, сборки frontend/Docker, Edge с несколькими окнами: корень/ответ/CAPTCHA/обновление/переподключение/черновик/сортировка/EN-RU-UA/360px,18 сценариев сохранённого миллиона и публичный HTTPS/WSS/переподключение/heartbeat45с. Исходные данные/схема/копии/тома сохранены. Перезагрузка хоста не повторялась.
-
-UA: Junior+ об’єднує Events після збереження, обмежений Cache читання, Queue сигналів з об’єднанням і WebSocket свого сайту. Нові коментарі/відповіді показують сповіщення про оновлення; перепідключення перечитує дані, зберігаючи чернетку, сторінку й сортування. Cache/Notifications/Realtime сумісні зі старими конфігами. Джерело даних — PostgreSQL; сповіщення/кеш локальні процесу, без довговічності й узгодженості реплік. Міграцій схеми, нового брокера, NoSQL та хмарних залежностей немає.
-
-Пройшли337 backend-тестів (27/85/67/158),31 frontend, збирання frontend/Docker, Edge з кількома вікнами: корінь/відповідь/CAPTCHA/оновлення/перепідключення/чернетка/сортування/EN-RU-UA/360px,18 сценаріїв збереженого мільйона й публічний HTTPS/WSS/перепідключення/heartbeat45с. Початкові дані/схема/копії/томи збережено. Перезавантаження хоста не повторювалось.
-
-[EN](README.md) · [RU](README.RU.md) · [UA](README.UA.md) · [Junior+](docs/JUNIOR_PLUS.md)
-
-<!-- JUNIOR-PLUS-CURRENT-END -->
-
-Historical release notes / Исторические записи / Історичні записи:
-
-CommentsService — 1.1.1.17 RuntimeLimits
-Branch: CommentsService/v_1.1.1.17_RuntimeLimits
-
-EN: Pagination/field/upload/image/CAPTCHA/request policies now come from config.json; the SPA uses a safe public allowlist. Original Junior defaults and schema/security ceilings retained. Passed305backend/28frontend, builds, custom-config desktop/mobile browser and default live checks; persistent data preserved. [Settings and verification](docs/RUNTIME_LIMITS.md). Workbench model/save/reopen verified with documented manual-menu/shutdown caveat; host logon-autostart/reboot verified on preceding1.1.1.16, no reboot repeated for this update.
-
-RU: Пагинация/поля/загрузки/изображения/CAPTCHA/запросы настраиваются через config.json; SPA получает безопасный публичный список. Прежние значения Junior и пределы схемы/безопасности сохранены. Прошли305backend/28frontend, сборки, браузер desktop/mobile с изменённым конфигом и публичные проверки; постоянные данные сохранены. [Настройки и проверки](docs/RUNTIME_LIMITS.md). Модель/save/reopen Workbench проверены с оговоркой ручного меню/завершения; reboot/автозапуск после входа проверен на предыдущей1.1.1.16, для обновления reboot не повторяли.
-
-UA: Пагінація/поля/завантаження/зображення/CAPTCHA/запити налаштовуються через config.json; SPA отримує безпечний публічний список. Попередні значення Junior й межі схеми/безпеки збережено. Пройшли305backend/28frontend, збирання, браузер desktop/mobile зі зміненим конфігом і публічні перевірки; постійні дані збережено. [Налаштування й перевірки](docs/RUNTIME_LIMITS.md). Модель/save/reopen Workbench перевірено із застереженням ручного меню/завершення; reboot/автозапуск після входу перевірено на попередній1.1.1.16, для оновлення reboot не повторювали.
-
-[EN change log](change.log) · [RU](change.log.ru) · [UA](change.log.ua)
-
-EN: The following acceptance notes describe earlier versions. RU: Далее — исторические записи приёмки. UA: Далі — історичні записи приймання.
-
-## English
-
-.NET 10 / React / PostgreSQL 17 / Docker, Onion/OOP/SOLID. Comments/replies, XHTML, CAPTCHA, sorting/pagination, one image or UTF-8 TXT, viewer/downloads and EN/RU/UA responsive UI. Layer-owned DTOs preserve JSON; backend config.json supports independent instances; structured console/file logs use configurable levels, rolling retention and InstanceId/TraceId.
-
-[Installation/update](README.md) · [Configuration](docs/CONFIGURATION.md) · [Logging](docs/LOGGING.md) · [Current checks](docs/ACCEPTANCE_RECHECK.md). Keep project/environment/database volumes, apply migrations explicitly and preserve checkpoints/corpus; never reset shared data for tests.
-
-Passed: 283 backend tests, 26 frontend, frontend/Docker builds, independent configuration/logging checks, Edge desktop/360px and 18 retained-million cases. Original rows/schema/history/environment/database volumes/checkpoints/preview preserved; dedicated persistent log volume added. Workbench GUI remains pending. Deployment 1.1.1.16 requires a target server.
-
-## Русский
-
-.NET 10 / React / PostgreSQL 17 / Docker, Onion/OOP/SOLID. Комментарии/ответы, XHTML, CAPTCHA, сортировка/пагинация, изображение или UTF-8 TXT, просмотр/скачивание, адаптивный EN/RU/UA UI. DTO принадлежат слоям и сохраняют JSON; backend config.json поддерживает независимые инстансы; структурированные console/file логи имеют уровни, ротацию/хранение и InstanceId/TraceId.
-
-[Установка/обновление](README.RU.md) · [Конфигурация](docs/CONFIGURATION.md) · [Логи](docs/LOGGING.md) · [Текущие проверки](docs/ACCEPTANCE_RECHECK.md). Сохраняйте проект/окружение/тома БД, применяйте миграции явно, сохраняйте копии/набор; не сбрасывайте общие данные для тестов.
-
-Прошли 283 backend, 26 frontend, сборки frontend/Docker, независимые конфиги/логи, Edge desktop/360px и 18 сценариев миллиона. Исходные строки/схема/история/окружение/тома БД/копии/просмотр сохранены; добавлен отдельный постоянный том логов. GUI Workbench pending. Deployment 1.1.1.16 требует целевой сервер.
-
-## Українська
-
-.NET 10 / React / PostgreSQL 17 / Docker, Onion/OOP/SOLID. Коментарі/відповіді, XHTML, CAPTCHA, сортування/пагінація, зображення або UTF-8 TXT, перегляд/завантаження, адаптивний EN/RU/UA UI. DTO належать шарам і зберігають JSON; backend config.json підтримує незалежні інстанси; структуровані console/file логи мають рівні, ротацію/зберігання та InstanceId/TraceId.
-
-[Установка/оновлення](README.UA.md) · [Конфігурація](docs/CONFIGURATION.md) · [Логи](docs/LOGGING.md) · [Поточні перевірки](docs/ACCEPTANCE_RECHECK.md). Зберігайте проєкт/оточення/томи БД, застосовуйте міграції явно, зберігайте копії/набір; не скидайте спільні дані для тестів.
-
-Пройшли 283 backend, 26 frontend, збирання frontend/Docker, незалежні конфіги/логи, Edge desktop/360px та 18 сценаріїв мільйона. Початкові рядки/схему/історію/оточення/томи БД/копії/перегляд збережено; додано окремий постійний том логів. GUI Workbench pending. Deployment 1.1.1.16 потребує цільовий сервер.
+UA: Інсталяція та функції: README.UA.md; фінальна інсталяція й Cloud-демо: docs/MIDDLE_ACCEPTANCE.md; схема: docs/database/commentsservice.mwb. Перевірки:449backend/36frontend, справжня хмара й браузер; підсумки інсталяції — у фінальному прийманні.

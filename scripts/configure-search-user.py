@@ -1,5 +1,5 @@
 """Provision a namespace-limited Elasticsearch user in an explicitly owned Compose service."""
-import argparse,json,subprocess
+import argparse,json,subprocess,time
 from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--app-env',type=Path,default=Path('.env.search'))
@@ -23,6 +23,16 @@ for path,body in [('/_security/role/comments_search',{'cluster':[],'indices':[{'
                   ('/_security/user/comments_search',{'password':app['SEARCH_PASSWORD'],'roles':['comments_search']})]:
     # curl reads credentials and JSON from stdin; neither secret appears in process arguments or output.
     config='url = '+json.dumps('http://localhost:9200'+path)+'\nuser = '+json.dumps('elastic:'+server['ELASTIC_PASSWORD'])+'\nrequest = "PUT"\nheader = "Content-Type: application/json"\ndata = '+json.dumps(json.dumps(body))+'\n'
-    r=subprocess.run(['docker','exec','-i',container,'curl','--silent','--show-error','--fail','--config','-'],input=config.encode(),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-    if r.returncode:p.exit(1,'Search user provisioning failed; private files preserved.\n')
+    # An unauthenticated401 health check can precede security-index readiness on a new volume.
+    # Retry only temporary failures, with a total120s deadline per idempotent operation.
+    deadline=time.monotonic()+120
+    config+='connect-timeout = 2\nmax-time = 5\nwrite-out = "\\n%{http_code}"\n'
+    while True:
+        r=subprocess.run(['docker','exec','-i',container,'curl','--silent','--show-error','--fail','--config','-'],input=config.encode(),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        try: status=int(r.stdout.rsplit(b'\n',1)[-1])
+        except ValueError: status=0
+        if r.returncode==0 and status in (200,201): break
+        if (status not in (0,408,429,500,502,503,504) or time.monotonic()>=deadline):
+            p.exit(1,'Search user provisioning failed or readiness deadline expired; private files preserved.\n')
+        time.sleep(min(2,max(0,deadline-time.monotonic())))
 print('Scoped comments_search role/user ready; admin credentials are not supplied to the app.')

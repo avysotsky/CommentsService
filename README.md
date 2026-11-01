@@ -1,6 +1,6 @@
 # CommentsService
 
-Version: **1.3.3.4** · `CommentsService/v_1.3.3.4_CloudAttachments`
+Version: **1.3.3.4** · `CommentsService/v_1.3.3.4_MiddleAcceptance`
 
 Supabase Storage Free is an optional mirror for explicitly approved image/TXT attachments. PostgreSQL retains every original and remains authoritative; comment/file writes never wait for Cloud. Existing REST/GraphQL, CAPTCHA, preview, search, Events, RabbitMQ, cache and WS remain available when Cloud is absent or restricted. Only explicitly listed own test comments may be mirrored in this release. No SQL migration, backfill, outbox or replica deployment.
 
@@ -9,6 +9,14 @@ Supabase Storage Free is an optional mirror for explicitly approved image/TXT at
 Verified:449 distinct backend tests (27 Domain,85 Application,67 Data,270 API),36 frontend tests and frontend/Docker builds. Real Edge created own PNG/TXT root/reply with CAPTCHA, checked exact file responses/headers/downloads, six GraphQL sorts, preview, WS/drafts and EN/RU/UA mobile layout. Real Supabase copied2 own files totaling267bytes; authenticated downloads matched, public access was denied; final image confirmed2 copies and5 verified reads. Invalid/missing key startup preserved writes/TXT/WS and SQL reads. Quota/429/5xx/timeout/corruption/concurrency/retry/budget behavior was tested with injected provider responses, not actual quota exhaustion or a real paused project. Event dispatch does not wait for a blocked worker. Owned SQL/cloud fixtures were removed, including proof that SQL-deleted IDs stay404 before cloud cleanup. Public HTTPS/HSTS/database/GraphQL/search/WSS/reconnect checks were read-only. Original data/schema/history/corpus/checkpoints/env/volumes/preview fingerprints matched. Prior Junior/million/reboot acceptance was not repeated. Current live deployment keeps consent/replay lists empty; ordinary user uploads are not sent to Cloud.
 
 <!-- CLOUD-ATTACHMENTS-CURRENT-END -->
+
+## Middle submission
+
+All four selected Middle categories are implemented: GraphQL, RabbitMQ, Elasticsearch and Supabase Storage Free. Events/cache/queue/WebSocket and the earlier comment/file functionality remain. [Final installation and acceptance](docs/MIDDLE_ACCEPTANCE.md) includes the combined optional-service setup and a reproducible owner-controlled Cloud demonstration. Supabase user-data transfer is disabled by empty consent lists; an arbitrary demo upload remains SQL-only. Real Cloud evidence and simulated failure cases are distinguished in the reports.
+
+Live demo: [CommentsService](https://comments.alexvysotsky.com). Runtime remains `1.3.3.4 / CloudAttachments`; this branch corrects submission documents and adds a read-only Cloud verifier. The original feature branches remain published. Prior 268-test acceptance figures refer to historical Junior acceptance; current backend coverage is449 and frontend36. Middle+ load targets, durable outbox and replicas are outside this submission.
+
+
 
 Structured console/file JSON logging is configured through `Runtime.Logging`, with InstanceId, TraceId, level/category filters and retained rolling files. Docker preserves logs in a separate volume. [Logging settings and data policy](docs/LOGGING.md).
 
@@ -52,7 +60,7 @@ Keep the same Compose project name and environment file on updates. Development 
 
 ## Updates and recovery
 
-1. For code-only updates, rebuild and restart the app with the same environment, project and volumes. Version 1.1.1.16 has no new migration or dependency.
+1. For code-only updates, rebuild and restart the app with the same environment, project and volumes. This acceptance correction keeps runtime 1.3.3.4 / CloudAttachments, schema and application dependencies unchanged.
 2. Before schema/data-changing updates, stop every writer, run `scripts/db-checkpoint.py`, then explicitly migrate every used database. Add `--include-benchmark` if the retained benchmark database exists. Restart with the same volumes.
 3. Retain one restore-verified previous checkpoint and the current databases. Never reset shared data for routine tests or remove persistent volumes. Stop services with `docker compose -p commentsservice --profile testing down` when needed; do not delete their volumes.
 4. Verify an existing checkpoint without replacing it:
@@ -90,11 +98,11 @@ In Visual Studio 2026 open `CommentsService.slnx`; it contains backend/test proj
 
 ## Runtime and acceptance
 
-`GET /api/status` returns `{"application":"CommentsService","version":"1.1.1.16","stage":"Deployment"}`. `/health` checks the process; `/health/database` checks connectivity and current migrations (503 when unavailable/outdated). [API contract](docs/API.md).
+`GET /api/status` returns `{"application":"CommentsService","version":"1.3.3.4","stage":"CloudAttachments"}`. `/health` checks the process; `/health/database` checks connectivity and current migrations (503 when unavailable/outdated). [API contract](docs/API.md).
 
 JSON create/preview requires UTF-8, exact camelCase fields and at most 1 MiB, including chunked bodies. Unknown/duplicate/case-variant fields and invalid input return 400; oversized JSON 413; unsupported media/charset 415. CAPTCHA is process-local, expires after five minutes and is consumed by a verification attempt. Refresh after uncertain/failed submission. File bytes are stored transactionally in PostgreSQL, included in its backups, and omitted from list DTOs.
 
-Automated acceptance passed: 268 backend and 26 frontend tests; frontend/Docker builds; all four migration stages and downgrade guards; restore/upgrade of three preserved checkpoints; independent empty installation; least-privilege roles; current-data recovery with 7 exact attachments and container recreation; browser viewers/RTL/security/pagination; 18 retained-million paging scenarios. Original databases, corpus, volumes, environment and checkpoint hashes remained unchanged.
+Historical Junior acceptance passed: 268 backend and 26 frontend tests; frontend/Docker builds; all four migration stages and downgrade guards; restore/upgrade of three preserved checkpoints; independent empty installation; least-privilege roles; current-data recovery with 7 exact attachments and container recreation; browser viewers/RTL/security/pagination; 18 retained-million paging scenarios. Original databases, corpus, volumes, environment and checkpoint hashes remained unchanged.
 
 Current limits, verified behavior and remaining manual-tool caveats: [RuntimeLimits](docs/RUNTIME_LIMITS.md).
 

@@ -1,3 +1,7 @@
+1.3.3.4 SubmissionDocs — 2026-11-01
+Branch: CommentsService/v_1.3.3.4_SubmissionDocs
+Replaced the remaining Python checkpoint instruction in all three READMEs and the legacy schema-helper reference in the Middle acceptance checklist with the supported Docker/.NET tools commands. Retained the requirement to stop writers, include the benchmark database when present, and preserve the project, private environment, all deployment overrides and original volumes. Documentation only; runtime1.3.3.4/CloudAttachments, source, schema and dependencies are unchanged. The previous full audit passed449backend/36frontend, frontend build, live services and three-database schema/data checks; this correction validates documentation and the source-only diff without rerunning those suites.
+
 1.3.3.4 DockerTools — 2026-11-01
 Branch: CommentsService/v_1.3.3.4_DockerTools
 DockerTools replaces mandatory Python setup/maintenance/acceptance commands with a separate .NET10 executable/container: private env generation, EF migration/check, PostgreSQL17 dump/restore verification, SQL/Workbench parity, scoped Elasticsearch provisioning, real Cloud read-only verification and containerized backend tests. Installation needs Docker/Compose only, no host Python/.NET SDK or Docker socket. Existing files/secrets/volumes and app runtime1.3.3.4 are preserved. Legacy developer .py helpers remain optional. See docs/DOCKER_TOOLS.md.

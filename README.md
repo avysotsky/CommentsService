@@ -1,6 +1,8 @@
 # CommentsService
 
-Version: **1.3.3.4** · `CommentsService/v_1.3.3.4_DockerTools`
+Version: **1.3.3.4** · `CommentsService/v_1.3.3.4_SubmissionDocs`
+
+Documentation correction: recovery and acceptance use Docker/.NET tools throughout. Runtime remains `1.3.3.4 / CloudAttachments`; application code, schema and dependencies are unchanged.
 
 Supabase Storage Free is an optional mirror for explicitly approved image/TXT attachments. PostgreSQL retains every original and remains authoritative; comment/file writes never wait for Cloud. Existing REST/GraphQL, CAPTCHA, preview, search, Events, RabbitMQ, cache and WS remain available when Cloud is absent or restricted. Only explicitly listed own test comments may be mirrored in this release. No SQL migration, backfill, outbox or replica deployment.
 
@@ -66,7 +68,7 @@ Keep the same Compose project name and environment file on updates. Development 
 ## Updates and recovery
 
 1. For code-only updates, rebuild and restart the app with the same environment, project and volumes. This acceptance correction keeps runtime 1.3.3.4 / CloudAttachments, schema and application dependencies unchanged.
-2. Before schema/data-changing updates, stop every writer, run `scripts/db-checkpoint.py`, then explicitly migrate every used database. Add `--include-benchmark` if the retained benchmark database exists. Restart with the same volumes.
+2. Before schema/data-changing updates, stop every writer, run `docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools checkpoint`, then explicitly migrate every used database. Add `--include-benchmark` if the retained benchmark database exists. Use the same Compose project, private environment and all deployment overrides for checkpoint/migration commands, then restart with the same volumes.
 3. Retain one restore-verified previous checkpoint and the current databases. Never reset shared data for routine tests or remove persistent volumes. Stop services with `docker compose -p commentsservice --profile testing down` when needed; do not delete their volumes.
 4. Verify an existing checkpoint without replacing it:
 

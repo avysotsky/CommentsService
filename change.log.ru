@@ -1,3 +1,7 @@
+1.3.3.4 SubmissionDocs — 2026-11-01
+Branch: CommentsService/v_1.3.3.4_SubmissionDocs
+Заменены оставшиеся Python-команда контрольной копии во всех трёх README и ссылка на старую проверку схемы в приёмке Middle командами Docker/.NET tools. Сохранены остановка писателей, включение benchmark, проект/приватное окружение/overrides и исходные тома. Только документы: runtime1.3.3.4/CloudAttachments, код, схема и зависимости прежние. Предыдущая полная проверка:449backend/36frontend, сборка frontend, живые сервисы и проверки схемы/данных трёх БД; это исправление проверяет документацию и состав изменений без повторения этих наборов.
+
 1.3.3.4 DockerTools — 2026-11-01
 Branch: CommentsService/v_1.3.3.4_DockerTools
 DockerTools заменяет обязательные Python-команды установки/обслуживания/приёмки отдельной утилитой/контейнером .NET10: генерация приватного env, EF migrate/check, PostgreSQL17 dump/проверка восстановления, паритет SQL/Workbench, ограниченный пользователь Elasticsearch, реальная Cloud-проверка чтением и backend-тесты в контейнере. Для установки нужны только Docker/Compose, без Python/.NET SDK хоста и Docker socket. Прежние файлы/ключи/тома и runtime1.3.3.4 сохранены. Старые .py разработки необязательны. См.docs/DOCKER_TOOLS.md.

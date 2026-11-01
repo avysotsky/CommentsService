@@ -6,7 +6,7 @@ Runtime1.3.3.4/CloudAttachments implements all selected Middle tools and preserv
 
 ### Install the published source
 
-Clone the published CommentsService/v_1.3.3.4_DockerTools branch into a new directory, then follow First installation in README.md. Use a new Compose project, empty volumes and unused ports only for an independent acceptance installation; preserve existing environments on updates. Keep the initial restore-verified checkpoints, apply migrations explicitly and run schema verification. Do not copy the retained user databases or million corpus. After core installation, enable the optional local services with these commands. If using a different project/env/override, supply the same arguments consistently to every Compose and database/search script.
+Clone the published CommentsService/v_1.3.3.4_SubmissionDocs branch into a new directory, then follow First installation in README.md. Use a new Compose project, empty volumes and unused ports only for an independent acceptance installation; preserve existing environments on updates. Keep the initial restore-verified checkpoints, apply migrations explicitly and run schema verification. Do not copy the retained user databases or million corpus. After core installation, enable the optional local services with these commands. If using a different project/env/override, supply the same arguments consistently to every Compose and database/search script.
 
 ```bash
 docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-broker-env
@@ -45,7 +45,7 @@ docker compose -p commentsservice logs --tail 100 app
 
 ### Checks and limits
 
-Confirm /api/status1.3.3.4/CloudAttachments; health/database200; GraphQL rootPage25 and6sorts; actual word search and selected reply; broker publisher/consumer logs; WS refresh without losing draft; PNG/TXT exact download and safe headers. Recreate app with the same environment/volumes and confirm your own rows/files survive. verify-schema.py must match the shipped Workbench projection. Optional provider failures have previous real/injected evidence; do not exhaust a real cloud quota or pause the owner's project just for acceptance. Supabase limits/pausing and process-local delivery/budgets are documented in CLOUD_ATTACHMENTS.md. Native .mwb import/reopen is verified; the known Workbench shutdown-code caveat remains. Hosting has no24/7 SLA.
+Confirm /api/status1.3.3.4/CloudAttachments; health/database200; GraphQL rootPage25 and6sorts; actual word search and selected reply; broker publisher/consumer logs; WS refresh without losing draft; PNG/TXT exact download and safe headers. Recreate app with the same environment/volumes and confirm your own rows/files survive. Run `docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-schema` to compare the live SQL schema with the shipped Workbench projection. Preserve the same project, private environment and every deployment override. Optional provider failures have previous real/injected evidence; do not exhaust a real cloud quota or pause the owner's project just for acceptance. Supabase limits/pausing and process-local delivery/budgets are documented in CLOUD_ATTACHMENTS.md. Native .mwb import/reopen is verified; the known Workbench shutdown-code caveat remains. Hosting has no24/7 SLA.
 
 ## Русский
 
@@ -53,7 +53,7 @@ Runtime1.3.3.4/CloudAttachments реализует выбранные инстр
 
 ### Установка опубликованного кода
 
-Клонировать опубликованную ветку CommentsService/v_1.3.3.4_DockerTools в новый каталог и выполнить первую установку README.RU.md. Для независимой приёмки использовать новый Compose-проект, пустые тома и свободные порты; при обновлении сохранять прежнее окружение. Сохранить начальные проверенные восстановлением копии, явно применить миграции и сверить схему. Пользовательские БД/миллион не копировать. После основной установки включить дополнительные локальные сервисы командами ниже. Другие проект/env/overrides одинаково указывать во всех Compose и скриптах БД/поиска.
+Клонировать опубликованную ветку CommentsService/v_1.3.3.4_SubmissionDocs в новый каталог и выполнить первую установку README.RU.md. Для независимой приёмки использовать новый Compose-проект, пустые тома и свободные порты; при обновлении сохранять прежнее окружение. Сохранить начальные проверенные восстановлением копии, явно применить миграции и сверить схему. Пользовательские БД/миллион не копировать. После основной установки включить дополнительные локальные сервисы командами ниже. Другие проект/env/overrides одинаково указывать во всех Compose и скриптах БД/поиска.
 
 ```bash
 docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-broker-env
@@ -92,7 +92,7 @@ docker compose -p commentsservice logs --tail 100 app
 
 ### Проверки и ограничения
 
-Проверить /api/status1.3.3.4/CloudAttachments, health/database200, GraphQL rootPage25/6сортировок, реальный поиск/найденный ответ, логи publisher/consumer брокера, WS без потери черновика, точные PNG/TXT/защитные заголовки. Пересоздать app с теми же env/томами и проверить сохранность своих строк/файлов. verify-schema.py должен совпасть с Workbench-проекцией. Для отказов сервисов сохранены реальные/подставные доказательства; настоящую квоту не исчерпывать, проект владельца ради приёмки не приостанавливать. Лимиты/пауза Supabase и память процесса описаны в CLOUD_ATTACHMENTS.md. Импорт/повторное открытие .mwb проверены; известная оговорка кода завершения Workbench остаётся. Хостинг без SLA24/7.
+Проверить /api/status1.3.3.4/CloudAttachments, health/database200, GraphQL rootPage25/6сортировок, реальный поиск/найденный ответ, логи publisher/consumer брокера, WS без потери черновика, точные PNG/TXT/защитные заголовки. Пересоздать app с теми же env/томами и проверить сохранность своих строк/файлов. Выполнить `docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-schema` для сравнения живой схемы SQL с Workbench-проекцией. Сохранить прежние проект, приватное окружение и все overrides запуска. Для отказов сервисов сохранены реальные/подставные доказательства; настоящую квоту не исчерпывать, проект владельца ради приёмки не приостанавливать. Лимиты/пауза Supabase и память процесса описаны в CLOUD_ATTACHMENTS.md. Импорт/повторное открытие .mwb проверены; известная оговорка кода завершения Workbench остаётся. Хостинг без SLA24/7.
 
 ## Українська
 
@@ -100,7 +100,7 @@ Runtime1.3.3.4/CloudAttachments реалізує обрані інструмен
 
 ### Інсталяція опублікованого коду
 
-Клонувати опубліковану гілку CommentsService/v_1.3.3.4_DockerTools до нового каталогу й виконати першу інсталяцію README.UA.md. Для незалежного приймання використати новий Compose-проєкт, порожні томи та вільні порти; за оновлення зберігати попереднє оточення. Зберегти початкові перевірені відновленням копії, явно застосувати міграції та звірити схему. Користувацькі БД/мільйон не копіювати. Після основної інсталяції ввімкнути додаткові локальні сервіси командами нижче. Інші проєкт/env/overrides однаково вказувати в усіх Compose і скриптах БД/пошуку.
+Клонувати опубліковану гілку CommentsService/v_1.3.3.4_SubmissionDocs до нового каталогу й виконати першу інсталяцію README.UA.md. Для незалежного приймання використати новий Compose-проєкт, порожні томи та вільні порти; за оновлення зберігати попереднє оточення. Зберегти початкові перевірені відновленням копії, явно застосувати міграції та звірити схему. Користувацькі БД/мільйон не копіювати. Після основної інсталяції ввімкнути додаткові локальні сервіси командами нижче. Інші проєкт/env/overrides однаково вказувати в усіх Compose і скриптах БД/пошуку.
 
 ```bash
 docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-broker-env
@@ -139,7 +139,7 @@ docker compose -p commentsservice logs --tail 100 app
 
 ### Перевірки й обмеження
 
-Перевірити /api/status1.3.3.4/CloudAttachments, health/database200, GraphQL rootPage25/6сортувань, справжній пошук/знайдену відповідь, логи publisher/consumer брокера, WS без втрати чернетки, точні PNG/TXT/захисні заголовки. Перестворити app з тими самими env/томами та перевірити збереження власних рядків/файлів. verify-schema.py має збігтися з Workbench-проєкцією. Для відмов сервісів збережені справжні/підставні докази; справжню квоту не вичерпувати, проєкт власника заради приймання не призупиняти. Межі/пауза Supabase та пам'ять процесу описані в CLOUD_ATTACHMENTS.md. Імпорт/повторне відкриття .mwb перевірені; відоме застереження коду завершення Workbench лишається. Хостинг без SLA24/7.
+Перевірити /api/status1.3.3.4/CloudAttachments, health/database200, GraphQL rootPage25/6сортувань, справжній пошук/знайдену відповідь, логи publisher/consumer брокера, WS без втрати чернетки, точні PNG/TXT/захисні заголовки. Перестворити app з тими самими env/томами та перевірити збереження власних рядків/файлів. Виконати `docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-schema` для порівняння живої схеми SQL з Workbench-проєкцією. Зберегти попередні проєкт, приватне оточення й усі overrides запуску. Для відмов сервісів збережені справжні/підставні докази; справжню квоту не вичерпувати, проєкт власника заради приймання не призупиняти. Межі/пауза Supabase та пам'ять процесу описані в CLOUD_ATTACHMENTS.md. Імпорт/повторне відкриття .mwb перевірені; відоме застереження коду завершення Workbench лишається. Хостинг без SLA24/7.
 
 ## Acceptance evidence / Результаты / Результати
 

@@ -1,4 +1,14 @@
-# DockerTools — current submission / текущая сдача / поточна здача
+# SubmissionDocs — current submission / текущая сдача / поточна здача
+
+Branch: `CommentsService/v_1.3.3.4_SubmissionDocs`
+
+EN: Replaced the remaining Python checkpoint instruction in all three READMEs and the legacy schema-helper reference in the Middle acceptance checklist with the supported Docker/.NET tools commands. Retained the requirement to stop writers, include the benchmark database when present, and preserve the project, private environment, all deployment overrides and original volumes. Documentation only; runtime1.3.3.4/CloudAttachments, source, schema and dependencies are unchanged. The previous full audit passed449backend/36frontend, frontend build, live services and three-database schema/data checks; this correction validates documentation and the source-only diff without rerunning those suites.
+
+RU: Заменены оставшиеся Python-команда контрольной копии во всех трёх README и ссылка на старую проверку схемы в приёмке Middle командами Docker/.NET tools. Сохранены остановка писателей, включение benchmark, проект/приватное окружение/overrides и исходные тома. Только документы: runtime1.3.3.4/CloudAttachments, код, схема и зависимости прежние. Предыдущая полная проверка:449backend/36frontend, сборка frontend, живые сервисы и проверки схемы/данных трёх БД; это исправление проверяет документацию и состав изменений без повторения этих наборов.
+
+UA: Замінено залишкову Python-команду контрольної копії в усіх трьох README та посилання на стару перевірку схеми в прийманні Middle командами Docker/.NET tools. Збережено зупинку писачів, включення benchmark, проєкт/приватне оточення/overrides і початкові томи. Лише документи: runtime1.3.3.4/CloudAttachments, код, схема та залежності попередні. Попередня повна перевірка:449backend/36frontend, збирання frontend, справжні сервіси й перевірки схеми/даних трьох БД; це виправлення перевіряє документацію та склад змін без повторення цих наборів.
+
+# DockerTools — preceding tools release / предыдущий выпуск инструментов / попередній випуск інструментів
 
 EN: DockerTools replaces mandatory Python setup/maintenance/acceptance commands with a separate .NET10 executable/container: private env generation, EF migration/check, PostgreSQL17 dump/restore verification, SQL/Workbench parity, scoped Elasticsearch provisioning, real Cloud read-only verification and containerized backend tests. Installation needs Docker/Compose only, no host Python/.NET SDK or Docker socket. Existing files/secrets/volumes and app runtime1.3.3.4 are preserved. Legacy developer .py helpers remain optional. See docs/DOCKER_TOOLS.md.
 
@@ -6,7 +16,7 @@ RU: DockerTools заменяет обязательные Python-команды 
 
 UA: DockerTools замінює обов’язкові Python-команди інсталяції/обслуговування/приймання окремою утилітою/контейнером .NET10: генерація приватного env, EF migrate/check, PostgreSQL17 dump/перевірка відновлення, паритет SQL/Workbench, обмежений користувач Elasticsearch, справжня Cloud-перевірка читанням та backend-тести в контейнері. Для інсталяції потрібні лише Docker/Compose, без Python/.NET SDK хоста й Docker socket. Попередні файли/ключі/томи та runtime1.3.3.4 збережені. Старі .py розробки необов’язкові. Див.docs/DOCKER_TOOLS.md.
 
-Current branch: `CommentsService/v_1.3.3.4_DockerTools`. Previous acceptance record below remains historical. / Прежняя приёмка ниже — история. / Попереднє приймання нижче — історія.
+Previous tools branch: `CommentsService/v_1.3.3.4_DockerTools`. Previous acceptance record below remains historical. / Прежняя приёмка ниже — история. / Попереднє приймання нижче — історія.
 
 # CommentsService — completed scope / завершённый объём / завершений обсяг
 

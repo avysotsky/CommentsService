@@ -1,3 +1,13 @@
+# DockerTools — current submission / текущая сдача / поточна здача
+
+EN: DockerTools replaces mandatory Python setup/maintenance/acceptance commands with a separate .NET10 executable/container: private env generation, EF migration/check, PostgreSQL17 dump/restore verification, SQL/Workbench parity, scoped Elasticsearch provisioning, real Cloud read-only verification and containerized backend tests. Installation needs Docker/Compose only, no host Python/.NET SDK or Docker socket. Existing files/secrets/volumes and app runtime1.3.3.4 are preserved. Legacy developer .py helpers remain optional. See docs/DOCKER_TOOLS.md.
+
+RU: DockerTools заменяет обязательные Python-команды установки/обслуживания/приёмки отдельной утилитой/контейнером .NET10: генерация приватного env, EF migrate/check, PostgreSQL17 dump/проверка восстановления, паритет SQL/Workbench, ограниченный пользователь Elasticsearch, реальная Cloud-проверка чтением и backend-тесты в контейнере. Для установки нужны только Docker/Compose, без Python/.NET SDK хоста и Docker socket. Прежние файлы/ключи/тома и runtime1.3.3.4 сохранены. Старые .py разработки необязательны. См.docs/DOCKER_TOOLS.md.
+
+UA: DockerTools замінює обов’язкові Python-команди інсталяції/обслуговування/приймання окремою утилітою/контейнером .NET10: генерація приватного env, EF migrate/check, PostgreSQL17 dump/перевірка відновлення, паритет SQL/Workbench, обмежений користувач Elasticsearch, справжня Cloud-перевірка читанням та backend-тести в контейнері. Для інсталяції потрібні лише Docker/Compose, без Python/.NET SDK хоста й Docker socket. Попередні файли/ключі/томи та runtime1.3.3.4 збережені. Старі .py розробки необов’язкові. Див.docs/DOCKER_TOOLS.md.
+
+Current branch: `CommentsService/v_1.3.3.4_DockerTools`. Previous acceptance record below remains historical. / Прежняя приёмка ниже — история. / Попереднє приймання нижче — історія.
+
 # CommentsService — completed scope / завершённый объём / завершений обсяг
 
 ## English

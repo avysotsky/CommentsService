@@ -1,6 +1,6 @@
 # CommentsService
 
-Версия: **1.3.3.4** · `CommentsService/v_1.3.3.4_MiddleAcceptance`
+Версия: **1.3.3.4** · `CommentsService/v_1.3.3.4_DockerTools`
 
 Supabase Storage Free — дополнительная копия явно разрешённых изображений/TXT. Все оригиналы остаются в PostgreSQL; запись комментария и файла не ждёт Cloud. REST/GraphQL, CAPTCHA, preview, поиск, Events, RabbitMQ, кеш и WS сохраняются при отсутствии или ограничении облака. В этом выпуске разрешены только собственные тестовые комментарии из явного списка. Миграции SQL, массового переноса, outbox и реплик нет.
 
@@ -9,6 +9,10 @@ Supabase Storage Free — дополнительная копия явно ра�
 Проверено:449 различных backend-тестов (27 Domain,85 Application,67 Data,270 API),36 frontend и сборки frontend/Docker. Реальный Edge создал свои PNG/TXT в корне/ответе с CAPTCHA; проверены точные байты/заголовки/скачивание,6сортировок GraphQL, preview, WS/черновик и EN/RU/UA mobile. Настоящий Supabase принял2своих файла общим размером267байт; авторизованное скачивание совпало, публичный доступ закрыт; финальный образ подтвердил2копии и5проверенных чтений. Запуск с неверным/отсутствующим ключом сохранил запись/TXT/WS/SQL-чтение. Квоты/429/5xx/таймаут/повреждение/параллелизм/повторы/бюджеты проверены подставными ответами провайдера, без реального исчерпания квот/паузы проекта. Events не ждёт заблокированный worker. Свои SQL/cloud-фикстуры удалены; до очистки Cloud подтверждён404 SQL-удалённых ID. Публичные HTTPS/HSTS/БД/GraphQL/search/WSS/reconnect проверены только чтением. Исходные отпечатки данных/схемы/истории/миллиона/копий/env/томов/preview совпали. Прежние Junior/миллион/reboot не повторялись. Рабочие списки разрешения/повтора пусты; пользовательские файлы в Cloud не отправляются.
 
 <!-- CLOUD-ATTACHMENTS-CURRENT-END -->
+
+Проверена установка только Docker в отдельном пустом проекте: создание/сохранение env, восстановление/отпечатки двух начальных копий, явные миграции development/test, паритет схемы, восстановление/обновление/идемпотентность между серверами, Rabbit/ограниченный поиск. В tools нет исполняемого python3 и Docker socket. Все449backend прошли из контейнера tools(27/85/67/270). Edge/все сервисы Middle прошли; C#-проверка Cloud сверила2своих файла267байт и запрет публичного доступа, файл вне списка остался SQL. Негативные случаи отклонили неполный env, неверную цель, SHA копии, изменённую схему и неверные ES-права, сохранив файлы и скрыв секреты. Заполненная своими PNG/TXT/ответом копия также восстановилась/обновилась. Runtime/основной Compose прежние, новый путь обеспечивает только образ инструментов.
+
+[Docker/.NET tools](docs/DOCKER_TOOLS.md).
 
 ## Сдача Middle
 
@@ -41,20 +45,21 @@ SPA на .NET 10 / React с PostgreSQL 17, упакованное в Docker. Dom
 
 ## Первая установка
 
-Нужны Docker Engine, Compose v2.24+ и Python 3. Docker собирает приложение; локальные .NET/Node нужны только для тестов на хосте. Из корня репозитория:
+Нужны только Docker Engine и Compose v2.24+. Отдельный образ инструментов .NET10 обеспечивает установку, обслуживание и backend-тесты; Python и .NET SDK на хосте не требуются. Локальный Node необязателен для тестов разработки frontend. Из корня репозитория:
 
 ```bash
-python3 scripts/init-env.py
+docker compose -p commentsservice -f compose.tools.yaml build tools
+docker compose -p commentsservice -f compose.tools.yaml run --rm --no-deps tools init-env
 docker compose -p commentsservice --profile testing up -d --wait database test-database
-python3 scripts/db-checkpoint.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools checkpoint
 docker compose -p commentsservice build app
-python3 scripts/db-command.py migrate
-python3 scripts/db-command.py migrate --service test-database
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools migrate
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools migrate --target test
 docker compose -p commentsservice up -d --no-build --wait app
 curl --fail http://127.0.0.1:8080/health/database
 ```
 
-Откройте [localhost:8080](http://localhost:8080/) на Docker-хосте. При необходимости используйте sudo для Docker. Учётные данные создаются один раз в приватном `.env`; не публикуйте его и не перезаписывайте пароли существующих томов. Чтобы выбрать свободные порты **до первой генерации**, используйте `python3 scripts/init-env.py --port 8081 --test-db-port 55435`. Существующий файл окружения сохраняется вместе с портами.
+Откройте [localhost:8080](http://localhost:8080/) на Docker-хосте. При необходимости используйте sudo для Docker. Учётные данные создаются один раз в приватном `.env`; не публикуйте его и не перезаписывайте пароли существующих томов. Чтобы выбрать свободные порты **до первой генерации**, используйте `docker compose -p commentsservice -f compose.tools.yaml run --rm --no-deps tools init-env --port 8081 --test-db-port 55435`. Существующий файл окружения сохраняется вместе с портами.
 
 При обновлениях сохраняйте имя Compose-проекта и файл окружения. Разработка использует `commentsservice_development_data`, тесты — отдельный `commentsservice_test_data`; оба содержат постоянные данные PostgreSQL. Приложение использует роль `comments_app` без прав суперпользователя. При старте миграции автоматически не применяются.
 
@@ -66,7 +71,7 @@ curl --fail http://127.0.0.1:8080/health/database
 4. Проверьте существующую копию без её замены:
 
 ```bash
-python3 scripts/verify-checkpoint.py artifacts/checkpoints/database.dump --upgrade
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-checkpoint --dump artifacts/checkpoints/database.dump --target test --upgrade
 ```
 
 Команда восстанавливает только в новую БД с уникальным именем, проверяет manifest/SHA-256 и отпечатки строк, при необходимости применяет текущий идемпотентный SQL и удаляет только свою временную БД. Рабочее подключение приложения не переключается. Восстановление возвращает данные на момент копии, без последующих записей. См. [миграции/восстановление](docs/database/MIGRATIONS.md).
@@ -80,19 +85,19 @@ python3 scripts/verify-checkpoint.py artifacts/checkpoints/database.dump --upgra
 
 ## Проверки
 
-Для тестов на хосте нужны .NET 10 SDK и Node.js 24; при отсутствии frontend-зависимостей выполните `npm --prefix src/comments-web ci`. Профиль testing должен работать.
+Backend-тесты выполняются в контейнере .NET-инструментов. Node.js24 необязателен для тестов разработки frontend; зависимости: `npm --prefix src/comments-web ci`. Профиль testing должен работать.
 
 ```bash
-python3 scripts/db-command.py check
-python3 scripts/db-command.py check --service test-database
-python3 scripts/verify-schema.py
-python3 scripts/verify-schema.py --service test-database --database comments_test
-python3 scripts/test-backend.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools check
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools check --target test
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-schema
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-schema --target test
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools test-backend --target test
 npm --prefix src/comments-web test
 npm --prefix src/comments-web run build
 ```
 
-DB-тесты откатывают транзакции; HTTP-фикстуры удаляют только свои строки. `verify-schema.py` сравнивает каталог PostgreSQL с Workbench-проекцией, не подтверждая импорт через GUI. Команды развёртывания/копий/схемы поддерживают `--env-file`, `--project` и повторяемый `--compose-file`; используйте одинаковые параметры везде. Backend-тесты дополнительно поддерживают `--host`/`--port`.
+DB-тесты откатывают транзакции; HTTP-фикстуры удаляют только свои строки. `verify-schema` сравнивает каталог PostgreSQL с Workbench-проекцией. Проект, env и overrides задаются параметрами Docker Compose; `--env-file` после имени команды tools выбирает приватный файл утилиты, `--target test` — тестовую БД. [Инструменты Docker/.NET](docs/DOCKER_TOOLS.md).
 
 В Visual Studio 2026 открывайте `CommentsService.slnx`: backend/test-проекты и исходники frontend. Решение собирает backend/тесты, Docker — всё приложение. Каталоги Windows/Linux разделены.
 

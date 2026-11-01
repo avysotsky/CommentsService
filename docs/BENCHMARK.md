@@ -1,3 +1,11 @@
+# Historical developer benchmark / Исторические замеры / Історичні вимірювання
+
+EN: Corpus generation/measurement helpers below are optional historical developer tools. They are not required for installation, Middle acceptance or normal operation. Keep the retained corpus; do not regenerate it for setup. Current Docker-only operations: [tools](DOCKER_TOOLS.md).
+
+RU: Генераторы/замеры ниже — необязательные исторические инструменты разработки, не зависимость установки/приёмки Middle/работы. Сохранённый миллион не пересоздавать. Текущие операции только через Docker: [инструменты](DOCKER_TOOLS.md).
+
+UA: Генератори/вимірювання нижче — необов’язкові історичні інструменти розробки, не залежність інсталяції/приймання Middle/роботи. Збережений мільйон не перестворювати. Поточні операції лише через Docker: [інструменти](DOCKER_TOOLS.md).
+
 # Persistent paging corpus / Постоянный набор / Постійний набір — 1.1.0.8
 
 ## English
@@ -14,9 +22,9 @@ Build the current app and start both database services first, using the README d
 python3 scripts/prepare-benchmark.py
 python3 scripts/measure-benchmark.py --start-api
 # Before future schema changes that must preserve this corpus too:
-python3 scripts/db-checkpoint.py --include-benchmark
-python3 scripts/db-command.py migrate --benchmark
-python3 scripts/db-command.py check --benchmark
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools checkpoint --include-benchmark
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools migrate --target benchmark
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools check --target benchmark
 ```
 
 All scripts accept `--env-file`, `--project` and repeated `--compose-file`; use matching options. `--start-api` creates a uniquely named temporary app against the benchmark DB, binds only to the loopback URL (default 8083), reads private test credentials without printing them, and removes only its verified owned container. It neither deletes the DB nor seeds it. Without that flag, provide an existing benchmark API via `--base-url`. The measurement command issues GETs only, runs three samples per sort/direction on first/middle/last pages, verifies counts/roots/stable IDs, and saves `artifacts/benchmark-paging-v1.json`. For a smaller corpus pass the matching `--expected-roots`.
@@ -39,9 +47,9 @@ Recorded on 2026-10-30: one warmed containerized .NET 10/PostgreSQL 17 run, sequ
 python3 scripts/prepare-benchmark.py
 python3 scripts/measure-benchmark.py --start-api
 # Before future schema changes that must preserve this corpus too:
-python3 scripts/db-checkpoint.py --include-benchmark
-python3 scripts/db-command.py migrate --benchmark
-python3 scripts/db-command.py check --benchmark
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools checkpoint --include-benchmark
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools migrate --target benchmark
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools check --target benchmark
 ```
 
 Все скрипты поддерживают `--env-file`, `--project` и повторяемый `--compose-file`; параметры должны совпадать. `--start-api` создаёт уникальный временный API для benchmark-БД, слушает только loopback (по умолчанию 8083), читает приватный тестовый пароль без вывода и удаляет только проверенный собственный контейнер. БД не удаляется и не заполняется. Без флага укажите готовый benchmark API через `--base-url`. Замер делает только GET, три повтора каждой сортировки/порядка на первой/средней/последней страницах, проверяет количество/корни/стабильные ID и сохраняет `artifacts/benchmark-paging-v1.json`. Для меньшего набора задайте соответствующий `--expected-roots`.
@@ -64,9 +72,9 @@ python3 scripts/db-command.py check --benchmark
 python3 scripts/prepare-benchmark.py
 python3 scripts/measure-benchmark.py --start-api
 # Before future schema changes that must preserve this corpus too:
-python3 scripts/db-checkpoint.py --include-benchmark
-python3 scripts/db-command.py migrate --benchmark
-python3 scripts/db-command.py check --benchmark
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools checkpoint --include-benchmark
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools migrate --target benchmark
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools check --target benchmark
 ```
 
 Усі скрипти підтримують `--env-file`, `--project` та повторюваний `--compose-file`; параметри мають збігатися. `--start-api` створює унікальний тимчасовий API для benchmark-БД, слухає лише loopback (типово 8083), читає приватний тестовий пароль без виведення та видаляє лише перевірений власний контейнер. БД не видаляється й не заповнюється. Без прапорця вкажіть готовий benchmark API через `--base-url`. Замір робить лише GET, три повтори кожного сортування/порядку на першій/середній/останній сторінках, перевіряє кількість/корені/стабільні ID та зберігає `artifacts/benchmark-paging-v1.json`. Для меншого набору задайте відповідний `--expected-roots`.

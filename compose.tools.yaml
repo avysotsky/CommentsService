@@ -1,0 +1,13 @@
+services:
+  tools:
+    profiles: [tools]
+    image: commentsservice-tools:1.3.3.4
+    build:
+      context: .
+      dockerfile: tools/Dockerfile
+    user: "${TOOLS_UID:-1000}:${TOOLS_GID:-1000}"
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    init: true
+    restart: "no"

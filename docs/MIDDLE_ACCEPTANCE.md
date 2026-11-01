@@ -6,18 +6,18 @@ Runtime1.3.3.4/CloudAttachments implements all selected Middle tools and preserv
 
 ### Install the published source
 
-Clone the published CommentsService/v_1.3.3.4_MiddleAcceptance branch into a new directory, then follow First installation in README.md. Use a new Compose project, empty volumes and unused ports only for an independent acceptance installation; preserve existing environments on updates. Keep the initial restore-verified checkpoints, apply migrations explicitly and run schema verification. Do not copy the retained user databases or million corpus. After core installation, enable the optional local services with these commands. If using a different project/env/override, supply the same arguments consistently to every Compose and database/search script.
+Clone the published CommentsService/v_1.3.3.4_DockerTools branch into a new directory, then follow First installation in README.md. Use a new Compose project, empty volumes and unused ports only for an independent acceptance installation; preserve existing environments on updates. Keep the initial restore-verified checkpoints, apply migrations explicitly and run schema verification. Do not copy the retained user databases or million corpus. After core installation, enable the optional local services with these commands. If using a different project/env/override, supply the same arguments consistently to every Compose and database/search script.
 
 ```bash
-python3 scripts/init-broker-env.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-broker-env
 docker compose -p commentsservice --profile broker up -d --no-deps --wait broker
-python3 scripts/init-search-env.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-search-env
 docker compose -p commentsservice --profile search up -d --no-deps --wait elasticsearch
-python3 scripts/configure-search-user.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools configure-search-user
 docker compose -p commentsservice up -d --no-deps --no-build --wait app
 ```
 
-The search provisioning command now waits/retries bounded transient readiness failures (up to120seconds per idempotent role/user operation,5seconds per HTTP attempt). A401/403 is not retried as readiness: correct the private settings. It never prints credentials or changes global Docker/host settings. Restarting app picks up the newly generated private env files. PostgreSQL, broker and search stay private; only the selected app port is exposed on loopback.
+The .NET search provisioning command now waits/retries bounded transient readiness failures (up to120seconds per idempotent role/user operation,5seconds per HTTP attempt). A401/403 is not retried as readiness: correct the private settings. It never prints credentials or changes global Docker/host settings. Restarting app picks up the newly generated private env files. PostgreSQL, broker and search stay private; only the selected app port is exposed on loopback.
 
 ### Demonstrate Cloud on your own files
 
@@ -33,11 +33,11 @@ Runtime__Cloud__ReplayCommentIds__0=OWN_IMAGE_COMMENT_UUID
 Runtime__Cloud__ReplayCommentIds__1=OWN_TXT_COMMENT_UUID
 ```
 
-4. Recreate only app and run the read-only verifier below. Use the actual SQL database name for the object namespace and your actual demo username. The script requires one PNG and one TXT, verifies the author marker, byte equality/SHA256 in real private Storage and denied public access. It performs no upload, SQL write or bucket scan; no redirects/retries,5second request timeout,2MiB total response budget, at most9requests. It prints object keys/UUIDs/hashes for your own fixtures, never keys, private project URL or provider error bodies. App logs should contain Cloud attachment copy completed and Cloud attachment read verified with the selected attachment IDs. The verifier alone does not replace this backend-path evidence.
+4. Recreate only app and run the read-only .NET verifier below. Use the actual SQL database name for the object namespace and your actual demo username. The script requires one PNG and one TXT, verifies the author marker, byte equality/SHA256 in real private Storage and denied public access. It performs no upload, SQL write or bucket scan; no redirects/retries,5second request timeout,2MiB total response budget, at most9requests. It prints object keys/UUIDs/hashes for your own fixtures, never keys, private project URL or provider error bodies. App logs should contain Cloud attachment copy completed and Cloud attachment read verified with the selected attachment IDs. The verifier alone does not replace this backend-path evidence.
 
 ```bash
 docker compose -p commentsservice up -d --no-deps --no-build --wait app
-python3 scripts/verify-cloud-demo.py --base-url http://127.0.0.1:8080   --env-file .env.cloud --database comments --expected-author CloudDemoOwner   --comment-id OWN_IMAGE_COMMENT_UUID --comment-id OWN_TXT_COMMENT_UUID
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-cloud-demo --base-url http://app:8080   --env-file .env.cloud --database comments --expected-author CloudDemoOwner   --comment-id OWN_IMAGE_COMMENT_UUID --comment-id OWN_TXT_COMMENT_UUID
 docker compose -p commentsservice logs --tail 100 app
 ```
 
@@ -53,14 +53,14 @@ Runtime1.3.3.4/CloudAttachments реализует выбранные инстр
 
 ### Установка опубликованного кода
 
-Клонировать опубликованную ветку CommentsService/v_1.3.3.4_MiddleAcceptance в новый каталог и выполнить первую установку README.RU.md. Для независимой приёмки использовать новый Compose-проект, пустые тома и свободные порты; при обновлении сохранять прежнее окружение. Сохранить начальные проверенные восстановлением копии, явно применить миграции и сверить схему. Пользовательские БД/миллион не копировать. После основной установки включить дополнительные локальные сервисы командами ниже. Другие проект/env/overrides одинаково указывать во всех Compose и скриптах БД/поиска.
+Клонировать опубликованную ветку CommentsService/v_1.3.3.4_DockerTools в новый каталог и выполнить первую установку README.RU.md. Для независимой приёмки использовать новый Compose-проект, пустые тома и свободные порты; при обновлении сохранять прежнее окружение. Сохранить начальные проверенные восстановлением копии, явно применить миграции и сверить схему. Пользовательские БД/миллион не копировать. После основной установки включить дополнительные локальные сервисы командами ниже. Другие проект/env/overrides одинаково указывать во всех Compose и скриптах БД/поиска.
 
 ```bash
-python3 scripts/init-broker-env.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-broker-env
 docker compose -p commentsservice --profile broker up -d --no-deps --wait broker
-python3 scripts/init-search-env.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-search-env
 docker compose -p commentsservice --profile search up -d --no-deps --wait elasticsearch
-python3 scripts/configure-search-user.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools configure-search-user
 docker compose -p commentsservice up -d --no-deps --no-build --wait app
 ```
 
@@ -84,7 +84,7 @@ Runtime__Cloud__ReplayCommentIds__1=OWN_TXT_COMMENT_UUID
 
 ```bash
 docker compose -p commentsservice up -d --no-deps --no-build --wait app
-python3 scripts/verify-cloud-demo.py --base-url http://127.0.0.1:8080   --env-file .env.cloud --database comments --expected-author CloudDemoOwner   --comment-id OWN_IMAGE_COMMENT_UUID --comment-id OWN_TXT_COMMENT_UUID
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-cloud-demo --base-url http://app:8080   --env-file .env.cloud --database comments --expected-author CloudDemoOwner   --comment-id OWN_IMAGE_COMMENT_UUID --comment-id OWN_TXT_COMMENT_UUID
 docker compose -p commentsservice logs --tail 100 app
 ```
 
@@ -100,14 +100,14 @@ Runtime1.3.3.4/CloudAttachments реалізує обрані інструмен
 
 ### Інсталяція опублікованого коду
 
-Клонувати опубліковану гілку CommentsService/v_1.3.3.4_MiddleAcceptance до нового каталогу й виконати першу інсталяцію README.UA.md. Для незалежного приймання використати новий Compose-проєкт, порожні томи та вільні порти; за оновлення зберігати попереднє оточення. Зберегти початкові перевірені відновленням копії, явно застосувати міграції та звірити схему. Користувацькі БД/мільйон не копіювати. Після основної інсталяції ввімкнути додаткові локальні сервіси командами нижче. Інші проєкт/env/overrides однаково вказувати в усіх Compose і скриптах БД/пошуку.
+Клонувати опубліковану гілку CommentsService/v_1.3.3.4_DockerTools до нового каталогу й виконати першу інсталяцію README.UA.md. Для незалежного приймання використати новий Compose-проєкт, порожні томи та вільні порти; за оновлення зберігати попереднє оточення. Зберегти початкові перевірені відновленням копії, явно застосувати міграції та звірити схему. Користувацькі БД/мільйон не копіювати. Після основної інсталяції ввімкнути додаткові локальні сервіси командами нижче. Інші проєкт/env/overrides однаково вказувати в усіх Compose і скриптах БД/пошуку.
 
 ```bash
-python3 scripts/init-broker-env.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-broker-env
 docker compose -p commentsservice --profile broker up -d --no-deps --wait broker
-python3 scripts/init-search-env.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-search-env
 docker compose -p commentsservice --profile search up -d --no-deps --wait elasticsearch
-python3 scripts/configure-search-user.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools configure-search-user
 docker compose -p commentsservice up -d --no-deps --no-build --wait app
 ```
 
@@ -131,7 +131,7 @@ Runtime__Cloud__ReplayCommentIds__1=OWN_TXT_COMMENT_UUID
 
 ```bash
 docker compose -p commentsservice up -d --no-deps --no-build --wait app
-python3 scripts/verify-cloud-demo.py --base-url http://127.0.0.1:8080   --env-file .env.cloud --database comments --expected-author CloudDemoOwner   --comment-id OWN_IMAGE_COMMENT_UUID --comment-id OWN_TXT_COMMENT_UUID
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-cloud-demo --base-url http://app:8080   --env-file .env.cloud --database comments --expected-author CloudDemoOwner   --comment-id OWN_IMAGE_COMMENT_UUID --comment-id OWN_TXT_COMMENT_UUID
 docker compose -p commentsservice logs --tail 100 app
 ```
 
@@ -148,3 +148,12 @@ EN: Final acceptance: published1.3.3.4 source installed into independent empty P
 RU: Финальная приёмка: опубликованный код1.3.3.4 установлен по README в отдельные пустые тома PostgreSQL; начальные копии проверены восстановлением,4миграции применены явно. RabbitMQ/поиск настроены штатными скриптами. Гонка готовности ES на новом томе воспроизведена/исправлена ограниченными повторами, второй пустой ES-том прошёл. Edge CAPTCHA/корень/ответ/PNG/TXT/preview/6GraphQL-сортировок/WS/черновик/EN-RU-UA/360px прошли. Все3свои записи найдены поиском, наблюдались публикация/приём Rabbit и отдельный search consumer. Реальные2объекта Supabase267байт совпали, публичный доступ закрыт; новая утилита чтения прошла. Третий файл без разрешения остался в SQL. Свои записи/файлы пережили пересоздание app. Прежние449backend/36frontend сохраняются; runtime/схема/пакеты не менялись. Точная опубликованная копия исправления отдельно сверяется с проверенными runtime/установщиком/утилитой. Свои временные ресурсы/объекты облака удаляются после проверки владельцев; рабочее развёртывание сохранено.
 
 UA: Фінальне приймання: опублікований код1.3.3.4 встановлено за README в окремі порожні томи PostgreSQL; початкові копії перевірено відновленням,4міграції застосовано явно. RabbitMQ/пошук налаштовано штатними скриптами. Гонку готовності ES на новому томі відтворено/виправлено обмеженими повторами, другий порожній ES-том пройшов. Edge CAPTCHA/корінь/відповідь/PNG/TXT/preview/6GraphQL-сортувань/WS/чернетка/EN-RU-UA/360px пройшли. Усі3власні записи знайдено пошуком, спостерігали публікацію/приймання Rabbit та окремий search consumer. Справжні2об’єкти Supabase267байтів збіглися, публічний доступ закрито; нова утиліта читання пройшла. Третій файл без дозволу лишився в SQL. Власні записи/файли пережили перестворення app. Попередні449backend/36frontend зберігаються; runtime/схема/пакети не змінювалися. Точна опублікована копія виправлення окремо звіряється з перевіреними runtime/інсталятором/утилітою. Власні тимчасові ресурси/об’єкти хмари видаляються після перевірки власників; робоче розгортання збережене.
+
+
+## DockerTools verification / Проверки / Перевірки
+
+EN: Verified Docker-only installation in an isolated empty project: environment creation/preservation; two initial dumps restored and fingerprinted; explicit development/test migrations; schema parity; restore/upgrade/idempotency across servers; scoped Rabbit/search setup. The tools container has no python3 executable and no Docker socket. All449backend tests passed from the tools container (27/85/67/270). Real Edge and all Middle services passed; the C# Cloud verifier checked2own files267bytes with public denial, while an unlisted file stayed SQL-only. Negative cases rejected incomplete env, invalid target, bad checkpoint SHA, altered schema and wrong ES credentials, preserving files and hiding secrets. A populated own PNG/TXT/reply checkpoint also restored/upgraded correctly. Runtime and primary Compose remain unchanged; the tooling image alone provides the new route.
+
+RU: Проверена установка только Docker в отдельном пустом проекте: создание/сохранение env, восстановление/отпечатки двух начальных копий, явные миграции development/test, паритет схемы, восстановление/обновление/идемпотентность между серверами, Rabbit/ограниченный поиск. В tools нет исполняемого python3 и Docker socket. Все449backend прошли из контейнера tools(27/85/67/270). Edge/все сервисы Middle прошли; C#-проверка Cloud сверила2своих файла267байт и запрет публичного доступа, файл вне списка остался SQL. Негативные случаи отклонили неполный env, неверную цель, SHA копии, изменённую схему и неверные ES-права, сохранив файлы и скрыв секреты. Заполненная своими PNG/TXT/ответом копия также восстановилась/обновилась. Runtime/основной Compose прежние, новый путь обеспечивает только образ инструментов.
+
+UA: Перевірено інсталяцію лише Docker в окремому порожньому проєкті: створення/збереження env, відновлення/відбитки двох початкових копій, явні міграції development/test, паритет схеми, відновлення/оновлення/ідемпотентність між серверами, Rabbit/обмежений пошук. У tools немає виконуваного python3 і Docker socket. Усі449backend пройшли з контейнера tools(27/85/67/270). Edge/усі сервіси Middle пройшли; C#-перевірка Cloud звірила2власні файли267байтів і заборону публічного доступу, файл поза списком залишився SQL. Негативні випадки відхилили неповний env, хибну ціль, SHA копії, змінену схему й хибні ES-права, зберігши файли та приховавши секрети. Заповнена власними PNG/TXT/відповіддю копія також відновилася/оновилася. Runtime/основний Compose попередні, новий шлях забезпечує лише образ інструментів.

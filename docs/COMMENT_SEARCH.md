@@ -71,9 +71,9 @@ SEARCH_PASSWORD is an environment secret, not a JSON/public field / секрет
 Retain your existing project/environment/overrides/volumes. This is the portable default example / Сохраните прежние проект/окружение/overrides/тома; переносимый пример / Збережіть попередні проєкт/оточення/overrides/томи; переносний приклад:
 
 ```bash
-python3 scripts/init-search-env.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-search-env
 docker compose -p commentsservice --profile search up -d --no-deps --wait elasticsearch
-python3 scripts/configure-search-user.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools configure-search-user
 docker compose -p commentsservice build app
 docker compose -p commentsservice up -d --no-deps --no-build --wait app
 ```

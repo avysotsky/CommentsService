@@ -69,7 +69,7 @@ UA: Пароль лише з BROKER_PASSWORD, не з JSON/публічних н
 Keep your existing project/env/overrides/volumes / Сохраните прежние проект/env/overrides/тома / Збережіть попередні проєкт/env/overrides/томи. The following is the portable default example / Переносимый пример / Переносний приклад:
 
 ```bash
-python3 scripts/init-broker-env.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools init-broker-env
 # Existing app/database project from README; generate broker credentials once.
 docker compose -p commentsservice --profile broker up -d --no-deps --wait broker
 docker compose -p commentsservice build app

@@ -1,3 +1,9 @@
+EN: Historical Junior acceptance report. Current installation/maintenance uses Docker/.NET, with no host Python requirement: [tools](DOCKER_TOOLS.md).
+
+RU: Историческая приёмка Junior. Текущие установка/обслуживание — Docker/.NET, без Python хоста: [инструменты](DOCKER_TOOLS.md).
+
+UA: Історичне приймання Junior. Поточні інсталяція/обслуговування — Docker/.NET, без Python хоста: [інструменти](DOCKER_TOOLS.md).
+
 # Acceptance — 1.1.0.15 / Приёмка / Приймання
 
 ## English

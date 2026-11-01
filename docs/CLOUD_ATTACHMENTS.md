@@ -90,8 +90,15 @@ RU: Проверено:449 различных backend-тестов (27 Domain,85
 UA: Перевірено:449різних backend-тестів (27 Domain,85 Application,67 Data,270 API),36 frontend і збирання frontend/Docker. Справжній Edge створив власні PNG/TXT у корені/відповіді з CAPTCHA; перевірено точні байти/заголовки/завантаження,6сортувань GraphQL, preview, WS/чернетку та EN/RU/UA mobile. Справжній Supabase прийняв2власні файли загалом267байтів; авторизоване завантаження збіглося, публічний доступ закрито; фінальний образ підтвердив2копії та5перевірених читань. Старт із хибним/відсутнім ключем зберіг запис/TXT/WS/SQL-читання. Квоти/429/5xx/таймаут/пошкодження/паралельність/повтори/бюджети перевірено підставними відповідями провайдера, без справжнього вичерпання квот/паузи проєкту. Events не чекає заблокований worker. Власні SQL/cloud-фікстури видалено; до очищення Cloud підтверджено404 SQL-видалених ID. Публічні HTTPS/HSTS/БД/GraphQL/search/WSS/reconnect перевірено лише читанням. Початкові відбитки даних/схеми/історії/мільйона/копій/env/томів/preview збіглися. Попередні Junior/мільйон/reboot не повторювалися. Робочі списки дозволу/повтору порожні; користувацькі файли в Cloud не надсилаються.
 
 
-EN: Reproduce the owner-only demonstration with [final acceptance](MIDDLE_ACCEPTANCE.md) and scripts/verify-cloud-demo.py.
+EN: Reproduce the owner-only demonstration with [final acceptance](MIDDLE_ACCEPTANCE.md) and verify-cloud-demo (.NET tools).
 
-RU: Воспроизводимая демонстрация только своих файлов: [финальная приёмка](MIDDLE_ACCEPTANCE.md) и scripts/verify-cloud-demo.py.
+RU: Воспроизводимая демонстрация только своих файлов: [финальная приёмка](MIDDLE_ACCEPTANCE.md) и verify-cloud-demo (.NET tools).
 
-UA: Відтворювана демонстрація лише власних файлів: [фінальне приймання](MIDDLE_ACCEPTANCE.md) та scripts/verify-cloud-demo.py.
+UA: Відтворювана демонстрація лише власних файлів: [фінальне приймання](MIDDLE_ACCEPTANCE.md) та verify-cloud-demo (.NET tools).
+
+
+EN: Use the tools container for init-cloud-env and verify-cloud-demo; [Docker-only commands](DOCKER_TOOLS.md).
+
+RU: init-cloud-env и verify-cloud-demo выполняются контейнером tools; [команды без Python](DOCKER_TOOLS.md).
+
+UA: init-cloud-env і verify-cloud-demo виконуються контейнером tools; [команди без Python](DOCKER_TOOLS.md).

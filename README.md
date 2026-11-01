@@ -1,6 +1,6 @@
 # CommentsService
 
-Version: **1.3.3.4** · `CommentsService/v_1.3.3.4_MiddleAcceptance`
+Version: **1.3.3.4** · `CommentsService/v_1.3.3.4_DockerTools`
 
 Supabase Storage Free is an optional mirror for explicitly approved image/TXT attachments. PostgreSQL retains every original and remains authoritative; comment/file writes never wait for Cloud. Existing REST/GraphQL, CAPTCHA, preview, search, Events, RabbitMQ, cache and WS remain available when Cloud is absent or restricted. Only explicitly listed own test comments may be mirrored in this release. No SQL migration, backfill, outbox or replica deployment.
 
@@ -9,6 +9,10 @@ Supabase Storage Free is an optional mirror for explicitly approved image/TXT at
 Verified:449 distinct backend tests (27 Domain,85 Application,67 Data,270 API),36 frontend tests and frontend/Docker builds. Real Edge created own PNG/TXT root/reply with CAPTCHA, checked exact file responses/headers/downloads, six GraphQL sorts, preview, WS/drafts and EN/RU/UA mobile layout. Real Supabase copied2 own files totaling267bytes; authenticated downloads matched, public access was denied; final image confirmed2 copies and5 verified reads. Invalid/missing key startup preserved writes/TXT/WS and SQL reads. Quota/429/5xx/timeout/corruption/concurrency/retry/budget behavior was tested with injected provider responses, not actual quota exhaustion or a real paused project. Event dispatch does not wait for a blocked worker. Owned SQL/cloud fixtures were removed, including proof that SQL-deleted IDs stay404 before cloud cleanup. Public HTTPS/HSTS/database/GraphQL/search/WSS/reconnect checks were read-only. Original data/schema/history/corpus/checkpoints/env/volumes/preview fingerprints matched. Prior Junior/million/reboot acceptance was not repeated. Current live deployment keeps consent/replay lists empty; ordinary user uploads are not sent to Cloud.
 
 <!-- CLOUD-ATTACHMENTS-CURRENT-END -->
+
+Verified Docker-only installation in an isolated empty project: environment creation/preservation; two initial dumps restored and fingerprinted; explicit development/test migrations; schema parity; restore/upgrade/idempotency across servers; scoped Rabbit/search setup. The tools container has no python3 executable and no Docker socket. All449backend tests passed from the tools container (27/85/67/270). Real Edge and all Middle services passed; the C# Cloud verifier checked2own files267bytes with public denial, while an unlisted file stayed SQL-only. Negative cases rejected incomplete env, invalid target, bad checkpoint SHA, altered schema and wrong ES credentials, preserving files and hiding secrets. A populated own PNG/TXT/reply checkpoint also restored/upgraded correctly. Runtime and primary Compose remain unchanged; the tooling image alone provides the new route.
+
+[Docker/.NET tools](docs/DOCKER_TOOLS.md).
 
 ## Middle submission
 
@@ -41,20 +45,21 @@ A .NET 10 / React SPA with PostgreSQL 17, packaged with Docker. Domain, Applicat
 
 ## First installation
 
-Requires Docker Engine, Compose v2.24+ and Python 3. Docker builds the application; host .NET/Node are needed only for host-side tests. Run from the repository root:
+Requires Docker Engine and Compose v2.24+. The separate .NET10 tools image provides installation, maintenance and backend tests; no host Python or .NET SDK is required. Host Node is optional for frontend development tests. Run from the repository root:
 
 ```bash
-python3 scripts/init-env.py
+docker compose -p commentsservice -f compose.tools.yaml build tools
+docker compose -p commentsservice -f compose.tools.yaml run --rm --no-deps tools init-env
 docker compose -p commentsservice --profile testing up -d --wait database test-database
-python3 scripts/db-checkpoint.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools checkpoint
 docker compose -p commentsservice build app
-python3 scripts/db-command.py migrate
-python3 scripts/db-command.py migrate --service test-database
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools migrate
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools migrate --target test
 docker compose -p commentsservice up -d --no-build --wait app
 curl --fail http://127.0.0.1:8080/health/database
 ```
 
-Open [localhost:8080](http://localhost:8080/) on the Docker host. Use sudo for Docker where needed. Credentials are generated once in the private `.env`; never publish it or overwrite credentials for existing volumes. To select unused ports **before first generation**, use `python3 scripts/init-env.py --port 8081 --test-db-port 55435`. An existing environment file is preserved, including its ports.
+Open [localhost:8080](http://localhost:8080/) on the Docker host. Use sudo for Docker where needed. Credentials are generated once in the private `.env`; never publish it or overwrite credentials for existing volumes. To select unused ports **before first generation**, use `docker compose -p commentsservice -f compose.tools.yaml run --rm --no-deps tools init-env --port 8081 --test-db-port 55435`. An existing environment file is preserved, including its ports.
 
 Keep the same Compose project name and environment file on updates. Development uses `commentsservice_development_data`; tests use the separate `commentsservice_test_data`. Both contain persistent PostgreSQL data. The app uses the non-superuser `comments_app` role. Startup never applies migrations automatically.
 
@@ -66,7 +71,7 @@ Keep the same Compose project name and environment file on updates. Development 
 4. Verify an existing checkpoint without replacing it:
 
 ```bash
-python3 scripts/verify-checkpoint.py artifacts/checkpoints/database.dump --upgrade
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-checkpoint --dump artifacts/checkpoints/database.dump --target test --upgrade
 ```
 
 This restores only into a uniquely named temporary database, checks manifest/SHA-256 and row fingerprints, optionally applies the current idempotent SQL export, then removes only its own temporary database. It never switches the application database. A restore returns checkpoint-time data; later writes are absent. Read [migration/recovery details](docs/database/MIGRATIONS.md).
@@ -80,19 +85,19 @@ All four migrations remain current:
 
 ## Verification
 
-Host tests need .NET 10 SDK and Node.js 24; install frontend dependencies with `npm --prefix src/comments-web ci` if absent. Keep the testing profile running.
+Backend tests run in the tools container. Optional frontend development tests need Node.js24; install dependencies with `npm --prefix src/comments-web ci`. Keep the testing profile running.
 
 ```bash
-python3 scripts/db-command.py check
-python3 scripts/db-command.py check --service test-database
-python3 scripts/verify-schema.py
-python3 scripts/verify-schema.py --service test-database --database comments_test
-python3 scripts/test-backend.py
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools check
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools check --target test
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-schema
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools verify-schema --target test
+docker compose -p commentsservice -f compose.yaml -f compose.tools.yaml run --rm --no-deps tools test-backend --target test
 npm --prefix src/comments-web test
 npm --prefix src/comments-web run build
 ```
 
-Database tests roll back; HTTP fixtures remove only their own rows. `verify-schema.py` compares the live PostgreSQL catalog with the shipped Workbench projection; it does not certify GUI import. Deployment/checkpoint/schema commands accept `--env-file`, `--project` and repeated `--compose-file`; use the same options on every command. Backend tests additionally accept `--host`/`--port`.
+Database tests roll back; HTTP fixtures remove only their own rows. `verify-schema` compares the live PostgreSQL catalog with the shipped Workbench projection; it does not certify GUI import.  [Docker/.NET tools](docs/DOCKER_TOOLS.md).
 
 In Visual Studio 2026 open `CommentsService.slnx`; it contains backend/test projects and frontend source items. Solution builds backend/tests; Docker builds the complete app. Windows/Linux build outputs are separate.
 

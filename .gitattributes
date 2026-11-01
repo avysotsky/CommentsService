@@ -3,3 +3,5 @@
 *.py text eol=lf
 *.pdf binary
 *.png binary
+change.log* linguist-language=Markdown linguist-documentation=true
+read.me linguist-language=Text linguist-documentation=true
